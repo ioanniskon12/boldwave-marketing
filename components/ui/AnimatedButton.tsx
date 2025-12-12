@@ -3,10 +3,11 @@
 import styled from 'styled-components';
 import Link from 'next/link';
 
-interface AnimatedButtonProps {
+export interface AnimatedButtonProps {
   href: string;
   children: string;
   variant?: 'light' | 'orange' | 'white';
+  onClick?: () => void;
 }
 
 const ButtonWrapper = styled(Link)<{ $variant: 'light' | 'orange' | 'white' }>`
@@ -58,9 +59,9 @@ const ArrowCircle = styled.span<{ $variant: 'light' | 'orange' | 'white' }>`
 
 const ButtonText = styled.span``;
 
-export default function AnimatedButton({ href, children, variant = 'light' }: AnimatedButtonProps) {
+export default function AnimatedButton({ href, children, variant = 'light', onClick }: AnimatedButtonProps) {
   return (
-    <ButtonWrapper href={href} $variant={variant}>
+    <ButtonWrapper href={href} $variant={variant} onClick={onClick}>
       <ButtonText>{children}</ButtonText>
       <ArrowCircle $variant={variant}>
         <img
