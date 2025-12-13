@@ -8,7 +8,7 @@ import {
   BlogPreview,
 } from '@/components/sections';
 import { testimonials, processSteps } from '@/data';
-import Popup from '@/components/ui/Popup';
+import ScrollToTop from '@/components/ui/ScrollToTop';
 
 export default function HomePage() {
   return (
@@ -20,7 +20,7 @@ export default function HomePage() {
       <ProcessTimeline steps={processSteps} />
       <TeamAndTestimonials testimonials={testimonials} />
       <BlogPreview />
-      <Popup />
+      <ScrollToTop />
     </>
   );
 }

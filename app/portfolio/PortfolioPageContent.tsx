@@ -174,22 +174,21 @@ const SectionHeader = styled.div`
 const SectionLabel = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   margin-bottom: 16px;
 `;
 
-const LabelDot = styled.span`
-  width: 6px;
-  height: 6px;
+const LabelLine = styled.span`
+  width: 40px;
+  height: 2px;
   background: #ff8c42;
-  border-radius: 50%;
 `;
 
 const LabelText = styled.span`
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   color: #ff8c42;
 `;
 
@@ -357,7 +356,7 @@ export function PortfolioPageContent() {
         <Container>
           <SectionHeader>
             <SectionLabel>
-              <LabelDot />
+              <LabelLine />
               <LabelText>Featured Work</LabelText>
             </SectionLabel>
             <SectionTitle>Success Stories</SectionTitle>

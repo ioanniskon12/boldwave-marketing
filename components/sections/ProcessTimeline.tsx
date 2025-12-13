@@ -31,23 +31,21 @@ const SectionHeader = styled.div`
 const Badge = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: 1px solid #e8e8e8;
-  border-radius: 100px;
+  gap: 12px;
   margin-bottom: 24px;
 `;
 
-const BadgeDot = styled.span`
-  width: 6px;
-  height: 6px;
+const BadgeLine = styled.span`
+  width: 40px;
+  height: 2px;
   background: #ff8c42;
-  border-radius: 50%;
 `;
 
 const BadgeText = styled.span`
   font-size: 13px;
   font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
   color: #ff8c42;
 `;
 
@@ -260,9 +258,8 @@ export default function ProcessTimeline({ steps }: ProcessTimelineProps) {
       <Container>
         <SectionHeader>
           <Badge>
-            <BadgeDot />
+            <BadgeLine />
             <BadgeText>Work Process</BadgeText>
-            <BadgeDot />
           </Badge>
           <Title>Turning Insights into Impactful Strategies</Title>
         </SectionHeader>

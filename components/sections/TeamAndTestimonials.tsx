@@ -87,20 +87,21 @@ const HeaderLeft = styled.div``;
 const Badge = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   margin-bottom: 16px;
 `;
 
-const BadgeDot = styled.span`
-  width: 6px;
-  height: 6px;
+const BadgeLine = styled.span`
+  width: 40px;
+  height: 2px;
   background: #ff8c42;
-  border-radius: 50%;
 `;
 
 const BadgeText = styled.span`
   font-size: 13px;
   font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
   color: #ff8c42;
 `;
 
@@ -274,14 +275,25 @@ const TestimonialHeader = styled.div`
   }
 `;
 
-const TestimonialBadge = styled.span`
+const TestimonialLabel = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+`;
+
+const TestimonialLine = styled.span`
+  width: 40px;
+  height: 2px;
+  background: #ff8c42;
+`;
+
+const TestimonialLabelText = styled.span`
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: #ff8c42;
-  margin-bottom: 16px;
-  display: block;
 `;
 
 const TestimonialTitle = styled.h2`
@@ -546,9 +558,8 @@ export default function TeamAndTestimonials({ testimonials }: TeamAndTestimonial
             <Header>
               <HeaderLeft>
                 <Badge>
-                  <BadgeDot />
+                  <BadgeLine />
                   <BadgeText>Team Member</BadgeText>
-                  <BadgeDot />
                 </Badge>
                 <Title>Meet the Expert Team Members</Title>
               </HeaderLeft>
@@ -607,7 +618,10 @@ export default function TeamAndTestimonials({ testimonials }: TeamAndTestimonial
           {/* Testimonials */}
           <TestimonialsSection>
             <TestimonialHeader>
-              <TestimonialBadge>TESTIMONIALS</TestimonialBadge>
+              <TestimonialLabel>
+                <TestimonialLine />
+                <TestimonialLabelText>Testimonials</TestimonialLabelText>
+              </TestimonialLabel>
               <TestimonialTitle>Don&apos;t take our word for it! Hear it from our partners.</TestimonialTitle>
             </TestimonialHeader>
 

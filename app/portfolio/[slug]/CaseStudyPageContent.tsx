@@ -439,22 +439,21 @@ const OtherCasesSection = styled.section`
 const SectionLabel = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   margin-bottom: 16px;
 `;
 
-const LabelDot = styled.span`
-  width: 8px;
-  height: 8px;
+const LabelLine = styled.span`
+  width: 40px;
+  height: 2px;
   background: #ff8c42;
-  border-radius: 50%;
 `;
 
 const LabelText = styled.span`
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   color: #ff8c42;
 `;
 
@@ -732,7 +731,7 @@ export function CaseStudyPageContent({ caseStudy }: CaseStudyPageContentProps) {
       <OtherCasesSection>
         <Container>
           <SectionLabel>
-            <LabelDot />
+            <LabelLine />
             <LabelText>More Success Stories</LabelText>
           </SectionLabel>
 

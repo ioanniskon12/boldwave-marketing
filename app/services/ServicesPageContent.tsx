@@ -1,6 +1,6 @@
 'use client';
 
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import Link from 'next/link';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
@@ -8,8 +8,327 @@ import AnimatedButton from '@/components/ui/AnimatedButton';
 import { PageHero } from '@/components/sections';
 import { services } from '@/data';
 
+const float = keyframes`
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+`;
+
+const shimmer = keyframes`
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+`;
+
+const gradientMove = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
+
 // Services Section
 const ServicesSection = styled.section`
+  padding: 80px 0;
+  background: #faf8f5;
+  position: relative;
+
+  ${media.lg} {
+    padding: 100px 0;
+  }
+`;
+
+const SectionHeader = styled.div`
+  text-align: center;
+  margin-bottom: 60px;
+
+  ${media.lg} {
+    margin-bottom: 80px;
+  }
+`;
+
+const SectionLabel = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+`;
+
+const LabelLine = styled.span`
+  width: 40px;
+  height: 2px;
+  background: #ff8c42;
+`;
+
+const LabelText = styled.span`
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #ff8c42;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  line-height: 1.2;
+
+  ${media.lg} {
+    font-size: 48px;
+  }
+`;
+
+const SectionDescription = styled.p`
+  font-size: 18px;
+  color: #666666;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.7;
+`;
+
+const ServicesGrid = styled.div`
+  display: grid;
+  gap: 20px;
+
+  ${media.md} {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  ${media.lg} {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+`;
+
+const ServiceCard = styled(Link)`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 24px;
+  text-decoration: none;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border: 1px solid transparent;
+  min-height: 320px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    padding: 1px;
+    background: linear-gradient(135deg, transparent, rgba(255, 140, 66, 0.3), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  &:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.15);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  ${media.lg} {
+    padding: 36px;
+  }
+`;
+
+const CardIconWrapper = styled.div`
+  position: relative;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 24px;
+`;
+
+const CardIconBg = styled.div`
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #ff8c42, #ff6b35);
+  border-radius: 20px;
+  opacity: 0.1;
+  transition: all 0.5s ease;
+
+  ${ServiceCard}:hover & {
+    opacity: 1;
+    transform: rotate(-6deg) scale(1.1);
+  }
+`;
+
+const CardIcon = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  z-index: 1;
+  transition: all 0.5s ease;
+
+  ${ServiceCard}:hover & {
+    transform: scale(1.1);
+    filter: grayscale(1) brightness(10);
+  }
+`;
+
+const CardNumber = styled.span`
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  font-size: 48px;
+  font-weight: 900;
+  color: rgba(0, 0, 0, 0.03);
+  line-height: 1;
+  transition: all 0.5s ease;
+
+  ${ServiceCard}:hover & {
+    color: rgba(255, 140, 66, 0.1);
+  }
+`;
+
+const CardContent = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+`;
+
+const CardTitle = styled.h3`
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  transition: color 0.3s ease;
+
+  ${ServiceCard}:hover & {
+    color: #ff8c42;
+  }
+`;
+
+const CardDescription = styled.p`
+  font-size: 15px;
+  color: #666666;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  flex: 1;
+`;
+
+const CardFooter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+`;
+
+const CardTags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+`;
+
+const Tag = styled.span`
+  display: inline-flex;
+  padding: 5px 10px;
+  background: #faf8f5;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888888;
+  transition: all 0.3s ease;
+
+  ${ServiceCard}:hover & {
+    background: rgba(255, 140, 66, 0.1);
+    color: #ff8c42;
+  }
+`;
+
+const CardArrow = styled.div`
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #faf8f5;
+  border-radius: 50%;
+  color: #888888;
+  transition: all 0.4s ease;
+  flex-shrink: 0;
+
+  ${ServiceCard}:hover & {
+    background: #ff8c42;
+    color: #ffffff;
+    transform: translateX(4px);
+  }
+`;
+
+// Stats Section
+const StatsSection = styled.section`
+  padding: 60px 0;
+  background: #0d0d12;
+  position: relative;
+  overflow: hidden;
+`;
+
+const StatsGlow = styled.div`
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 140, 66, 0.15), transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(80px);
+  pointer-events: none;
+`;
+
+const StatsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+
+  ${media.md} {
+    grid-template-columns: repeat(4, 1fr);
+  }
+`;
+
+const StatItem = styled.div`
+  text-align: center;
+  padding: 24px;
+`;
+
+const StatValue = styled.div`
+  font-size: 42px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #ffffff, #ff8c42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  ${media.lg} {
+    font-size: 56px;
+  }
+`;
+
+const StatLabel = styled.div`
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+`;
+
+// Process Section
+const ProcessSection = styled.section`
   padding: 100px 0;
   background: #ffffff;
 
@@ -18,168 +337,70 @@ const ServicesSection = styled.section`
   }
 `;
 
-const SectionLabel = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-`;
-
-const LabelDot = styled.span`
-  width: 8px;
-  height: 8px;
-  background: ${({ theme }) => theme.colors.accent};
-  border-radius: 50%;
-`;
-
-const LabelText = styled.span`
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: ${({ theme }) => theme.colors.accent};
-`;
-
-const SectionHeader = styled.div`
+const ProcessHeader = styled.div`
+  text-align: center;
   margin-bottom: 60px;
 `;
 
-const SectionTitle = styled.h2`
-  font-size: 32px;
-  font-weight: 800;
-  color: ${({ theme }) => theme.colors.text.primary};
-  margin-bottom: 16px;
-  line-height: 1.2;
-
-  ${media.lg} {
-    font-size: 40px;
-  }
-`;
-
-const SectionDescription = styled.p`
-  font-size: 18px;
-  color: ${({ theme }) => theme.colors.text.secondary};
-  max-width: 600px;
-`;
-
-const ServicesGrid = styled.div`
+const ProcessGrid = styled.div`
   display: grid;
-  gap: 24px;
+  gap: 20px;
 
   ${media.md} {
     grid-template-columns: repeat(2, 1fr);
   }
 
   ${media.lg} {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 `;
 
-const ServiceCard = styled(Link)`
+const ProcessCard = styled.div`
   position: relative;
-  display: block;
   padding: 32px;
-  background: #ffffff;
-  border-radius: 24px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
+  background: #faf8f5;
+  border-radius: 20px;
+  text-align: center;
+  transition: all 0.4s ease;
 
   &:hover {
     transform: translateY(-8px);
-    border-color: ${({ theme }) => theme.colors.accent};
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
   }
 `;
 
-const CardNumber = styled.span`
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  font-size: 13px;
-  font-weight: 700;
-  color: ${({ theme }) => theme.colors.text.muted};
-`;
-
-const CardIcon = styled.div`
-  width: 64px;
-  height: 64px;
+const ProcessNumber = styled.div`
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(255, 75, 75, 0.1), rgba(255, 75, 75, 0.05));
-  border-radius: 20px;
-  font-size: 28px;
-  margin-bottom: 24px;
-  transition: all 0.4s ease;
-
-  ${ServiceCard}:hover & {
-    background: linear-gradient(135deg, #FF4B4B, #FF8F8F);
-    transform: scale(1.1) rotate(-5deg);
-  }
-`;
-
-const CardTitle = styled.h3`
+  background: linear-gradient(135deg, #ff8c42, #ff6b35);
+  border-radius: 14px;
   font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+`;
+
+const ProcessTitle = styled.h4`
+  font-size: 18px;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.text.primary};
-  margin-bottom: 12px;
-  transition: color 0.3s ease;
-
-  ${ServiceCard}:hover & {
-    color: ${({ theme }) => theme.colors.accent};
-  }
+  color: #1a1a1a;
+  margin-bottom: 8px;
 `;
 
-const CardDescription = styled.p`
+const ProcessDesc = styled.p`
   font-size: 14px;
-  color: ${({ theme }) => theme.colors.text.secondary};
+  color: #666666;
   line-height: 1.6;
-  margin-bottom: 20px;
-`;
-
-const CardTags = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-`;
-
-const Tag = styled.span`
-  display: inline-flex;
-  padding: 6px 12px;
-  background: ${({ theme }) => theme.colors.background};
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.text.secondary};
-`;
-
-const CardArrow = styled.div`
-  position: absolute;
-  bottom: 32px;
-  right: 32px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${({ theme }) => theme.colors.background};
-  border-radius: 50%;
-  color: ${({ theme }) => theme.colors.text.muted};
-  transition: all 0.3s ease;
-
-  ${ServiceCard}:hover & {
-    background: ${({ theme }) => theme.colors.accent};
-    color: #ffffff;
-    transform: translateX(4px);
-  }
 `;
 
 // CTA Section
 const CTASection = styled.section`
   padding: 100px 0;
-  background: #fafafa;
+  background: #faf8f5;
 
   ${media.lg} {
     padding: 120px 0;
@@ -188,7 +409,9 @@ const CTASection = styled.section`
 
 const CTACard = styled.div`
   padding: 60px 40px;
-  background: linear-gradient(135deg, #111111, #1a1a2e);
+  background: linear-gradient(135deg, #0d0d12 0%, #1a1a2e 50%, #0d0d12 100%);
+  background-size: 200% 200%;
+  animation: ${gradientMove} 15s ease infinite;
   border-radius: 32px;
   text-align: center;
   position: relative;
@@ -204,10 +427,22 @@ const CTAOrb = styled.div`
   width: 400px;
   height: 400px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 75, 75, 0.2), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 140, 66, 0.25), transparent 70%);
   top: -200px;
   left: 50%;
   transform: translateX(-50%);
+  filter: blur(60px);
+  pointer-events: none;
+`;
+
+const CTAOrb2 = styled.div`
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139, 69, 180, 0.2), transparent 70%);
+  bottom: -150px;
+  right: -100px;
   filter: blur(60px);
   pointer-events: none;
 `;
@@ -234,6 +469,7 @@ const CTAText = styled.p`
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.7;
 `;
 
 
@@ -251,6 +487,20 @@ const featureTags: { [key: string]: string[] } = {
   'full-funnel-setup': ['CRM', 'Automation', 'Funnels'],
 };
 
+const stats = [
+  { value: '100+', label: 'Brands Scaled' },
+  { value: '3.5x', label: 'Average ROAS' },
+  { value: '50M+', label: 'Ad Spend Managed' },
+  { value: '98%', label: 'Client Retention' },
+];
+
+const process = [
+  { number: '01', title: 'Discovery', desc: 'Deep dive into your brand, goals, and target audience' },
+  { number: '02', title: 'Strategy', desc: 'Custom roadmap tailored to your growth objectives' },
+  { number: '03', title: 'Execute', desc: 'Launch campaigns with precision and creativity' },
+  { number: '04', title: 'Optimize', desc: 'Continuous testing and refinement for peak performance' },
+];
+
 export function ServicesPageContent() {
   return (
     <>
@@ -266,7 +516,7 @@ export function ServicesPageContent() {
         <Container>
           <SectionHeader>
             <SectionLabel>
-              <LabelDot />
+              <LabelLine />
               <LabelText>Our Services</LabelText>
             </SectionLabel>
             <SectionTitle>Everything you need to grow</SectionTitle>
@@ -279,36 +529,85 @@ export function ServicesPageContent() {
             {services.map((service, index) => (
               <ServiceCard key={service.id} href={`/services/${service.slug}`}>
                 <CardNumber>{String(index + 1).padStart(2, '0')}</CardNumber>
-                <CardIcon>{service.icon}</CardIcon>
-                <CardTitle>{service.title}</CardTitle>
-                <CardDescription>{service.shortDescription}</CardDescription>
-                <CardTags>
-                  {featureTags[service.slug]?.map((tag) => (
-                    <Tag key={tag}>{tag}</Tag>
-                  ))}
-                </CardTags>
-                <CardArrow>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M3 8h10M9 4l4 4-4 4"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </CardArrow>
+                <CardIconWrapper>
+                  <CardIconBg />
+                  <CardIcon>{service.icon}</CardIcon>
+                </CardIconWrapper>
+                <CardContent>
+                  <CardTitle>{service.title}</CardTitle>
+                  <CardDescription>{service.shortDescription}</CardDescription>
+                  <CardFooter>
+                    <CardTags>
+                      {featureTags[service.slug]?.map((tag) => (
+                        <Tag key={tag}>{tag}</Tag>
+                      ))}
+                    </CardTags>
+                    <CardArrow>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path
+                          d="M3 8h10M9 4l4 4-4 4"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </CardArrow>
+                  </CardFooter>
+                </CardContent>
               </ServiceCard>
             ))}
           </ServicesGrid>
         </Container>
       </ServicesSection>
 
+      {/* Stats Section */}
+      <StatsSection>
+        <StatsGlow />
+        <Container>
+          <StatsGrid>
+            {stats.map((stat) => (
+              <StatItem key={stat.label}>
+                <StatValue>{stat.value}</StatValue>
+                <StatLabel>{stat.label}</StatLabel>
+              </StatItem>
+            ))}
+          </StatsGrid>
+        </Container>
+      </StatsSection>
+
+      {/* Process Section */}
+      <ProcessSection>
+        <Container>
+          <ProcessHeader>
+            <SectionLabel>
+              <LabelLine />
+              <LabelText>How We Work</LabelText>
+            </SectionLabel>
+            <SectionTitle>Our Process</SectionTitle>
+            <SectionDescription>
+              A proven framework that delivers consistent results for every client.
+            </SectionDescription>
+          </ProcessHeader>
+
+          <ProcessGrid>
+            {process.map((step) => (
+              <ProcessCard key={step.number}>
+                <ProcessNumber>{step.number}</ProcessNumber>
+                <ProcessTitle>{step.title}</ProcessTitle>
+                <ProcessDesc>{step.desc}</ProcessDesc>
+              </ProcessCard>
+            ))}
+          </ProcessGrid>
+        </Container>
+      </ProcessSection>
+
       {/* CTA Section */}
       <CTASection>
         <Container>
           <CTACard>
             <CTAOrb />
+            <CTAOrb2 />
             <CTATitle>Not sure which service you need?</CTATitle>
             <CTAText>
               Book a free strategy call and we&apos;ll help you figure out the best approach for your goals.
