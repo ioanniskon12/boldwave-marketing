@@ -793,10 +793,50 @@ export const faqs: FAQ[] = [
   },
 ];
 
+// General categories (for main FAQ page)
+const generalCategories = [
+  'Getting Started',
+  'Pricing & Engagement',
+  'Working Together',
+  'Results & Reporting',
+];
+
+// Service-specific categories mapping (slug -> FAQ category)
+const serviceToFaqCategory: { [key: string]: string } = {
+  'social-media-management': 'Social Media Management',
+  'content-creation': 'Content Creation',
+  'branding-creative-direction': 'Branding & Creative',
+  'paid-advertising': 'Paid Advertising',
+  'website-development': 'Website Development',
+  'ui-ux-design': 'Website Development', // UI/UX uses website FAQs
+  'seo-content-writing': 'SEO & Content Writing',
+  'email-marketing': 'Email Marketing',
+  'influencer-partnerships': 'Influencer Partnerships',
+  'marketing-strategy': 'Marketing Strategy',
+  'full-funnel-setup': 'Full Funnel Setup',
+};
+
 export const getFaqsByCategory = () => {
   const categories = [...new Set(faqs.map((faq) => faq.category))];
   return categories.map((category) => ({
     category,
     items: faqs.filter((faq) => faq.category === category),
   }));
+};
+
+// Get only general FAQs (for main FAQ page)
+export const getGeneralFaqs = () => {
+  return generalCategories
+    .map((category) => ({
+      category,
+      items: faqs.filter((faq) => faq.category === category),
+    }))
+    .filter((cat) => cat.items.length > 0);
+};
+
+// Get service-specific FAQs by service slug
+export const getFaqsByServiceSlug = (slug: string) => {
+  const faqCategory = serviceToFaqCategory[slug];
+  if (!faqCategory) return [];
+  return faqs.filter((faq) => faq.category === faqCategory);
 };

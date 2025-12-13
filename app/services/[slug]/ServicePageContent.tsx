@@ -1,12 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Link from 'next/link';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
-import { Service } from '@/types';
-import { services } from '@/data';
+import { Service, FAQ } from '@/types';
+import { services, getFaqsByServiceSlug } from '@/data';
 
 interface ServicePageContentProps {
   service: Service;
@@ -422,6 +423,223 @@ const FeatureTitle = styled.h3`
   line-height: 1.5;
 `;
 
+// Stacked Cards Layout - What's Included
+const StackedSectionWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+
+  ${media.lg} {
+    flex-direction: row;
+    gap: 80px;
+    align-items: center;
+  }
+`;
+
+const StackedSideContent = styled.div`
+  flex: 1;
+  order: 2;
+
+  ${media.lg} {
+    order: 1;
+  }
+`;
+
+const StackedCounter = styled.div`
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 16px;
+`;
+
+const StackedCurrentNumber = styled.span`
+  font-size: 56px;
+  font-weight: 800;
+  color: #ff8c42;
+  line-height: 1;
+
+  ${media.lg} {
+    font-size: 72px;
+  }
+`;
+
+const StackedTotalNumber = styled.span`
+  font-size: 24px;
+  font-weight: 600;
+  color: #cccccc;
+
+  ${media.lg} {
+    font-size: 32px;
+  }
+`;
+
+const StackedSideTitle = styled.h3`
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  line-height: 1.3;
+
+  ${media.lg} {
+    font-size: 36px;
+  }
+`;
+
+const StackedSideDesc = styled.p`
+  font-size: 17px;
+  color: #666666;
+  line-height: 1.7;
+  margin-bottom: 32px;
+
+  ${media.lg} {
+    font-size: 18px;
+  }
+`;
+
+const StackedProgressBar = styled.div`
+  width: 100%;
+  height: 4px;
+  background: #e8e8e8;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 24px;
+`;
+
+const StackedProgressFill = styled.div<{ $progress: number }>`
+  height: 100%;
+  background: linear-gradient(90deg, #ff8c42, #ffb380);
+  border-radius: 2px;
+  width: ${({ $progress }) => $progress}%;
+  transition: width 0.5s ease;
+`;
+
+const StackNavigation = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+`;
+
+const StackArrow = styled.button`
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: 2px solid #e8e8e8;
+  background: #ffffff;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover:not(:disabled) {
+    border-color: #ff8c42;
+    background: #ff8c42;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 140, 66, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+`;
+
+const StackDots = styled.div`
+  display: flex;
+  gap: 6px;
+`;
+
+const StackDot = styled.button<{ $isActive: boolean }>`
+  width: ${({ $isActive }) => ($isActive ? '24px' : '8px')};
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+  background: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#e0e0e0')};
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#ccc')};
+  }
+`;
+
+const StackedCardsWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  min-height: 420px;
+  order: 1;
+
+  ${media.lg} {
+    min-height: 480px;
+    order: 2;
+  }
+`;
+
+const StackedCard = styled.div<{ $index: number; $activeIndex: number }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  transition: all 0.5s ease;
+  cursor: pointer;
+
+  ${({ $index, $activeIndex }) => {
+    const diff = $index - $activeIndex;
+    if (diff === 0) {
+      return `
+        transform: translateY(0) scale(1);
+        z-index: 10;
+        opacity: 1;
+      `;
+    } else if (diff === 1) {
+      return `
+        transform: translateY(30px) scale(0.95);
+        z-index: 5;
+        opacity: 0.7;
+      `;
+    } else if (diff === 2) {
+      return `
+        transform: translateY(60px) scale(0.9);
+        z-index: 3;
+        opacity: 0.4;
+      `;
+    } else {
+      return `
+        transform: translateY(90px) scale(0.85);
+        z-index: 1;
+        opacity: 0;
+        pointer-events: none;
+      `;
+    }
+  }}
+
+  &:hover {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  }
+`;
+
+const StackedCardImageOnly = styled.div`
+  height: 350px;
+  position: relative;
+
+  ${media.lg} {
+    height: 420px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+`;
+
 // Target Audience Section - Split layout
 const AudienceSection = styled.section`
   padding: 0;
@@ -741,11 +959,173 @@ const CTAButtons = styled.div`
   gap: 20px;
 `;
 
+// FAQ Section
+const FAQSection = styled.section`
+  padding: 100px 0;
+  background: #faf8f5;
+
+  ${media.lg} {
+    padding: 140px 0;
+  }
+`;
+
+const FAQGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 900px;
+  margin-top: 60px;
+`;
+
+const FAQCard = styled.div<{ $isOpen: boolean }>`
+  padding: 0;
+  background: #ffffff;
+  border-radius: 24px;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 32px;
+    right: 32px;
+    height: 4px;
+    background: linear-gradient(90deg, #ff8c42, #ffb380);
+    border-radius: 0 0 4px 4px;
+    transform: scaleX(${({ $isOpen }) => ($isOpen ? 1 : 0)});
+    transition: transform 0.4s ease;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08);
+
+    &::before {
+      transform: scaleX(1);
+    }
+  }
+`;
+
+const FAQCardHeader = styled.button`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 32px 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 24px;
+
+  ${media.md} {
+    padding: 40px 40px;
+    align-items: center;
+  }
+`;
+
+const FAQNumber = styled.span`
+  font-size: 48px;
+  font-weight: 800;
+  color: rgba(255, 140, 66, 0.12);
+  line-height: 1;
+  flex-shrink: 0;
+  display: none;
+
+  ${media.md} {
+    display: block;
+    font-size: 64px;
+  }
+`;
+
+const FAQQuestion = styled.span`
+  font-size: 17px;
+  font-weight: 700;
+  color: #1a1a1a;
+  line-height: 1.5;
+  flex: 1;
+
+  ${media.md} {
+    font-size: 18px;
+  }
+`;
+
+const FAQToggle = styled.div<{ $isOpen: boolean }>`
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${({ $isOpen }) => ($isOpen ? '#ff8c42' : 'transparent')};
+  border: 2px solid ${({ $isOpen }) => ($isOpen ? '#ff8c42' : '#e0e0e0')};
+  border-radius: 50%;
+  transition: all 0.3s ease;
+
+  svg {
+    color: ${({ $isOpen }) => ($isOpen ? '#ffffff' : '#1a1a1a')};
+    transform: ${({ $isOpen }) => ($isOpen ? 'rotate(45deg)' : 'rotate(0)')};
+    transition: all 0.3s ease;
+  }
+
+  &:hover {
+    border-color: #ff8c42;
+    background: ${({ $isOpen }) => ($isOpen ? '#ff8c42' : 'rgba(255, 140, 66, 0.1)')};
+  }
+`;
+
+const FAQContent = styled.div<{ $isOpen: boolean }>`
+  max-height: ${({ $isOpen }) => ($isOpen ? '600px' : '0')};
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+`;
+
+const FAQAnswer = styled.div`
+  padding: 0 32px 32px;
+  font-size: 16px;
+  color: #666666;
+  line-height: 1.8;
+
+  ${media.md} {
+    padding: 0 40px 40px 144px;
+    font-size: 17px;
+  }
+`;
+
 const outcomeIcons = ['📈', '💰', '🚀'];
+
+// Images for stacked cards based on service features
+const featureImages = [
+  'https://picsum.photos/seed/feature1/600/500',
+  'https://picsum.photos/seed/feature2/600/500',
+  'https://picsum.photos/seed/feature3/600/500',
+  'https://picsum.photos/seed/feature4/600/500',
+  'https://picsum.photos/seed/feature5/600/500',
+  'https://picsum.photos/seed/feature6/600/500',
+  'https://picsum.photos/seed/feature7/600/500',
+  'https://picsum.photos/seed/feature8/600/500',
+];
 
 export function ServicePageContent({ service }: ServicePageContentProps) {
   const otherServices = services.filter(s => s.id !== service.id).slice(0, 3);
   const serviceIndex = services.findIndex(s => s.id === service.id) + 1;
+  const serviceFaqs = getFaqsByServiceSlug(service.slug);
+  const [openFaqId, setOpenFaqId] = useState<string | null>(null);
+  const [stackedCardIndex, setStackedCardIndex] = useState(0);
+
+  const toggleFaq = (id: string) => {
+    setOpenFaqId((prev) => (prev === id ? null : id));
+  };
+
+  const nextStackedCard = () => {
+    setStackedCardIndex(prev => Math.min(prev + 1, service.included.length - 1));
+  };
+
+  const prevStackedCard = () => {
+    setStackedCardIndex(prev => Math.max(prev - 1, 0));
+  };
 
   return (
     <>
@@ -826,14 +1206,62 @@ export function ServicePageContent({ service }: ServicePageContentProps) {
             </SectionSubtitle>
           </SectionHeader>
 
-          <FeaturesGrid>
-            {service.included.map((item, index) => (
-              <FeatureCard key={index}>
-                <FeatureNumber>0{index + 1}</FeatureNumber>
-                <FeatureTitle>{item}</FeatureTitle>
-              </FeatureCard>
-            ))}
-          </FeaturesGrid>
+          <StackedSectionWrapper>
+            <StackedSideContent>
+              <StackedCounter>
+                <StackedCurrentNumber>{String(stackedCardIndex + 1).padStart(2, '0')}</StackedCurrentNumber>
+                <StackedTotalNumber>/ {String(service.included.length).padStart(2, '0')}</StackedTotalNumber>
+              </StackedCounter>
+              <StackedSideTitle>{service.included[stackedCardIndex]}</StackedSideTitle>
+              <StackedSideDesc>
+                Each element of our service is designed to drive measurable results and help your brand stand out.
+              </StackedSideDesc>
+              <StackedProgressBar>
+                <StackedProgressFill $progress={((stackedCardIndex + 1) / service.included.length) * 100} />
+              </StackedProgressBar>
+              <StackNavigation>
+                <StackArrow onClick={prevStackedCard} disabled={stackedCardIndex === 0}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                  </svg>
+                </StackArrow>
+                <StackDots>
+                  {service.included.map((_, index) => (
+                    <StackDot
+                      key={index}
+                      $isActive={index === stackedCardIndex}
+                      onClick={() => setStackedCardIndex(index)}
+                    />
+                  ))}
+                </StackDots>
+                <StackArrow onClick={nextStackedCard} disabled={stackedCardIndex === service.included.length - 1}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </StackArrow>
+              </StackNavigation>
+            </StackedSideContent>
+            <StackedCardsWrapper>
+              {service.included.map((item, index) => {
+                const diff = index - stackedCardIndex;
+                const isVisible = diff >= 0 && diff <= 2;
+                if (!isVisible) return null;
+
+                return (
+                  <StackedCard
+                    key={index}
+                    $index={index}
+                    $activeIndex={stackedCardIndex}
+                    onClick={() => index === stackedCardIndex + 1 && nextStackedCard()}
+                  >
+                    <StackedCardImageOnly>
+                      <img src={featureImages[index % featureImages.length]} alt={item} />
+                    </StackedCardImageOnly>
+                  </StackedCard>
+                );
+              })}
+            </StackedCardsWrapper>
+          </StackedSectionWrapper>
         </Container>
       </FeaturesSection>
 
@@ -909,6 +1337,49 @@ export function ServicePageContent({ service }: ServicePageContentProps) {
           </RelatedGrid>
         </Container>
       </RelatedSection>
+
+      {/* FAQ Section */}
+      {serviceFaqs.length > 0 && (
+        <FAQSection>
+          <Container>
+            <SectionTag>
+              <TagLine />
+              <TagText>Common Questions</TagText>
+            </SectionTag>
+            <SectionTitle>Frequently asked questions</SectionTitle>
+
+            <FAQGrid>
+              {serviceFaqs.map((faq, index) => {
+                const formattedNumber = String(index + 1).padStart(2, '0');
+                return (
+                  <FAQCard key={faq.id} $isOpen={openFaqId === faq.id}>
+                    <FAQCardHeader
+                      onClick={() => toggleFaq(faq.id)}
+                      aria-expanded={openFaqId === faq.id}
+                    >
+                      <FAQNumber>{formattedNumber}</FAQNumber>
+                      <FAQQuestion>{faq.question}</FAQQuestion>
+                      <FAQToggle $isOpen={openFaqId === faq.id}>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                          <path
+                            d="M10 4V16M4 10H16"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </FAQToggle>
+                    </FAQCardHeader>
+                    <FAQContent $isOpen={openFaqId === faq.id}>
+                      <FAQAnswer>{faq.answer}</FAQAnswer>
+                    </FAQContent>
+                  </FAQCard>
+                );
+              })}
+            </FAQGrid>
+          </Container>
+        </FAQSection>
+      )}
 
       {/* CTA Section */}
       <CTASection>

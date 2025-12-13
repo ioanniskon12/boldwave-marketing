@@ -19,6 +19,7 @@ export interface CaseStudy {
     role: string;
   };
   image: string;
+  galleryImages?: string[];
   logo?: string;
   featured: boolean;
 }
@@ -46,6 +47,14 @@ export const caseStudies: CaseStudy[] = [
       role: 'CEO, StyleVerse',
     },
     image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=600&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1556742111-a301076d9d18?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop',
+    ],
     featured: true,
   },
   {
@@ -70,6 +79,13 @@ export const caseStudies: CaseStudy[] = [
       role: 'VP Marketing, CloudMetrics',
     },
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&h=600&fit=crop',
+    ],
     featured: true,
   },
   {
@@ -89,6 +105,13 @@ export const caseStudies: CaseStudy[] = [
     ],
     services: ['Brand Strategy', 'Paid Social', 'Influencer Marketing', 'Email Marketing'],
     image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1549576490-b0b4831ef60a?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=800&h=600&fit=crop',
+    ],
     featured: true,
   },
   {
@@ -108,6 +131,12 @@ export const caseStudies: CaseStudy[] = [
     ],
     services: ['Paid Social', 'Google Ads', 'YouTube Ads', 'Landing Pages'],
     image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop',
+    ],
     featured: false,
   },
   {
@@ -127,6 +156,12 @@ export const caseStudies: CaseStudy[] = [
     ],
     services: ['App Marketing', 'TikTok Ads', 'Apple Search Ads', 'Creative Production'],
     image: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=800&h=600&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1461896836934- voices-from-the-land?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&h=600&fit=crop',
+    ],
     featured: false,
   },
   {
@@ -146,6 +181,12 @@ export const caseStudies: CaseStudy[] = [
     ],
     services: ['Local Marketing', 'Social Media', 'Google Ads', 'Content Creation'],
     image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1567521464027-f127ff144326?w=800&h=600&fit=crop',
+    ],
     featured: false,
   },
 ];

@@ -4,10 +4,24 @@ import { useState } from 'react';
 import styled from 'styled-components';
 import { media } from '@/styles/theme';
 import Input from '@/components/ui/Input';
-import Select from '@/components/ui/Select';
 import Textarea from '@/components/ui/Textarea';
-import { Button } from '@/components/ui/Button';
-import { FormState, FormErrors } from '@/types';
+
+interface FormState {
+  name: string;
+  email: string;
+  company: string;
+  website: string;
+  services: string[];
+  message: string;
+}
+
+interface FormErrors {
+  name?: string;
+  email?: string;
+  company?: string;
+  services?: string;
+  message?: string;
+}
 
 const FormWrapper = styled.form`
   display: flex;
@@ -34,11 +48,11 @@ const SuccessIcon = styled.div`
   height: 64px;
   margin: 0 auto ${({ theme }) => theme.spacing.lg};
   border-radius: ${({ theme }) => theme.borderRadius.full};
-  background-color: ${({ theme }) => theme.colors.success};
+  background-color: #22c55e;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => theme.colors.text.inverse};
+  color: #ffffff;
 `;
 
 const SuccessTitle = styled.h3`
@@ -56,14 +70,14 @@ const SuccessText = styled.p`
 
 const ResetButton = styled.button`
   font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.accent};
+  color: #ff8c42;
   background: none;
   border: none;
   cursor: pointer;
   text-decoration: underline;
 
   &:hover {
-    color: ${({ theme }) => theme.colors.accentHover};
+    color: #e67a35;
   }
 `;
 
@@ -75,6 +89,7 @@ const Spinner = styled.span`
   border-top-color: currentColor;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+  margin-right: 8px;
 
   @keyframes spin {
     to {
@@ -83,12 +98,114 @@ const Spinner = styled.span`
   }
 `;
 
-const adSpendOptions = [
-  { value: 'under-10k', label: 'Under $10,000' },
-  { value: '10k-25k', label: '$10,000 - $25,000' },
-  { value: '25k-50k', label: '$25,000 - $50,000' },
-  { value: '50k-100k', label: '$50,000 - $100,000' },
-  { value: 'over-100k', label: '$100,000+' },
+// Services Checkboxes
+const ServicesFieldset = styled.fieldset`
+  border: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const ServicesLabel = styled.legend`
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  display: block;
+`;
+
+const ServicesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+
+  ${media.md} {
+    grid-template-columns: repeat(3, 1fr);
+  }
+`;
+
+const ServiceCheckbox = styled.label<{ $isChecked: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: ${({ $isChecked }) => ($isChecked ? '#fff5ee' : '#f8f8f8')};
+  border: 2px solid ${({ $isChecked }) => ($isChecked ? '#ff8c42' : 'transparent')};
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  color: #1a1a1a;
+
+  &:hover {
+    background: ${({ $isChecked }) => ($isChecked ? '#fff5ee' : '#f0f0f0')};
+  }
+
+  input {
+    display: none;
+  }
+`;
+
+const CheckboxIcon = styled.span<{ $isChecked: boolean }>`
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid ${({ $isChecked }) => ($isChecked ? '#ff8c42' : '#d0d0d0')};
+  background: ${({ $isChecked }) => ($isChecked ? '#ff8c42' : '#ffffff')};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+
+  svg {
+    opacity: ${({ $isChecked }) => ($isChecked ? 1 : 0)};
+    transform: scale(${({ $isChecked }) => ($isChecked ? 1 : 0.5)});
+    transition: all 0.2s ease;
+  }
+`;
+
+const ServicesError = styled.span`
+  display: block;
+  font-size: 13px;
+  color: #ef4444;
+  margin-top: 8px;
+`;
+
+// Orange Submit Button
+const SubmitButton = styled.button`
+  width: 100%;
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ff8c42 0%, #ff7a2e 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #ff7a2e 0%, #e66a1e 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 140, 66, 0.35);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+`;
+
+const serviceOptions = [
+  { value: 'paid-social', label: 'Paid Social' },
+  { value: 'google-ads', label: 'Google Ads' },
+  { value: 'creative-strategy', label: 'Creative Strategy' },
+  { value: 'email-marketing', label: 'Email Marketing' },
+  { value: 'seo', label: 'SEO' },
+  { value: 'web-design', label: 'Web Design' },
 ];
 
 const initialFormState: FormState = {
@@ -96,7 +213,7 @@ const initialFormState: FormState = {
   email: '',
   company: '',
   website: '',
-  adSpend: '',
+  services: [],
   message: '',
 };
 
@@ -111,20 +228,20 @@ export default function ContactForm() {
     return regex.test(email);
   };
 
-  const validateField = (name: keyof FormState, value: string) => {
+  const validateField = (name: keyof FormState, value: string | string[]) => {
     switch (name) {
       case 'name':
-        return value.trim() ? '' : 'Name is required';
+        return (value as string).trim() ? '' : 'Name is required';
       case 'email':
-        if (!value.trim()) return 'Email is required';
-        if (!validateEmail(value)) return 'Please enter a valid email';
+        if (!(value as string).trim()) return 'Email is required';
+        if (!validateEmail(value as string)) return 'Please enter a valid email';
         return '';
       case 'company':
-        return value.trim() ? '' : 'Company is required';
-      case 'adSpend':
-        return value ? '' : 'Please select your monthly ad spend';
+        return (value as string).trim() ? '' : 'Company is required';
+      case 'services':
+        return (value as string[]).length > 0 ? '' : 'Please select at least one service';
       case 'message':
-        return value.trim() ? '' : 'Message is required';
+        return (value as string).trim() ? '' : 'Message is required';
       default:
         return '';
     }
@@ -136,9 +253,21 @@ export default function ContactForm() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Clear error when user starts typing
     if (errors[name as keyof FormErrors]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleServiceToggle = (serviceValue: string) => {
+    setFormData((prev) => {
+      const newServices = prev.services.includes(serviceValue)
+        ? prev.services.filter((s) => s !== serviceValue)
+        : [...prev.services, serviceValue];
+      return { ...prev, services: newServices };
+    });
+
+    if (errors.services) {
+      setErrors((prev) => ({ ...prev, services: '' }));
     }
   };
 
@@ -153,14 +282,22 @@ export default function ContactForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate all fields
     const newErrors: FormErrors = {};
-    (Object.keys(formData) as Array<keyof FormState>).forEach((key) => {
-      if (key !== 'website') {
-        const error = validateField(key, formData[key]);
-        if (error) newErrors[key as keyof FormErrors] = error;
-      }
-    });
+
+    const nameError = validateField('name', formData.name);
+    if (nameError) newErrors.name = nameError;
+
+    const emailError = validateField('email', formData.email);
+    if (emailError) newErrors.email = emailError;
+
+    const companyError = validateField('company', formData.company);
+    if (companyError) newErrors.company = companyError;
+
+    const servicesError = validateField('services', formData.services);
+    if (servicesError) newErrors.services = servicesError;
+
+    const messageError = validateField('message', formData.message);
+    if (messageError) newErrors.message = messageError;
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -253,17 +390,32 @@ export default function ContactForm() {
           onChange={handleChange}
         />
       </FormGrid>
-      <Select
-        label="Monthly Ad Spend"
-        name="adSpend"
-        options={adSpendOptions}
-        placeholder="Select your monthly ad spend"
-        value={formData.adSpend}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        error={errors.adSpend}
-        required
-      />
+
+      <ServicesFieldset>
+        <ServicesLabel>Services You&apos;re Interested In *</ServicesLabel>
+        <ServicesGrid>
+          {serviceOptions.map((service) => {
+            const isChecked = formData.services.includes(service.value);
+            return (
+              <ServiceCheckbox key={service.value} $isChecked={isChecked}>
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={() => handleServiceToggle(service.value)}
+                />
+                <CheckboxIcon $isChecked={isChecked}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </CheckboxIcon>
+                {service.label}
+              </ServiceCheckbox>
+            );
+          })}
+        </ServicesGrid>
+        {errors.services && <ServicesError>{errors.services}</ServicesError>}
+      </ServicesFieldset>
+
       <Textarea
         label="Message"
         name="message"
@@ -275,7 +427,7 @@ export default function ContactForm() {
         rows={4}
         required
       />
-      <Button type="submit" $size="lg" disabled={isSubmitting}>
+      <SubmitButton type="submit" disabled={isSubmitting}>
         {isSubmitting ? (
           <>
             <Spinner /> Sending...
@@ -283,7 +435,7 @@ export default function ContactForm() {
         ) : (
           'Send Message'
         )}
-      </Button>
+      </SubmitButton>
     </FormWrapper>
   );
 }

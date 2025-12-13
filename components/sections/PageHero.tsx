@@ -108,18 +108,14 @@ const ContentWrapper = styled.div`
 const Badge = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 100px;
+  gap: 12px;
   margin-bottom: 24px;
 `;
 
-const BadgeDot = styled.span`
-  width: 6px;
-  height: 6px;
+const BadgeLine = styled.span`
+  width: 24px;
+  height: 2px;
   background: #ff8c42;
-  border-radius: 50%;
 `;
 
 const BadgeText = styled.span`
@@ -210,9 +206,8 @@ export default function PageHero({ badge, title, description, bigText }: PageHer
 
       <ContentWrapper>
         <Badge>
-          <BadgeDot />
+          <BadgeLine />
           <BadgeText>{badge}</BadgeText>
-          <BadgeDot />
         </Badge>
         <Title>{title}</Title>
         {description && <Description>{description}</Description>}

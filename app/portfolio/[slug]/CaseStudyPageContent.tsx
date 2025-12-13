@@ -18,11 +18,6 @@ const gradientMove = keyframes`
   100% { background-position: 0% 50%; }
 `;
 
-const float = keyframes`
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-`;
-
 const pulse = keyframes`
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.8; }
@@ -33,21 +28,26 @@ const countUp = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
+const lineGrow = keyframes`
+  from { width: 0; }
+  to { width: 60px; }
+`;
+
 // Hero Section
 const HeroSection = styled.section`
   position: relative;
-  min-height: 60vh;
+  min-height: 70vh;
   display: flex;
   align-items: center;
-  padding: 140px 0 80px;
+  padding: 140px 0 100px;
   background: linear-gradient(135deg, #111111 0%, #1a1a2e 50%, #111111 100%);
   background-size: 200% 200%;
   animation: ${gradientMove} 15s ease infinite;
   overflow: hidden;
 
   ${media.lg} {
-    min-height: 60vh;
-    padding: 80px 0;
+    min-height: 70vh;
+    padding: 100px 0;
   }
 `;
 
@@ -135,15 +135,8 @@ const HeroTitle = styled.h1`
   line-height: 1.2;
 
   ${media.lg} {
-    font-size: 52px;
+    font-size: 56px;
   }
-`;
-
-const GradientText = styled.span`
-  background: linear-gradient(135deg, #ff8c42, #ff6b35);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
 `;
 
 const HeroDescription = styled.p`
@@ -272,6 +265,139 @@ const ResultDescription = styled.div`
   line-height: 1.5;
 `;
 
+// Main Image Section
+const MainImageSection = styled.section`
+  padding: 0 0 80px;
+  background: #faf8f5;
+
+  ${media.lg} {
+    padding: 0 0 100px;
+  }
+`;
+
+const MainImageWrapper = styled.div`
+  position: relative;
+  aspect-ratio: 16/9;
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+`;
+
+// Section Header
+const SectionHeader = styled.div`
+  margin-bottom: 48px;
+`;
+
+const SectionTag = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+`;
+
+const TagLine = styled.span`
+  width: 40px;
+  height: 2px;
+  background: #ff8c42;
+  animation: ${lineGrow} 0.6s ease forwards;
+`;
+
+const TagText = styled.span`
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #ff8c42;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 32px;
+  font-weight: 800;
+  color: #1a1a1a;
+  line-height: 1.2;
+
+  ${media.lg} {
+    font-size: 40px;
+  }
+`;
+
+// What We Did Section
+const WhatWeDidSection = styled.section`
+  padding: 80px 0;
+  background: #ffffff;
+
+  ${media.lg} {
+    padding: 100px 0;
+  }
+`;
+
+const WhatWeDidGrid = styled.div`
+  display: grid;
+  gap: 40px;
+
+  ${media.lg} {
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+`;
+
+const WhatWeDidContent = styled.div``;
+
+const WhatWeDidText = styled.p`
+  font-size: 17px;
+  color: #666666;
+  line-height: 1.8;
+  margin-bottom: 24px;
+`;
+
+const WhatWeDidList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const WhatWeDidItem = styled.li`
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+`;
+
+const ItemIcon = styled.div`
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #fff5ee, #ffede0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ff8c42;
+`;
+
+const ItemText = styled.span`
+  font-size: 16px;
+  color: #1a1a1a;
+  font-weight: 500;
+  line-height: 1.5;
+  padding-top: 4px;
+`;
+
+const WhatWeDidImage = styled.div`
+  position: relative;
+  aspect-ratio: 4/3;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+`;
+
 // Challenge & Solution Section
 const StorySection = styled.section`
   padding: 80px 0;
@@ -329,49 +455,151 @@ const StoryText = styled.p`
   line-height: 1.8;
 `;
 
-// Image Section
-const ImageSection = styled.section`
-  padding: 0 0 80px;
-  background: #faf8f5;
+// Gallery Section
+const GallerySection = styled.section`
+  padding: 80px 0;
+  background: #ffffff;
 
   ${media.lg} {
-    padding: 0 0 100px;
+    padding: 100px 0;
   }
 `;
 
-const ImageWrapper = styled.div`
-  position: relative;
-  aspect-ratio: 16/9;
-  border-radius: 24px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+const GalleryGrid = styled.div`
+  display: grid;
+  gap: 24px;
+
+  ${media.md} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  ${media.lg} {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `;
 
-const PlaceholderImage = styled.div`
+const GalleryItem = styled.div<{ $isLarge?: boolean }>`
+  position: relative;
+  aspect-ratio: ${({ $isLarge }) => ($isLarge ? '16/10' : '4/3')};
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+
+  ${({ $isLarge }) =>
+    $isLarge &&
+    `
+    ${media.lg} {
+      grid-column: span 2;
+    }
+  `}
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+`;
+
+const GalleryImage = styled(Image)`
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  color: rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+  transition: transform 0.6s ease;
 `;
 
-const PlaceholderIcon = styled.div`
-  font-size: 64px;
+const GalleryOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+
+  ${GalleryItem}:hover & {
+    opacity: 1;
+  }
 `;
 
-const PlaceholderText = styled.div`
-  font-size: 16px;
-  font-weight: 500;
+// Process Section
+const ProcessSection = styled.section`
+  padding: 80px 0;
+  background: #1a1a1a;
+  position: relative;
+  overflow: hidden;
+
+  ${media.lg} {
+    padding: 100px 0;
+  }
+`;
+
+const ProcessPattern = styled.div`
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    radial-gradient(circle at 25% 25%, #ff8c42 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, #ff8c42 1px, transparent 1px);
+  background-size: 60px 60px;
+`;
+
+const ProcessGrid = styled.div`
+  display: grid;
+  gap: 32px;
+  position: relative;
+  z-index: 1;
+
+  ${media.md} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  ${media.lg} {
+    grid-template-columns: repeat(4, 1fr);
+  }
+`;
+
+const ProcessCard = styled.div`
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 140, 66, 0.3);
+    transform: translateY(-4px);
+  }
+`;
+
+const ProcessNumber = styled.div`
+  font-size: 48px;
+  font-weight: 800;
+  color: rgba(255, 140, 66, 0.3);
+  margin-bottom: 16px;
+  line-height: 1;
+`;
+
+const ProcessTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12px;
+`;
+
+const ProcessDesc = styled.p`
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
 `;
 
 // Testimonial Section
 const TestimonialSection = styled.section`
   padding: 80px 0;
-  background: linear-gradient(135deg, #111111 0%, #1a1a2e 100%);
+  background: #faf8f5;
   position: relative;
   overflow: hidden;
 
@@ -398,7 +626,7 @@ const QuoteIcon = styled.div`
 const QuoteText = styled.blockquote`
   font-size: 24px;
   font-weight: 500;
-  color: #ffffff;
+  color: #1a1a1a;
   line-height: 1.6;
   margin: 0 0 32px;
   font-style: italic;
@@ -418,54 +646,21 @@ const QuoteAuthor = styled.div`
 const AuthorName = styled.div`
   font-size: 18px;
   font-weight: 700;
-  color: #ffffff;
+  color: #1a1a1a;
 `;
 
 const AuthorRole = styled.div`
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
+  color: #666666;
 `;
 
 // Other Case Studies Section
 const OtherCasesSection = styled.section`
   padding: 80px 0;
-  background: #faf8f5;
+  background: #ffffff;
 
   ${media.lg} {
     padding: 100px 0;
-  }
-`;
-
-const SectionLabel = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-`;
-
-const LabelLine = styled.span`
-  width: 40px;
-  height: 2px;
-  background: #ff8c42;
-`;
-
-const LabelText = styled.span`
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: #ff8c42;
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 32px;
-  font-weight: 800;
-  color: #1a1a1a;
-  margin-bottom: 48px;
-  line-height: 1.2;
-
-  ${media.lg} {
-    font-size: 40px;
   }
 `;
 
@@ -484,10 +679,9 @@ const OtherCasesGrid = styled.div`
 
 const CaseCard = styled(Link)`
   display: block;
-  background: #ffffff;
+  background: #faf8f5;
   border-radius: 20px;
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.06);
   text-decoration: none;
   transition: all 0.4s ease;
 
@@ -499,19 +693,8 @@ const CaseCard = styled(Link)`
 
 const CaseImage = styled.div`
   aspect-ratio: 16/10;
-  background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
   position: relative;
   overflow: hidden;
-`;
-
-const CaseImagePlaceholder = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 48px;
-  color: rgba(0, 0, 0, 0.1);
 `;
 
 const CaseContent = styled.div`
@@ -605,8 +788,43 @@ const CTAText = styled.p`
   margin-right: auto;
 `;
 
+// Process steps data
+const processSteps = [
+  { title: 'Discovery', desc: 'Deep dive into business goals, audience, and market research' },
+  { title: 'Strategy', desc: 'Develop data-driven approach tailored to objectives' },
+  { title: 'Execution', desc: 'Launch campaigns with continuous optimization' },
+  { title: 'Scale', desc: 'Amplify results and expand successful initiatives' },
+];
+
+// What we did items based on services
+const getWhatWeDid = (services: string[]) => {
+  const items: { [key: string]: string } = {
+    'Paid Social': 'Developed and executed high-performing paid social campaigns across Meta and TikTok',
+    'Creative Strategy': 'Created 50+ scroll-stopping creatives optimized for conversion',
+    'CRO': 'Implemented conversion rate optimization across the entire customer journey',
+    'Google Ads': 'Built and optimized Google Search and Shopping campaigns',
+    'LinkedIn Ads': 'Targeted decision-makers with precision B2B advertising',
+    'Content Marketing': 'Produced compelling content that drove engagement and leads',
+    'Lead Generation': 'Implemented multi-channel lead generation strategies',
+    'Brand Strategy': 'Developed distinctive brand positioning and messaging',
+    'Influencer Marketing': 'Partnered with relevant influencers to expand reach',
+    'Email Marketing': 'Built automated email sequences for nurturing and retention',
+    'Local Marketing': 'Executed hyperlocal campaigns to drive foot traffic',
+    'Social Media': 'Managed organic social presence across all platforms',
+    'App Marketing': 'Launched mobile-first acquisition campaigns',
+    'TikTok Ads': 'Created viral video content for TikTok advertising',
+    'Apple Search Ads': 'Optimized App Store visibility and downloads',
+    'Creative Production': 'Produced high-quality video and static creative assets',
+    'YouTube Ads': 'Developed video ad campaigns for YouTube',
+    'Landing Pages': 'Designed and built high-converting landing pages',
+  };
+
+  return services.map((service) => items[service] || `Implemented ${service} strategy`);
+};
+
 export function CaseStudyPageContent({ caseStudy }: CaseStudyPageContentProps) {
-  const otherCaseStudies = caseStudies.filter(c => c.id !== caseStudy.id).slice(0, 3);
+  const otherCaseStudies = caseStudies.filter((c) => c.id !== caseStudy.id).slice(0, 3);
+  const whatWeDid = getWhatWeDid(caseStudy.services);
 
   return (
     <>
@@ -666,6 +884,65 @@ export function CaseStudyPageContent({ caseStudy }: CaseStudyPageContentProps) {
         </Container>
       </ResultsSection>
 
+      {/* Main Project Image */}
+      <MainImageSection>
+        <Container>
+          <MainImageWrapper>
+            <Image
+              src={caseStudy.image}
+              alt={`${caseStudy.client} case study`}
+              fill
+              style={{ objectFit: 'cover' }}
+              unoptimized
+            />
+          </MainImageWrapper>
+        </Container>
+      </MainImageSection>
+
+      {/* What We Did Section */}
+      <WhatWeDidSection>
+        <Container>
+          <WhatWeDidGrid>
+            <WhatWeDidContent>
+              <SectionHeader>
+                <SectionTag>
+                  <TagLine />
+                  <TagText>Our Approach</TagText>
+                </SectionTag>
+                <SectionTitle>What We Did</SectionTitle>
+              </SectionHeader>
+              <WhatWeDidText>
+                We partnered closely with {caseStudy.client} to develop and execute a comprehensive
+                marketing strategy that addressed their unique challenges and opportunities.
+              </WhatWeDidText>
+              <WhatWeDidList>
+                {whatWeDid.map((item, index) => (
+                  <WhatWeDidItem key={index}>
+                    <ItemIcon>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M5 12l5 5L20 7" />
+                      </svg>
+                    </ItemIcon>
+                    <ItemText>{item}</ItemText>
+                  </WhatWeDidItem>
+                ))}
+              </WhatWeDidList>
+            </WhatWeDidContent>
+            <WhatWeDidImage>
+              {caseStudy.galleryImages && caseStudy.galleryImages[0] && (
+                <Image
+                  src={caseStudy.galleryImages[0]}
+                  alt="Project showcase"
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  unoptimized
+                />
+              )}
+            </WhatWeDidImage>
+          </WhatWeDidGrid>
+        </Container>
+      </WhatWeDidSection>
+
       {/* Challenge & Solution Section */}
       <StorySection>
         <Container>
@@ -689,31 +966,60 @@ export function CaseStudyPageContent({ caseStudy }: CaseStudyPageContentProps) {
         </Container>
       </StorySection>
 
-      {/* Project Image */}
-      <ImageSection>
+      {/* Our Process Section */}
+      <ProcessSection>
+        <ProcessPattern />
         <Container>
-          <ImageWrapper>
-            {caseStudy.image ? (
-              <Image
-                src={caseStudy.image}
-                alt={`${caseStudy.client} case study`}
-                fill
-                style={{ objectFit: 'cover' }}
-              />
-            ) : (
-              <PlaceholderImage>
-                <PlaceholderIcon>📊</PlaceholderIcon>
-                <PlaceholderText>Project showcase image</PlaceholderText>
-              </PlaceholderImage>
-            )}
-          </ImageWrapper>
+          <SectionHeader style={{ textAlign: 'center', marginBottom: '48px' }}>
+            <SectionTag style={{ justifyContent: 'center' }}>
+              <TagLine />
+              <TagText style={{ color: '#ff8c42' }}>Our Process</TagText>
+            </SectionTag>
+            <SectionTitle style={{ color: '#ffffff' }}>How We Delivered Results</SectionTitle>
+          </SectionHeader>
+          <ProcessGrid>
+            {processSteps.map((step, index) => (
+              <ProcessCard key={index}>
+                <ProcessNumber>0{index + 1}</ProcessNumber>
+                <ProcessTitle>{step.title}</ProcessTitle>
+                <ProcessDesc>{step.desc}</ProcessDesc>
+              </ProcessCard>
+            ))}
+          </ProcessGrid>
         </Container>
-      </ImageSection>
+      </ProcessSection>
+
+      {/* Gallery Section */}
+      {caseStudy.galleryImages && caseStudy.galleryImages.length > 0 && (
+        <GallerySection>
+          <Container>
+            <SectionHeader>
+              <SectionTag>
+                <TagLine />
+                <TagText>Project Gallery</TagText>
+              </SectionTag>
+              <SectionTitle>Visual Highlights</SectionTitle>
+            </SectionHeader>
+            <GalleryGrid>
+              {caseStudy.galleryImages.map((image, index) => (
+                <GalleryItem key={index} $isLarge={index === 0}>
+                  <GalleryImage
+                    src={image}
+                    alt={`${caseStudy.client} project image ${index + 1}`}
+                    fill
+                    unoptimized
+                  />
+                  <GalleryOverlay />
+                </GalleryItem>
+              ))}
+            </GalleryGrid>
+          </Container>
+        </GallerySection>
+      )}
 
       {/* Testimonial Section */}
       {caseStudy.testimonial && (
         <TestimonialSection>
-          <HeroOrb $size={500} $top="50%" $left="-10%" $delay={0} />
           <Container>
             <TestimonialContent>
               <QuoteIcon>&ldquo;</QuoteIcon>
@@ -730,27 +1036,25 @@ export function CaseStudyPageContent({ caseStudy }: CaseStudyPageContentProps) {
       {/* Other Case Studies */}
       <OtherCasesSection>
         <Container>
-          <SectionLabel>
-            <LabelLine />
-            <LabelText>More Success Stories</LabelText>
-          </SectionLabel>
-
-          <SectionTitle>Explore other case studies</SectionTitle>
+          <SectionHeader>
+            <SectionTag>
+              <TagLine />
+              <TagText>More Success Stories</TagText>
+            </SectionTag>
+            <SectionTitle>Explore Other Case Studies</SectionTitle>
+          </SectionHeader>
 
           <OtherCasesGrid>
             {otherCaseStudies.map((otherCase) => (
               <CaseCard key={otherCase.id} href={`/portfolio/${otherCase.slug}`}>
                 <CaseImage>
-                  {otherCase.image ? (
-                    <Image
-                      src={otherCase.image}
-                      alt={otherCase.client}
-                      fill
-                      style={{ objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <CaseImagePlaceholder>📈</CaseImagePlaceholder>
-                  )}
+                  <Image
+                    src={otherCase.image}
+                    alt={otherCase.client}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    unoptimized
+                  />
                 </CaseImage>
                 <CaseContent>
                   <CaseIndustry>{otherCase.industry}</CaseIndustry>
