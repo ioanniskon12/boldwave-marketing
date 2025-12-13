@@ -28,6 +28,12 @@ const HeroSection = styled.section`
   }
 `;
 
+const HeroContainer = styled(Container)`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+`;
+
 const HeroInner = styled.div`
   flex: 1;
   display: flex;
@@ -733,7 +739,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
     <>
       {/* Hero Section - 100vh */}
       <HeroSection>
-        <Container style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <HeroContainer>
           <HeroInner>
             <HeaderContent>
               <Breadcrumb>
@@ -807,7 +813,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
               </ImageWrapper>
             </ImageContainer>
           </HeroInner>
-        </Container>
+        </HeroContainer>
       </HeroSection>
 
       {/* Content Section */}
