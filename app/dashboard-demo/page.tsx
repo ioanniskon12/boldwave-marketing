@@ -585,7 +585,7 @@ const sidebarItems = [
 ];
 
 // Dashboard Component
-function Dashboard({ theme, mode, projectName }) {
+function Dashboard({ theme, mode, projectName }: { theme: any; mode: string; projectName: string }) {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const getLogoInitial = () => {
@@ -673,7 +673,7 @@ function Dashboard({ theme, mode, projectName }) {
 }
 
 export default function DashboardDemoPage() {
-  const [activeProject, setActiveProject] = useState('dm-automation');
+  const [activeProject, setActiveProject] = useState<'dm-automation' | 'marketing-saas' | 'ai-video'>('dm-automation');
 
   const lightTheme = themes[activeProject].light;
   const darkTheme = themes[activeProject].dark;
@@ -685,7 +685,7 @@ export default function DashboardDemoPage() {
       <ControlsBar>
         <ControlLabel>Select Project:</ControlLabel>
         <ProjectSwitcher>
-          {Object.keys(themes).map((key) => (
+          {(Object.keys(themes) as Array<'dm-automation' | 'marketing-saas' | 'ai-video'>).map((key) => (
             <ProjectButton
               key={key}
               $isActive={activeProject === key}

@@ -101,7 +101,7 @@ const FilterCount = styled.span`
   margin-left: 8px;
   font-size: 12px;
   font-weight: 700;
-  background: ${({ theme }) => theme || 'rgba(0,0,0,0.1)'};
+  background: rgba(0, 0, 0, 0.1);
   border-radius: 12px;
 `;
 

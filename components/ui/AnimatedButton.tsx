@@ -8,6 +8,7 @@ export interface AnimatedButtonProps {
   children: string;
   variant?: 'light' | 'orange' | 'white';
   onClick?: () => void;
+  style?: React.CSSProperties;
 }
 
 const ButtonWrapper = styled(Link)<{ $variant: 'light' | 'orange' | 'white' }>`
@@ -59,9 +60,9 @@ const ArrowCircle = styled.span<{ $variant: 'light' | 'orange' | 'white' }>`
 
 const ButtonText = styled.span``;
 
-export default function AnimatedButton({ href, children, variant = 'light', onClick }: AnimatedButtonProps) {
+export default function AnimatedButton({ href, children, variant = 'light', onClick, style }: AnimatedButtonProps) {
   return (
-    <ButtonWrapper href={href} $variant={variant} onClick={onClick}>
+    <ButtonWrapper href={href} $variant={variant} onClick={onClick} style={style}>
       <ButtonText>{children}</ButtonText>
       <ArrowCircle $variant={variant}>
         <img
