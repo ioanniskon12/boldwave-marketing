@@ -1,7 +1,6 @@
-import type { Metadata } from 'next';
 import { PortfolioPageContent } from './PortfolioPageContent';
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'Portfolio | Case Studies',
   description:
     'Explore our case studies and see how we\'ve helped brands achieve remarkable growth through strategic marketing.',

@@ -105,7 +105,7 @@ const ServiceCard = styled(Link)`
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   border: 1px solid transparent;
-  min-height: 320px;
+  min-height: 420px;
 
   &::before {
     content: '';
@@ -210,8 +210,47 @@ const CardDescription = styled.p`
   font-size: 15px;
   color: #666666;
   line-height: 1.7;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+`;
+
+const BulletList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
   flex: 1;
+`;
+
+const BulletItem = styled.li`
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #555555;
+  margin-bottom: 8px;
+  line-height: 1.5;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &::before {
+    content: '';
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    background: #ff8c42;
+    border-radius: 50%;
+    margin-top: 1px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: all 0.3s ease;
+  }
+
+  ${ServiceCard}:hover &::before {
+    background-color: #ff6b35;
+    transform: scale(1.1);
+  }
 `;
 
 const CardFooter = styled.div`
@@ -219,6 +258,8 @@ const CardFooter = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
 `;
 
 const CardTags = styled.div`
@@ -454,7 +495,8 @@ const CTAButtons = styled.div`
 `;
 
 
-const featureTags: { [key: string]: string[] } = {
+
+const featureTags = {
   'social-media-management': ['Instagram', 'TikTok', 'LinkedIn'],
   'content-creation': ['Reels', 'UGC', 'Photography'],
   'branding-creative-direction': ['Logo', 'Identity', 'Guidelines'],
@@ -517,6 +559,11 @@ export function ServicesPageContent() {
                 <CardContent>
                   <CardTitle>{service.title}</CardTitle>
                   <CardDescription>{service.shortDescription}</CardDescription>
+                  <BulletList>
+                    {service.included?.slice(0, 4).map((item, i) => (
+                      <BulletItem key={i}>{item}</BulletItem>
+                    ))}
+                  </BulletList>
                   <CardFooter>
                     <CardTags>
                       {featureTags[service.slug]?.map((tag) => (

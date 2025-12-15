@@ -6,12 +6,8 @@ import Link from 'next/link';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
-import { Service, FAQ } from '@/types';
 import { services, getFaqsByServiceSlug } from '@/data';
-
-interface ServicePageContentProps {
-  service: Service;
-}
+import { FAQAccordion } from '@/components/sections';
 
 const fadeInUp = keyframes`
   from {
@@ -40,7 +36,7 @@ const lineGrow = keyframes`
   to { width: 60px; }
 `;
 
-// Hero Section - Clean, minimal with large typography
+// Hero Section
 const HeroSection = styled.section`
   position: relative;
   min-height: 85vh;
@@ -262,7 +258,7 @@ const StatLabel = styled.div`
   letter-spacing: 0.1em;
 `;
 
-// Intro Section - Full width quote style
+// Intro Section
 const IntroSection = styled.section`
   padding: 100px 0;
   background: #1a1a1a;
@@ -301,7 +297,7 @@ const IntroQuote = styled.blockquote`
   }
 `;
 
-// Features Section - Horizontal scrolling cards
+// Features Section
 const FeaturesSection = styled.section`
   padding: 100px 0;
   background: #faf8f5;
@@ -364,66 +360,7 @@ const SectionSubtitle = styled.p`
   line-height: 1.6;
 `;
 
-const FeaturesGrid = styled.div`
-  display: grid;
-  gap: 24px;
-
-  ${media.md} {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  ${media.lg} {
-    grid-template-columns: repeat(3, 1fr);
-  }
-`;
-
-const FeatureCard = styled.div`
-  padding: 40px 32px;
-  background: #ffffff;
-  border-radius: 24px;
-  position: relative;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 32px;
-    right: 32px;
-    height: 4px;
-    background: linear-gradient(90deg, #ff8c42, #ffb380);
-    border-radius: 0 0 4px 4px;
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-  }
-
-  &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08);
-
-    &::before {
-      transform: scaleX(1);
-    }
-  }
-`;
-
-const FeatureNumber = styled.span`
-  font-size: 64px;
-  font-weight: 800;
-  color: rgba(255, 140, 66, 0.12);
-  line-height: 1;
-  display: block;
-  margin-bottom: 16px;
-`;
-
-const FeatureTitle = styled.h3`
-  font-size: 18px;
-  font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1.5;
-`;
-
-// Stacked Cards Layout - What's Included
+// Stacked Cards Layout
 const StackedSectionWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -505,7 +442,7 @@ const StackedProgressBar = styled.div`
   margin-bottom: 24px;
 `;
 
-const StackedProgressFill = styled.div<{ $progress: number }>`
+const StackedProgressFill = styled.div`
   height: 100%;
   background: linear-gradient(90deg, #ff8c42, #ffb380);
   border-radius: 2px;
@@ -551,7 +488,7 @@ const StackDots = styled.div`
   gap: 6px;
 `;
 
-const StackDot = styled.button<{ $isActive: boolean }>`
+const StackDot = styled.button`
   width: ${({ $isActive }) => ($isActive ? '24px' : '8px')};
   height: 8px;
   border-radius: 4px;
@@ -578,7 +515,7 @@ const StackedCardsWrapper = styled.div`
   }
 `;
 
-const StackedCard = styled.div<{ $index: number; $activeIndex: number }>`
+const StackedCard = styled.div`
   position: absolute;
   top: 0;
   left: 0;
@@ -640,7 +577,7 @@ const StackedCardImageOnly = styled.div`
   }
 `;
 
-// Target Audience Section - Split layout
+// Target Audience Section
 const AudienceSection = styled.section`
   padding: 0;
   background: #ffffff;
@@ -747,7 +684,7 @@ const AudienceText = styled.p`
   padding-top: 8px;
 `;
 
-// Results Section - Big numbers
+// Results Section
 const ResultsSection = styled.section`
   padding: 100px 0;
   background: #1a1a1a;
@@ -838,7 +775,7 @@ const ResultDescription = styled.p`
   line-height: 1.6;
 `;
 
-// Related Services - Minimal cards
+// Related Services
 const RelatedSection = styled.section`
   padding: 100px 0;
   background: #ffffff;
@@ -913,7 +850,7 @@ const RelatedDescription = styled.p`
   line-height: 1.6;
 `;
 
-// CTA Section - Bold statement
+// CTA Section
 const CTASection = styled.section`
   padding: 120px 0;
   background: #1a1a1a;
@@ -983,134 +920,12 @@ const FAQSection = styled.section`
   }
 `;
 
-const FAQGrid = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
+const FAQWrapper = styled.div`
   margin-top: 60px;
-`;
-
-const FAQCard = styled.div<{ $isOpen: boolean }>`
-  padding: 0;
-  background: #ffffff;
-  border-radius: 24px;
-  position: relative;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 32px;
-    right: 32px;
-    height: 4px;
-    background: linear-gradient(90deg, #ff8c42, #ffb380);
-    border-radius: 0 0 4px 4px;
-    transform: scaleX(${({ $isOpen }) => ($isOpen ? 1 : 0)});
-    transition: transform 0.4s ease;
-  }
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08);
-
-    &::before {
-      transform: scaleX(1);
-    }
-  }
-`;
-
-const FAQCardHeader = styled.button`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 32px 32px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  gap: 24px;
-
-  ${media.md} {
-    padding: 40px 40px;
-    align-items: center;
-  }
-`;
-
-const FAQNumber = styled.span`
-  font-size: 48px;
-  font-weight: 800;
-  color: rgba(255, 140, 66, 0.12);
-  line-height: 1;
-  flex-shrink: 0;
-  display: none;
-
-  ${media.md} {
-    display: block;
-    font-size: 64px;
-  }
-`;
-
-const FAQQuestion = styled.span`
-  font-size: 17px;
-  font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1.5;
-  flex: 1;
-
-  ${media.md} {
-    font-size: 18px;
-  }
-`;
-
-const FAQToggle = styled.div<{ $isOpen: boolean }>`
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${({ $isOpen }) => ($isOpen ? '#ff8c42' : 'transparent')};
-  border: 2px solid ${({ $isOpen }) => ($isOpen ? '#ff8c42' : '#e0e0e0')};
-  border-radius: 50%;
-  transition: all 0.3s ease;
-
-  svg {
-    color: ${({ $isOpen }) => ($isOpen ? '#ffffff' : '#1a1a1a')};
-    transform: ${({ $isOpen }) => ($isOpen ? 'rotate(45deg)' : 'rotate(0)')};
-    transition: all 0.3s ease;
-  }
-
-  &:hover {
-    border-color: #ff8c42;
-    background: ${({ $isOpen }) => ($isOpen ? '#ff8c42' : 'rgba(255, 140, 66, 0.1)')};
-  }
-`;
-
-const FAQContent = styled.div<{ $isOpen: boolean }>`
-  max-height: ${({ $isOpen }) => ($isOpen ? '600px' : '0')};
-  overflow: hidden;
-  transition: max-height 0.4s ease;
-`;
-
-const FAQAnswer = styled.div`
-  padding: 0 32px 32px;
-  font-size: 16px;
-  color: #666666;
-  line-height: 1.8;
-
-  ${media.md} {
-    padding: 0 40px 40px 144px;
-    font-size: 17px;
-  }
 `;
 
 const outcomeIcons = ['📈', '💰', '🚀'];
 
-// Images for stacked cards based on service features
 const featureImages = [
   'https://picsum.photos/seed/feature1/600/500',
   'https://picsum.photos/seed/feature2/600/500',
@@ -1122,16 +937,11 @@ const featureImages = [
   'https://picsum.photos/seed/feature8/600/500',
 ];
 
-export function ServicePageContent({ service }: ServicePageContentProps) {
+export function ServicePageContent({ service }) {
   const otherServices = services.filter(s => s.id !== service.id).slice(0, 3);
   const serviceIndex = services.findIndex(s => s.id === service.id) + 1;
   const serviceFaqs = getFaqsByServiceSlug(service.slug);
-  const [openFaqId, setOpenFaqId] = useState<string | null>(null);
   const [stackedCardIndex, setStackedCardIndex] = useState(0);
-
-  const toggleFaq = (id: string) => {
-    setOpenFaqId((prev) => (prev === id ? null : id));
-  };
 
   const nextStackedCard = () => {
     setStackedCardIndex(prev => Math.min(prev + 1, service.included.length - 1));
@@ -1362,35 +1172,9 @@ export function ServicePageContent({ service }: ServicePageContentProps) {
             </SectionTag>
             <SectionTitle>Frequently asked questions</SectionTitle>
 
-            <FAQGrid>
-              {serviceFaqs.map((faq, index) => {
-                const formattedNumber = String(index + 1).padStart(2, '0');
-                return (
-                  <FAQCard key={faq.id} $isOpen={openFaqId === faq.id}>
-                    <FAQCardHeader
-                      onClick={() => toggleFaq(faq.id)}
-                      aria-expanded={openFaqId === faq.id}
-                    >
-                      <FAQNumber>{formattedNumber}</FAQNumber>
-                      <FAQQuestion>{faq.question}</FAQQuestion>
-                      <FAQToggle $isOpen={openFaqId === faq.id}>
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                          <path
-                            d="M10 4V16M4 10H16"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </FAQToggle>
-                    </FAQCardHeader>
-                    <FAQContent $isOpen={openFaqId === faq.id}>
-                      <FAQAnswer>{faq.answer}</FAQAnswer>
-                    </FAQContent>
-                  </FAQCard>
-                );
-              })}
-            </FAQGrid>
+            <FAQWrapper>
+              <FAQAccordion faqs={serviceFaqs} />
+            </FAQWrapper>
           </Container>
         </FAQSection>
       )}

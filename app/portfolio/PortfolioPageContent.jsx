@@ -60,7 +60,7 @@ const FilterSection = styled.section`
   border-bottom: 1px solid #f0f0f0;
 `;
 
-const FilterScrollWrapper = styled.div<{ $showLeftShadow?: boolean; $showRightShadow?: boolean }>`
+const FilterScrollWrapper = styled.div`
   position: relative;
 
   &::before {
@@ -96,19 +96,26 @@ const FilterWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 24px;
+  gap: 12px;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
   border-bottom: 2px solid #e0e0e0;
+  padding: 0 4px;
 
   &::-webkit-scrollbar {
     display: none;
   }
+
+  ${media.lg} {
+    justify-content: center;
+    gap: 24px;
+  }
 `;
 
-const FilterButton = styled.button<{ $isActive: boolean }>`
+const FilterButton = styled.button`
   padding: 16px 8px;
   font-size: 15px;
   font-weight: 600;
@@ -139,7 +146,7 @@ const FilterButton = styled.button<{ $isActive: boolean }>`
   }
 `;
 
-const FilterCount = styled.span<{ $isActive?: boolean }>`
+const FilterCount = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -184,7 +191,7 @@ const CardImage = styled(Image)`
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 `;
 
-const CaseStudyCard = styled(Link)<{ $isFeatured?: boolean }>`
+const CaseStudyCard = styled(Link)`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -197,7 +204,7 @@ const CaseStudyCard = styled(Link)<{ $isFeatured?: boolean }>`
   ${({ $isFeatured }) =>
     $isFeatured &&
     `
-    ${media.lg} {
+    @media (min-width: 1024px) {
       grid-column: span 2;
       grid-row: span 2;
     }
@@ -231,7 +238,7 @@ const CaseStudyCard = styled(Link)<{ $isFeatured?: boolean }>`
   }
 `;
 
-const ImageWrapper = styled.div<{ $isFeatured?: boolean }>`
+const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
   height: ${({ $isFeatured }) => ($isFeatured ? '400px' : '220px')};
@@ -264,7 +271,7 @@ const IndustryBadge = styled.span`
   z-index: 2;
 `;
 
-const CardContent = styled.div<{ $isFeatured?: boolean }>`
+const CardContent = styled.div`
   padding: 28px;
 
   ${({ $isFeatured }) =>
@@ -280,16 +287,16 @@ const CardContent = styled.div<{ $isFeatured?: boolean }>`
   `}
 `;
 
-const ClientName = styled.div<{ $isFeatured?: boolean }>`
+const ClientName = styled.div`
   font-size: 12px;
   font-weight: 700;
-  color: ${({ $isFeatured }) => ($isFeatured ? '#ff8c42' : '#ff8c42')};
+  color: #ff8c42;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 10px;
 `;
 
-const CardTitle = styled.h3<{ $isFeatured?: boolean }>`
+const CardTitle = styled.h3`
   font-size: ${({ $isFeatured }) => ($isFeatured ? '28px' : '20px')};
   font-weight: 700;
   color: ${({ $isFeatured }) => ($isFeatured ? '#ffffff' : '#1a1a1a')};
@@ -306,7 +313,7 @@ const CardTitle = styled.h3<{ $isFeatured?: boolean }>`
   }
 `;
 
-const CardDescription = styled.p<{ $isFeatured?: boolean }>`
+const CardDescription = styled.p`
   font-size: 15px;
   color: ${({ $isFeatured }) => ($isFeatured ? 'rgba(255,255,255,0.8)' : '#666666')};
   line-height: 1.6;
@@ -317,7 +324,7 @@ const CardDescription = styled.p<{ $isFeatured?: boolean }>`
   overflow: hidden;
 `;
 
-const ResultsPreview = styled.div<{ $isFeatured?: boolean }>`
+const ResultsPreview = styled.div`
   display: flex;
   gap: 24px;
   padding-top: 20px;
@@ -328,7 +335,7 @@ const ResultItem = styled.div`
   text-align: left;
 `;
 
-const ResultValue = styled.div<{ $isFeatured?: boolean }>`
+const ResultValue = styled.div`
   font-size: 24px;
   font-weight: 800;
   color: ${({ $isFeatured }) => ($isFeatured ? '#ff8c42' : '#1a1a1a')};
@@ -339,7 +346,7 @@ const ResultValue = styled.div<{ $isFeatured?: boolean }>`
   }
 `;
 
-const ResultLabel = styled.div<{ $isFeatured?: boolean }>`
+const ResultLabel = styled.div`
   font-size: 12px;
   color: ${({ $isFeatured }) => ($isFeatured ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)')};
   margin-top: 6px;
@@ -399,30 +406,6 @@ const SectionSubtitle = styled.p`
   color: #666666;
   max-width: 400px;
   line-height: 1.6;
-`;
-
-// View All Button
-const ViewAllLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #ff8c42;
-  text-decoration: none;
-  transition: gap 0.3s ease;
-
-  &:hover {
-    gap: 12px;
-  }
-
-  svg {
-    transition: transform 0.3s ease;
-  }
-
-  &:hover svg {
-    transform: translateX(4px);
-  }
 `;
 
 // CTA Section
@@ -511,18 +494,18 @@ const EmptyText = styled.p`
 `;
 
 export function PortfolioPageContent() {
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState(null);
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(true);
   const industries = getAllIndustries();
-  const filterWrapperRef = useRef<HTMLDivElement>(null);
+  const filterWrapperRef = useRef(null);
 
   const filteredStudies = activeFilter
     ? caseStudies.filter((study) => study.industry === activeFilter)
     : caseStudies;
 
   // Get count for each industry
-  const getIndustryCount = (industry: string) => {
+  const getIndustryCount = (industry) => {
     return caseStudies.filter((study) => study.industry === industry).length;
   };
 
@@ -543,7 +526,7 @@ export function PortfolioPageContent() {
   }, []);
 
   // Handle filter click with scroll to show the clicked tab
-  const handleFilterClick = (filter: string | null, element: HTMLButtonElement) => {
+  const handleFilterClick = (filter, element) => {
     setActiveFilter(filter);
     element.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   };

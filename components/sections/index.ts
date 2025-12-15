@@ -17,3 +17,4 @@ export { default as TeamMembers } from './TeamMembers';
 export { default as TeamAndTestimonials } from './TeamAndTestimonials';
 export { default as PageHero } from './PageHero';
 export { default as BlogPreview } from './BlogPreview';
+export { default as FAQAccordion } from './FAQAccordion';

@@ -173,7 +173,7 @@ const ProjectSwitcher = styled.div`
   gap: 8px;
 `;
 
-const ProjectButton = styled.button<{ $isActive: boolean; $primary: string }>`
+const ProjectButton = styled.button`
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 600;
@@ -198,12 +198,12 @@ const DashboardsContainer = styled.div`
 `;
 
 // Mode Label
-const ModeLabel = styled.div<{ $isDark?: boolean }>`
+const ModeLabel = styled.div`
   text-align: center;
   margin-bottom: 16px;
 `;
 
-const ModeLabelText = styled.span<{ $bg: string; $color: string }>`
+const ModeLabelText = styled.span`
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -216,7 +216,7 @@ const ModeLabelText = styled.span<{ $bg: string; $color: string }>`
 `;
 
 // Dashboard Frame - Max Width 1200px
-const DashboardFrame = styled.div<{ $bg: string; $border: string }>`
+const DashboardFrame = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   background: ${({ $bg }) => $bg};
@@ -233,7 +233,7 @@ const DashboardLayout = styled.div`
 `;
 
 // Sidebar
-const Sidebar = styled.aside<{ $bg: string; $border: string }>`
+const Sidebar = styled.aside`
   width: 220px;
   background: ${({ $bg }) => $bg};
   border-right: 1px solid ${({ $border }) => $border};
@@ -242,12 +242,12 @@ const Sidebar = styled.aside<{ $bg: string; $border: string }>`
   flex-shrink: 0;
 `;
 
-const SidebarHeader = styled.div<{ $border: string }>`
+const SidebarHeader = styled.div`
   padding: 16px;
   border-bottom: 1px solid ${({ $border }) => $border};
 `;
 
-const SidebarLogo = styled.div<{ $color: string }>`
+const SidebarLogo = styled.div`
   font-size: 16px;
   font-weight: 800;
   color: ${({ $color }) => $color};
@@ -256,7 +256,7 @@ const SidebarLogo = styled.div<{ $color: string }>`
   gap: 10px;
 `;
 
-const LogoIcon = styled.div<{ $gradient: string }>`
+const LogoIcon = styled.div`
   width: 32px;
   height: 32px;
   border-radius: 8px;
@@ -274,7 +274,7 @@ const SidebarNav = styled.nav`
   padding: 16px 10px;
 `;
 
-const SidebarLabel = styled.div<{ $color: string }>`
+const SidebarLabel = styled.div`
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
@@ -284,7 +284,7 @@ const SidebarLabel = styled.div<{ $color: string }>`
   padding: 0 10px;
 `;
 
-const SidebarItem = styled.button<{ $isActive?: boolean; $text: string; $primary: string; $primaryLight: string }>`
+const SidebarItem = styled.button`
   width: 100%;
   display: flex;
   align-items: center;
@@ -311,7 +311,7 @@ const SidebarItem = styled.button<{ $isActive?: boolean; $text: string; $primary
   }
 `;
 
-const SidebarBadge = styled.span<{ $primary: string }>`
+const SidebarBadge = styled.span`
   margin-left: auto;
   background: ${({ $primary }) => $primary};
   color: #ffffff;
@@ -330,7 +330,7 @@ const MainArea = styled.div`
 `;
 
 // Top Bar
-const TopBar = styled.header<{ $bg: string; $border: string }>`
+const TopBar = styled.header`
   background: ${({ $bg }) => $bg};
   border-bottom: 1px solid ${({ $border }) => $border};
   padding: 12px 20px;
@@ -339,7 +339,7 @@ const TopBar = styled.header<{ $bg: string; $border: string }>`
   justify-content: space-between;
 `;
 
-const TopBarTitle = styled.h1<{ $color: string }>`
+const TopBarTitle = styled.h1`
   font-size: 16px;
   font-weight: 700;
   color: ${({ $color }) => $color};
@@ -352,7 +352,7 @@ const TopBarRight = styled.div`
   gap: 10px;
 `;
 
-const TopBarButton = styled.button<{ $bg: string; $color: string }>`
+const TopBarButton = styled.button`
   padding: 6px 12px;
   background: ${({ $bg }) => $bg};
   color: ${({ $color }) => $color};
@@ -367,7 +367,7 @@ const TopBarButton = styled.button<{ $bg: string; $color: string }>`
 `;
 
 // Content Area
-const ContentArea = styled.main<{ $bg: string }>`
+const ContentArea = styled.main`
   flex: 1;
   padding: 20px;
   background: ${({ $bg }) => $bg};
@@ -382,7 +382,7 @@ const StatsGrid = styled.div`
   margin-bottom: 20px;
 `;
 
-const StatCard = styled.div<{ $bg: string; $border: string }>`
+const StatCard = styled.div`
   background: ${({ $bg }) => $bg};
   border: 1px solid ${({ $border }) => $border};
   border-radius: 12px;
@@ -397,7 +397,7 @@ const StatHeader = styled.div`
   margin-bottom: 12px;
 `;
 
-const StatIcon = styled.div<{ $bg: string; $color: string }>`
+const StatIcon = styled.div`
   width: 36px;
   height: 36px;
   border-radius: 8px;
@@ -413,7 +413,7 @@ const StatIcon = styled.div<{ $bg: string; $color: string }>`
   }
 `;
 
-const StatChange = styled.span<{ $isPositive: boolean; $success: string; $danger: string }>`
+const StatChange = styled.span`
   display: flex;
   align-items: center;
   gap: 2px;
@@ -422,20 +422,20 @@ const StatChange = styled.span<{ $isPositive: boolean; $success: string; $danger
   color: ${({ $isPositive, $success, $danger }) => $isPositive ? $success : $danger};
 `;
 
-const StatValue = styled.div<{ $color: string }>`
+const StatValue = styled.div`
   font-size: 24px;
   font-weight: 800;
   color: ${({ $color }) => $color};
   margin-bottom: 2px;
 `;
 
-const StatLabel = styled.div<{ $color: string }>`
+const StatLabel = styled.div`
   font-size: 12px;
   color: ${({ $color }) => $color};
 `;
 
 // Chart Card
-const ChartCard = styled.div<{ $bg: string; $border: string }>`
+const ChartCard = styled.div`
   background: ${({ $bg }) => $bg};
   border: 1px solid ${({ $border }) => $border};
   border-radius: 12px;
@@ -449,14 +449,14 @@ const ChartHeader = styled.div`
   margin-bottom: 16px;
 `;
 
-const ChartTitle = styled.h3<{ $color: string }>`
+const ChartTitle = styled.h3`
   font-size: 14px;
   font-weight: 700;
   color: ${({ $color }) => $color};
   margin: 0;
 `;
 
-const ChartArea = styled.div<{ $gradient: string }>`
+const ChartArea = styled.div`
   height: 160px;
   border-radius: 8px;
   background: ${({ $gradient }) => $gradient};
@@ -585,7 +585,7 @@ const sidebarItems = [
 ];
 
 // Dashboard Component
-function Dashboard({ theme, mode, projectName }: { theme: any; mode: string; projectName: string }) {
+function Dashboard({ theme, mode, projectName }) {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const getLogoInitial = () => {
@@ -673,7 +673,7 @@ function Dashboard({ theme, mode, projectName }: { theme: any; mode: string; pro
 }
 
 export default function DashboardDemoPage() {
-  const [activeProject, setActiveProject] = useState<'dm-automation' | 'marketing-saas' | 'ai-video'>('dm-automation');
+  const [activeProject, setActiveProject] = useState('dm-automation');
 
   const lightTheme = themes[activeProject].light;
   const darkTheme = themes[activeProject].dark;
@@ -685,7 +685,7 @@ export default function DashboardDemoPage() {
       <ControlsBar>
         <ControlLabel>Select Project:</ControlLabel>
         <ProjectSwitcher>
-          {(Object.keys(themes) as Array<'dm-automation' | 'marketing-saas' | 'ai-video'>).map((key) => (
+          {Object.keys(themes).map((key) => (
             <ProjectButton
               key={key}
               $isActive={activeProject === key}

@@ -75,7 +75,7 @@ const PageWrapper = styled.div`
   padding: 120px 20px 60px;
 `;
 
-const Particle = styled.div<{ $size: number; $top: string; $left: string; $delay: number }>`
+const Particle = styled.div`
   position: absolute;
   width: ${({ $size }) => $size}px;
   height: ${({ $size }) => $size}px;

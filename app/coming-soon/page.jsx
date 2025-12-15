@@ -90,7 +90,7 @@ const ParticlesContainer = styled.div`
   overflow: hidden;
 `;
 
-const Particle = styled.div<{ $delay: number; $size: number; $x: number; $y: number; $tx: number; $ty: number; $duration: number }>`
+const Particle = styled.div`
   position: absolute;
   width: ${props => props.$size}px;
   height: ${props => props.$size}px;
@@ -105,7 +105,7 @@ const Particle = styled.div<{ $delay: number; $size: number; $x: number; $y: num
   filter: blur(1px);
 `;
 
-const GlowOrb = styled.div<{ $x: number; $y: number; $size: number; $color: string }>`
+const GlowOrb = styled.div`
   position: absolute;
   width: ${props => props.$size}px;
   height: ${props => props.$size}px;
@@ -285,7 +285,7 @@ const generateParticles = () => {
 };
 
 export default function ComingSoonPage() {
-  const [particles, setParticles] = useState<ReturnType<typeof generateParticles>>([]);
+  const [particles, setParticles] = useState([]);
 
   useEffect(() => {
     setParticles(generateParticles());

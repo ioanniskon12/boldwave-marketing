@@ -19,7 +19,7 @@ const TeamSection = styled.section`
   overflow: hidden;
 `;
 
-const Particle = styled.div<{ $size: number; $top: string; $left: string; $delay: number }>`
+const Particle = styled.div`
   position: absolute;
   width: ${({ $size }) => $size}px;
   height: ${({ $size }) => $size}px;

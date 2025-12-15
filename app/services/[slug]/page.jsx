@@ -1,11 +1,6 @@
-import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getServiceBySlug, services } from '@/data';
 import { ServicePageContent } from './ServicePageContent';
-
-interface PageProps {
-  params: Promise<{ slug: string }>;
-}
 
 export async function generateStaticParams() {
   return services.map((service) => ({
@@ -13,7 +8,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }) {
   const { slug } = await params;
   const service = getServiceBySlug(slug);
 
@@ -29,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function ServicePage({ params }: PageProps) {
+export default async function ServicePage({ params }) {
   const { slug } = await params;
   const service = getServiceBySlug(slug);
 

@@ -8,10 +8,9 @@ import Container from '@/components/layout/Container';
 import { PageHero } from '@/components/sections';
 import { blogPosts, getAllTags } from '@/data';
 import { media } from '@/styles/theme';
-import { BlogPost } from '@/types';
 
 // Helper to get reading progress from localStorage
-const getReadingProgress = (slug: string): number => {
+const getReadingProgress = (slug) => {
   if (typeof window === 'undefined') return 0;
   const progress = localStorage.getItem(`blog-progress-${slug}`);
   return progress ? parseInt(progress, 10) : 0;
@@ -30,7 +29,7 @@ const fadeInUp = keyframes`
 `;
 
 // Map slugs to images
-const blogImages: Record<string, string> = {
+const blogImages = {
   'strategies-drive-growth': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop',
   'business-consultants-role': 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&h=600&fit=crop',
   'strategic-business-consulting': 'https://images.unsplash.com/photo-1553028826-f4804a6dba3b?w=800&h=600&fit=crop',
@@ -50,7 +49,7 @@ const FilterSection = styled.section`
   border-bottom: 1px solid #f0f0f0;
 `;
 
-const FilterScrollWrapper = styled.div<{ $showLeftShadow?: boolean; $showRightShadow?: boolean }>`
+const FilterScrollWrapper = styled.div`
   position: relative;
 
   &::before {
@@ -86,25 +85,26 @@ const FilterInner = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 24px;
+  gap: 12px;
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
   border-bottom: 2px solid #e0e0e0;
+  padding: 0 4px;
 
   &::-webkit-scrollbar {
     display: none;
   }
 
   ${media.lg} {
-    flex-wrap: wrap;
     justify-content: center;
-    overflow-x: visible;
+    gap: 24px;
   }
 `;
 
-const TabButton = styled.button<{ $isActive: boolean }>`
+const TabButton = styled.button`
   padding: 16px 8px;
   font-size: 15px;
   font-weight: 600;
@@ -135,7 +135,7 @@ const TabButton = styled.button<{ $isActive: boolean }>`
   }
 `;
 
-const PostCount = styled.span<{ $isActive?: boolean }>`
+const PostCount = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -191,7 +191,7 @@ const ViewToggle = styled.div`
   gap: 8px;
 `;
 
-const ViewButton = styled.button<{ $isActive: boolean }>`
+const ViewButton = styled.button`
   width: 40px;
   height: 40px;
   display: flex;
@@ -382,7 +382,7 @@ const BlogGrid = styled.div`
   }
 `;
 
-const BlogCard = styled(Link)<{ $index: number }>`
+const BlogCard = styled(Link)`
   display: flex;
   flex-direction: column;
   text-decoration: none;
@@ -550,16 +550,16 @@ const NoResults = styled.div`
 // COMPONENT
 // ============================================
 export function BlogPageContent() {
-  const [activeTag, setActiveTag] = useState<string | null>(null);
-  const [readingProgress, setReadingProgress] = useState<Record<string, number>>({});
+  const [activeTag, setActiveTag] = useState(null);
+  const [readingProgress, setReadingProgress] = useState({});
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(true);
-  const filterInnerRef = useRef<HTMLDivElement>(null);
+  const filterInnerRef = useRef(null);
   const allTags = getAllTags();
 
   // Load reading progress from localStorage on mount
   useEffect(() => {
-    const progress: Record<string, number> = {};
+    const progress = {};
     blogPosts.forEach((post) => {
       const stored = getReadingProgress(post.slug);
       if (stored > 0) {
@@ -592,12 +592,12 @@ export function BlogPageContent() {
   const featuredPost = filteredPosts[0];
   const remainingPosts = filteredPosts.slice(1);
 
-  const getPostCount = (tag: string | null) => {
+  const getPostCount = (tag) => {
     if (tag === null) return blogPosts.length;
     return blogPosts.filter((post) => post.tags.includes(tag)).length;
   };
 
-  const getImage = (slug: string) => {
+  const getImage = (slug) => {
     return blogImages[slug] || 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop';
   };
 

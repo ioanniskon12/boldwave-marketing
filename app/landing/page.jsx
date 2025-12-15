@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Link from 'next/link';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
+import { FAQAccordion } from '@/components/sections';
 
 // Animations
 const fadeInUp = keyframes`
@@ -515,7 +515,7 @@ const PricingGrid = styled.div`
   }
 `;
 
-const PricingCard = styled.div<{ $featured?: boolean }>`
+const PricingCard = styled.div`
   padding: 48px 40px;
   background: ${({ $featured }) => ($featured ? 'linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%)' : '#ffffff')};
   border-radius: 24px;
@@ -543,14 +543,14 @@ const PricingBadge = styled.div`
   border-radius: 20px;
 `;
 
-const PricingName = styled.h3<{ $featured?: boolean }>`
+const PricingName = styled.h3`
   font-size: 24px;
   font-weight: 700;
   color: ${({ $featured }) => ($featured ? '#ffffff' : '#1a1a1a')};
   margin-bottom: 8px;
 `;
 
-const PricingPrice = styled.div<{ $featured?: boolean }>`
+const PricingPrice = styled.div`
   font-size: 48px;
   font-weight: 800;
   color: ${({ $featured }) => ($featured ? '#ffffff' : '#1a1a1a')};
@@ -563,14 +563,14 @@ const PricingPrice = styled.div<{ $featured?: boolean }>`
   }
 `;
 
-const PricingDescription = styled.p<{ $featured?: boolean }>`
+const PricingDescription = styled.p`
   font-size: 15px;
   color: ${({ $featured }) => ($featured ? 'rgba(255,255,255,0.85)' : '#666666')};
   margin-bottom: 32px;
   line-height: 1.6;
 `;
 
-const PricingFeatures = styled.ul<{ $featured?: boolean }>`
+const PricingFeatures = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0 0 32px;
@@ -595,7 +595,7 @@ const PricingFeatures = styled.ul<{ $featured?: boolean }>`
   }
 `;
 
-const PricingButton = styled(Link)<{ $featured?: boolean }>`
+const PricingButton = styled(Link)`
   display: block;
   width: 100%;
   padding: 18px;
@@ -639,113 +639,8 @@ const FAQSection = styled.section`
   }
 `;
 
-const FAQGrid = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+const FAQWrapper = styled.div`
   margin-top: 60px;
-`;
-
-const FAQCard = styled.div<{ $isOpen: boolean }>`
-  padding: 0;
-  background: #ffffff;
-  border-radius: 24px;
-  position: relative;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 32px;
-    right: 32px;
-    height: 4px;
-    background: linear-gradient(90deg, #ff8c42, #ffb380);
-    border-radius: 0 0 4px 4px;
-    transform: scaleX(${({ $isOpen }) => ($isOpen ? 1 : 0)});
-    transition: transform 0.4s ease;
-  }
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08);
-
-    &::before {
-      transform: scaleX(1);
-    }
-  }
-`;
-
-const FAQCardHeader = styled.button`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 32px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  gap: 24px;
-
-  ${media.md} {
-    padding: 40px;
-  }
-`;
-
-const FAQQuestion = styled.span`
-  font-size: 17px;
-  font-weight: 700;
-  color: #1a1a1a;
-  line-height: 1.5;
-  flex: 1;
-
-  ${media.md} {
-    font-size: 18px;
-  }
-`;
-
-const FAQToggle = styled.div<{ $isOpen: boolean }>`
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${({ $isOpen }) => ($isOpen ? '#ff8c42' : 'transparent')};
-  border: 2px solid ${({ $isOpen }) => ($isOpen ? '#ff8c42' : '#e0e0e0')};
-  border-radius: 50%;
-  transition: all 0.3s ease;
-
-  svg {
-    color: ${({ $isOpen }) => ($isOpen ? '#ffffff' : '#1a1a1a')};
-    transform: ${({ $isOpen }) => ($isOpen ? 'rotate(45deg)' : 'rotate(0)')};
-    transition: all 0.3s ease;
-  }
-
-  &:hover {
-    border-color: #ff8c42;
-    background: ${({ $isOpen }) => ($isOpen ? '#ff8c42' : 'rgba(255, 140, 66, 0.1)')};
-  }
-`;
-
-const FAQContent = styled.div<{ $isOpen: boolean }>`
-  max-height: ${({ $isOpen }) => ($isOpen ? '600px' : '0')};
-  overflow: hidden;
-  transition: max-height 0.4s ease;
-`;
-
-const FAQAnswer = styled.div`
-  padding: 0 32px 32px;
-  font-size: 16px;
-  color: #666666;
-  line-height: 1.8;
-
-  ${media.md} {
-    padding: 0 40px 40px;
-    font-size: 17px;
-  }
 `;
 
 // ============================================
@@ -1040,12 +935,6 @@ const testimonials = [
 // MAIN COMPONENT
 // ============================================
 export default function LandingPage() {
-  const [openFaqId, setOpenFaqId] = useState<string | null>(null);
-
-  const toggleFaq = (id: string) => {
-    setOpenFaqId((prev) => (prev === id ? null : id));
-  };
-
   return (
     <>
       {/* Hero Section */}
@@ -1240,28 +1129,9 @@ export default function LandingPage() {
             </SectionSubtitle>
           </SectionHeader>
 
-          <FAQGrid>
-            {faqs.map((faq) => (
-              <FAQCard key={faq.id} $isOpen={openFaqId === faq.id}>
-                <FAQCardHeader onClick={() => toggleFaq(faq.id)}>
-                  <FAQQuestion>{faq.question}</FAQQuestion>
-                  <FAQToggle $isOpen={openFaqId === faq.id}>
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path
-                        d="M10 4V16M4 10H16"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </FAQToggle>
-                </FAQCardHeader>
-                <FAQContent $isOpen={openFaqId === faq.id}>
-                  <FAQAnswer>{faq.answer}</FAQAnswer>
-                </FAQContent>
-              </FAQCard>
-            ))}
-          </FAQGrid>
+          <FAQWrapper>
+            <FAQAccordion faqs={faqs} />
+          </FAQWrapper>
         </Container>
       </FAQSection>
 

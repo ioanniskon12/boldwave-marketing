@@ -9,15 +9,10 @@ import Container from '@/components/layout/Container';
 import Grid from '@/components/layout/Grid';
 import BlogCard from '@/components/cards/BlogCard';
 import AnimatedButton from '@/components/ui/AnimatedButton';
-import { BlogPost } from '@/types';
 import { getRelatedPosts } from '@/data';
 
-interface BlogPostContentProps {
-  post: BlogPost;
-}
-
 // Helper to save reading progress
-const saveReadingProgress = (slug: string, progress: number) => {
+const saveReadingProgress = (slug, progress) => {
   if (typeof window === 'undefined') return;
   const currentProgress = localStorage.getItem(`blog-progress-${slug}`);
   const current = currentProgress ? parseInt(currentProgress, 10) : 0;
@@ -28,7 +23,7 @@ const saveReadingProgress = (slug: string, progress: number) => {
 };
 
 // Reading Progress Bar - fixed under navbar
-const ReadingProgressBar = styled.div<{ $progress: number }>`
+const ReadingProgressBar = styled.div`
   position: fixed;
   top: 80px;
   left: 0;
@@ -721,7 +716,7 @@ const RelatedTitle = styled.h2`
   }
 `;
 
-function parseContent(content: string): string {
+function parseContent(content) {
   return content
     .replace(/^## (.*$)/gm, '<h2>$1</h2>')
     .replace(/^### (.*$)/gm, '<h3>$1</h3>')
@@ -743,7 +738,7 @@ function parseContent(content: string): string {
 }
 
 // Map slugs to images
-const blogImages: Record<string, string> = {
+const blogImages = {
   'strategies-drive-growth': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop',
   'business-consultants-role': 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&h=600&fit=crop',
   'strategic-business-consulting': 'https://images.unsplash.com/photo-1553028826-f4804a6dba3b?w=1200&h=600&fit=crop',
@@ -755,7 +750,7 @@ const blogImages: Record<string, string> = {
   'google-ads-vs-meta-ads': 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=1200&h=600&fit=crop',
 };
 
-export function BlogPostContent({ post }: BlogPostContentProps) {
+export function BlogPostContent({ post }) {
   const relatedPosts = getRelatedPosts(post.slug, 3);
   const authorInitials = post.author.name
     .split(' ')
@@ -763,7 +758,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
     .join('');
 
   const heroImage = blogImages[post.slug] || 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop';
-  const contentRef = useRef<HTMLElement>(null);
+  const contentRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   // Track reading progress based on scroll position

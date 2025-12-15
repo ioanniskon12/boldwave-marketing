@@ -6,11 +6,7 @@ import Image from 'next/image';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
-import { CaseStudy, caseStudies } from '@/data';
-
-interface CaseStudyPageContentProps {
-  caseStudy: CaseStudy;
-}
+import { caseStudies } from '@/data';
 
 const gradientMove = keyframes`
   0% { background-position: 0% 50%; }
@@ -51,7 +47,7 @@ const HeroSection = styled.section`
   }
 `;
 
-const HeroOrb = styled.div<{ $size: number; $top: string; $left: string; $delay: number }>`
+const HeroOrb = styled.div`
   position: absolute;
   width: ${({ $size }) => $size}px;
   height: ${({ $size }) => $size}px;
@@ -228,7 +224,7 @@ const ResultsGrid = styled.div`
   }
 `;
 
-const ResultCard = styled.div<{ $delay: number }>`
+const ResultCard = styled.div`
   padding: 32px;
   background: #ffffff;
   border-radius: 20px;
@@ -426,7 +422,7 @@ const StoryCard = styled.div`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 `;
 
-const StoryIcon = styled.div<{ $color: string }>`
+const StoryIcon = styled.div`
   width: 56px;
   height: 56px;
   border-radius: 16px;
@@ -478,7 +474,7 @@ const GalleryGrid = styled.div`
   }
 `;
 
-const GalleryItem = styled.div<{ $isLarge?: boolean }>`
+const GalleryItem = styled.div`
   position: relative;
   aspect-ratio: ${({ $isLarge }) => ($isLarge ? '16/10' : '4/3')};
   border-radius: 20px;
@@ -489,7 +485,7 @@ const GalleryItem = styled.div<{ $isLarge?: boolean }>`
   ${({ $isLarge }) =>
     $isLarge &&
     `
-    ${media.lg} {
+    @media (min-width: 1024px) {
       grid-column: span 2;
     }
   `}
@@ -797,8 +793,8 @@ const processSteps = [
 ];
 
 // What we did items based on services
-const getWhatWeDid = (services: string[]) => {
-  const items: { [key: string]: string } = {
+const getWhatWeDid = (services) => {
+  const items = {
     'Paid Social': 'Developed and executed high-performing paid social campaigns across Meta and TikTok',
     'Creative Strategy': 'Created 50+ scroll-stopping creatives optimized for conversion',
     'CRO': 'Implemented conversion rate optimization across the entire customer journey',
@@ -822,7 +818,7 @@ const getWhatWeDid = (services: string[]) => {
   return services.map((service) => items[service] || `Implemented ${service} strategy`);
 };
 
-export function CaseStudyPageContent({ caseStudy }: CaseStudyPageContentProps) {
+export function CaseStudyPageContent({ caseStudy }) {
   const otherCaseStudies = caseStudies.filter((c) => c.id !== caseStudy.id).slice(0, 3);
   const whatWeDid = getWhatWeDid(caseStudy.services);
 

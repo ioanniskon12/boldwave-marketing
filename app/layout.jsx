@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import StyledComponentsRegistry from '@/lib/registry';
 import LayoutWrapper from '@/components/layout/LayoutWrapper';
@@ -9,7 +8,7 @@ const poppins = Poppins({
   weight: ['300', '400', '500', '600', '700', '800'],
 });
 
-export const metadata: Metadata = {
+export const metadata = {
   metadataBase: new URL('https://owlmarketinghub.com'),
   title: {
     default: 'OwlMarketingHub | Performance Marketing Agency',
@@ -51,11 +50,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>

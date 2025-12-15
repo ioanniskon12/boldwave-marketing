@@ -19,45 +19,6 @@ const pulse = keyframes`
   50% { opacity: 0.5; }
 `;
 
-// Stats Bar under Hero
-const StatsBar = styled.section`
-  background: #1a1a1a;
-  padding: 40px 0;
-`;
-
-const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-
-  ${media.md} {
-    grid-template-columns: repeat(4, 1fr);
-  }
-`;
-
-const StatItem = styled.div`
-  text-align: center;
-`;
-
-const StatValue = styled.div`
-  font-size: 36px;
-  font-weight: 800;
-  color: #ff8c42;
-  line-height: 1;
-  margin-bottom: 8px;
-
-  ${media.lg} {
-    font-size: 48px;
-  }
-`;
-
-const StatLabel = styled.div`
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-`;
-
 // Main Content Section
 const ContentSection = styled.section`
   padding: 80px 0 120px;
@@ -523,30 +484,6 @@ export function ContactPageContent() {
         description="Ready to scale your brand? Tell us about your goals and we'll show you how we can help."
         bigText="CONTACT"
       />
-
-      {/* Stats Bar */}
-      <StatsBar>
-        <Container>
-          <StatsGrid>
-            <StatItem>
-              <StatValue>&lt;24h</StatValue>
-              <StatLabel>Response Time</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>50+</StatValue>
-              <StatLabel>Happy Clients</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>95%</StatValue>
-              <StatLabel>Client Retention</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>4.9/5</StatValue>
-              <StatLabel>Client Rating</StatLabel>
-            </StatItem>
-          </StatsGrid>
-        </Container>
-      </StatsBar>
 
       {/* Main Content */}
       <ContentSection>

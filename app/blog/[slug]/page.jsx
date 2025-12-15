@@ -1,11 +1,6 @@
-import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getBlogPostBySlug, blogPosts } from '@/data';
 import { BlogPostContent } from './BlogPostContent';
-
-interface PageProps {
-  params: Promise<{ slug: string }>;
-}
 
 export async function generateStaticParams() {
   return blogPosts.map((post) => ({
@@ -13,7 +8,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }) {
   const { slug } = await params;
   const post = getBlogPostBySlug(slug);
 
@@ -29,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function BlogPostPage({ params }: PageProps) {
+export default async function BlogPostPage({ params }) {
   const { slug } = await params;
   const post = getBlogPostBySlug(slug);
 

@@ -1,11 +1,6 @@
-import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getCaseStudyBySlug, caseStudies } from '@/data';
 import { CaseStudyPageContent } from './CaseStudyPageContent';
-
-interface PageProps {
-  params: Promise<{ slug: string }>;
-}
 
 export async function generateStaticParams() {
   return caseStudies.map((caseStudy) => ({
@@ -13,7 +8,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }) {
   const { slug } = await params;
   const caseStudy = getCaseStudyBySlug(slug);
 
@@ -29,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default async function CaseStudyPage({ params }: PageProps) {
+export default async function CaseStudyPage({ params }) {
   const { slug } = await params;
   const caseStudy = getCaseStudyBySlug(slug);
 

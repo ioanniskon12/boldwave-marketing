@@ -1,7 +1,6 @@
-import type { Metadata } from 'next';
 import { BlogPageContent } from './BlogPageContent';
 
-export const metadata: Metadata = {
+export const metadata = {
   title: 'Blog',
   description:
     'Insights, strategies, and lessons from the trenches of performance marketing.',

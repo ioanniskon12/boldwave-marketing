@@ -1,0 +1,3 @@
+# Exclude demo pages from Vercel deployment
+app/services-demo
+app/demo
