@@ -1,29 +1,65 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState } from 'react';
-import styled from 'styled-components';
+/**
+ * BLOG POST PAGE
+ *
+ * IMPORTANT: Icon Usage Guidelines
+ * ================================
+ * Always use professional SVG icon components directly from '@/components/icons'.
+ * DO NOT use the emoji-based Icon component (e.g., <Icon name="🎨" />).
+ *
+ * Available icons include:
+ * - PaletteIcon, CalendarIcon, ClockIcon, PenIcon, ClipboardIcon, TagIcon, ShareIcon
+ * - RocketIcon, ChartIcon, TargetIcon, StarIcon, CheckIcon, SearchIcon, etc.
+ *
+ * Usage example:
+ *   import { CalendarIcon } from '@/components/icons';
+ *   <CalendarIcon size={20} color="#ff8c42" />
+ *
+ * See /components/icons/Icons.jsx for full list of available icons.
+ */
+
+import { useState, useEffect, useRef, useCallback } from 'react';
+import styled, { keyframes } from 'styled-components';
 import Link from 'next/link';
 import Image from 'next/image';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
-import Grid from '@/components/layout/Grid';
-import BlogCard from '@/components/cards/BlogCard';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { getRelatedPosts } from '@/data';
+import {
+  PaletteIcon,
+  CalendarIcon,
+  ClockIcon,
+  PenIcon,
+  ClipboardIcon,
+  TagIcon,
+  ShareIcon,
+  DocumentIcon,
+  ChartIcon,
+  TargetIcon,
+  RocketIcon,
+  LightbulbIcon
+} from '@/components/icons';
 
-// Helper to save reading progress
-const saveReadingProgress = (slug, progress) => {
-  if (typeof window === 'undefined') return;
-  const currentProgress = localStorage.getItem(`blog-progress-${slug}`);
-  const current = currentProgress ? parseInt(currentProgress, 10) : 0;
-  // Only save if new progress is higher
-  if (progress > current) {
-    localStorage.setItem(`blog-progress-${slug}`, Math.min(progress, 100).toString());
-  }
-};
+// ============================================
+// ANIMATIONS
+// ============================================
+const gradientMove = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
 
-// Reading Progress Bar - fixed under navbar
-const ReadingProgressBar = styled.div`
+const pulse = keyframes`
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+`;
+
+// ============================================
+// READING PROGRESS BAR
+// ============================================
+const ProgressBar = styled.div`
   position: fixed;
   top: 80px;
   left: 0;
@@ -39,69 +75,69 @@ const ReadingProgressBar = styled.div`
   }
 `;
 
-// Hero Section - Full viewport height
+// ============================================
+// HERO SECTION
+// ============================================
 const HeroSection = styled.section`
+  position: relative;
+  min-height: 70vh;
   display: flex;
-  flex-direction: column;
-  background: #faf8f5;
-  padding-top: 80px;
+  align-items: center;
+  padding: 120px 0 80px;
+  background: linear-gradient(135deg, #000000 0%, #0a0a12 40%, #050508 100%);
+  background-size: 200% 200%;
+  animation: ${gradientMove} 20s ease infinite;
+  overflow: hidden;
 
   ${media.lg} {
-    min-height: 100vh;
-    padding-top: 100px;
+    min-height: 75vh;
+    padding: 140px 0 100px;
   }
 `;
 
-const HeroContainer = styled(Container)`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
+const HeroOrb = styled.div`
+  position: absolute;
+  width: ${({ $size }) => $size}px;
+  height: ${({ $size }) => $size}px;
+  border-radius: 50%;
+  background: ${({ $color }) => $color || 'radial-gradient(circle, rgba(255, 140, 66, 0.2), transparent 70%)'};
+  top: ${({ $top }) => $top};
+  left: ${({ $left }) => $left};
+  animation: ${pulse} ${({ $delay }) => 6 + $delay}s ease-in-out infinite;
+  filter: blur(80px);
+  pointer-events: none;
 `;
 
-const HeroInner = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 16px 0;
-
-  ${media.md} {
-    padding: 24px 0;
-  }
-
-  ${media.lg} {
-    padding: 32px 0;
-  }
+const HeroGrid = styled.div`
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  pointer-events: none;
 `;
 
-const HeaderContent = styled.div`
-  max-width: 800px;
+const HeroContent = styled.div`
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
   margin: 0 auto;
   text-align: center;
 `;
 
 const Breadcrumb = styled.nav`
-  display: none;
-
-  ${media.md} {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  ${media.lg} {
-    margin-bottom: 20px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 32px;
 `;
 
 const BreadcrumbLink = styled(Link)`
-  font-size: 13px;
-  font-weight: 500;
-  color: #999999;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
   text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
   transition: color 0.3s ease;
 
   &:hover {
@@ -110,60 +146,70 @@ const BreadcrumbLink = styled(Link)`
 `;
 
 const BreadcrumbSeparator = styled.span`
-  color: #dddddd;
-  font-size: 12px;
+  color: rgba(255, 255, 255, 0.2);
+`;
+
+const BreadcrumbCurrent = styled.span`
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
 `;
 
 const CategoryBadge = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-
-  ${media.md} {
-    gap: 12px;
-    margin-bottom: 16px;
-  }
+  gap: 12px;
+  padding: 10px 24px;
+  background: rgba(255, 140, 66, 0.1);
+  border: 1px solid rgba(255, 140, 66, 0.2);
+  border-radius: 100px;
+  margin-bottom: 28px;
 `;
 
-const CategoryLine = styled.span`
+const CategoryIcon = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 24px;
-  height: 2px;
-  background: #ff8c42;
-
-  ${media.md} {
-    width: 40px;
-  }
+  height: 24px;
+  color: #ff8c42;
 `;
 
 const CategoryText = styled.span`
-  font-size: 11px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   color: #ff8c42;
-
-  ${media.md} {
-    font-size: 12px;
-  }
 `;
 
-const Title = styled.h1`
-  font-size: 22px;
+const HeroTitle = styled.h1`
+  font-size: 36px;
   font-weight: 800;
-  color: #1a1a1a;
-  line-height: 1.25;
-  margin-bottom: 16px;
-  padding: 0 8px;
+  color: #ffffff;
+  margin-bottom: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 
   ${media.md} {
-    font-size: 32px;
-    margin-bottom: 24px;
-    padding: 0;
+    font-size: 48px;
   }
 
   ${media.lg} {
-    font-size: 44px;
+    font-size: 56px;
+  }
+`;
+
+const HeroExcerpt = styled.p`
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.7;
+  margin-bottom: 40px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+
+  ${media.lg} {
+    font-size: 20px;
   }
 `;
 
@@ -171,53 +217,26 @@ const MetaRow = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 32px;
   flex-wrap: wrap;
-
-  ${media.md} {
-    gap: 24px;
-  }
-
-  ${media.lg} {
-    gap: 32px;
-  }
 `;
 
 const MetaItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 6px;
-
-  ${media.md} {
-    gap: 10px;
-  }
+  gap: 12px;
 `;
 
 const MetaIcon = styled.div`
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
   color: #ff8c42;
-
-  svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  ${media.md} {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-
-    svg {
-      width: 18px;
-      height: 18px;
-    }
-  }
 `;
 
 const MetaInfo = styled.div`
@@ -225,169 +244,136 @@ const MetaInfo = styled.div`
 `;
 
 const MetaLabel = styled.div`
-  display: none;
-
-  ${media.md} {
-    display: block;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #999999;
-    margin-bottom: 2px;
-  }
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 2px;
 `;
 
 const MetaValue = styled.div`
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
-  color: #1a1a1a;
-
-  ${media.md} {
-    font-size: 14px;
-  }
+  color: #ffffff;
 `;
 
-// Featured Image - Takes remaining space in hero
-const ImageContainer = styled.div`
-  flex: 1;
-  display: flex;
-  align-items: stretch;
-  padding: 16px 0 24px;
-  min-height: 200px;
-
-  ${media.md} {
-    min-height: 350px;
-    padding: 24px 0 32px;
-  }
+// ============================================
+// FEATURED IMAGE
+// ============================================
+const ImageSection = styled.section`
+  padding: 0 0 60px;
+  background: linear-gradient(180deg, #000000 0%, #faf8f5 40%);
+  position: relative;
 
   ${media.lg} {
-    padding: 40px 0;
-    min-height: 550px;
+    padding: 0 0 80px;
   }
 `;
 
 const ImageWrapper = styled.div`
   position: relative;
-  width: 100%;
-  flex: 1;
-  border-radius: 12px;
+  aspect-ratio: 16/7;
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  margin-bottom: 0;
-
-  ${media.md} {
-    border-radius: 16px;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
-  }
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
+  transform: translateY(-60px);
 
   ${media.lg} {
-    border-radius: 24px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border-radius: 32px;
+    transform: translateY(-80px);
   }
 `;
 
-
-// Content Section
+// ============================================
+// CONTENT SECTION
+// ============================================
 const ContentSection = styled.section`
-  padding: 40px 0;
-  background: #ffffff;
-
-  ${media.md} {
-    padding: 60px 0;
-  }
-
-  ${media.lg} {
-    padding: 100px 0;
-    background: #faf8f5;
-  }
+  padding: 0 0 100px;
+  background: #faf8f5;
 `;
 
 const ContentGrid = styled.div`
   display: grid;
   gap: 40px;
 
-  ${media.md} {
-    gap: 60px;
-  }
-
   ${media.lg} {
-    grid-template-columns: 1fr 300px;
-    gap: 80px;
+    grid-template-columns: 1fr 320px;
+    gap: 60px;
   }
 `;
 
+// ============================================
+// MAIN ARTICLE
+// ============================================
 const MainContent = styled.article`
-  max-width: 100%;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 40px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+
+  ${media.md} {
+    padding: 48px 40px;
+  }
 
   ${media.lg} {
-    max-width: 720px;
+    padding: 60px 56px;
   }
 `;
 
 const ArticleContent = styled.div`
-  font-size: 16px;
-  line-height: 1.8;
+  font-size: 17px;
+  line-height: 1.9;
   color: #444444;
 
   ${media.md} {
     font-size: 18px;
-    line-height: 1.9;
   }
 
   h2 {
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 700;
     color: #1a1a1a;
-    margin-top: 40px;
-    margin-bottom: 16px;
+    margin-top: 48px;
+    margin-bottom: 20px;
     line-height: 1.3;
     position: relative;
-    padding-left: 16px;
+    padding-left: 20px;
 
     &::before {
       content: '';
       position: absolute;
       left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: #ff8c42;
+      top: 4px;
+      bottom: 4px;
+      width: 4px;
+      background: linear-gradient(180deg, #ff8c42, #ff6b35);
       border-radius: 2px;
     }
 
     ${media.md} {
-      font-size: 28px;
-      margin-top: 56px;
+      font-size: 30px;
+      margin-top: 64px;
       margin-bottom: 24px;
-      padding-left: 20px;
-
-      &::before {
-        width: 4px;
-      }
-    }
-
-    ${media.lg} {
-      font-size: 32px;
     }
   }
 
   h3 {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 600;
     color: #1a1a1a;
-    margin-top: 32px;
-    margin-bottom: 12px;
+    margin-top: 36px;
+    margin-bottom: 14px;
 
     ${media.md} {
       font-size: 22px;
-      margin-top: 40px;
+      margin-top: 44px;
       margin-bottom: 16px;
     }
   }
 
   p {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 
     ${media.md} {
       margin-bottom: 28px;
@@ -395,17 +381,13 @@ const ArticleContent = styled.div`
   }
 
   ul, ol {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     padding-left: 0;
-
-    ${media.md} {
-      margin-bottom: 28px;
-    }
   }
 
   li {
-    margin-bottom: 8px;
-    padding-left: 28px;
+    margin-bottom: 12px;
+    padding-left: 32px;
     position: relative;
     list-style: none;
 
@@ -413,23 +395,16 @@ const ArticleContent = styled.div`
       content: '';
       position: absolute;
       left: 0;
-      top: 8px;
-      width: 6px;
-      height: 6px;
-      background: #ff8c42;
+      top: 10px;
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(135deg, #ff8c42, #ff6b35);
       border-radius: 50%;
     }
+  }
 
-    ${media.md} {
-      margin-bottom: 8px;
-      padding-left: 32px;
-
-      &::before {
-        top: 10px;
-        width: 8px;
-        height: 8px;
-      }
-    }
+  ol {
+    counter-reset: item;
   }
 
   ol li {
@@ -437,31 +412,18 @@ const ArticleContent = styled.div`
 
     &::before {
       content: counter(item);
-      width: 20px;
-      height: 20px;
-      background: #ff8c42;
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #ff8c42, #ff6b35);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: 12px;
       font-weight: 700;
       color: #ffffff;
       top: 2px;
     }
-
-    ${media.md} {
-      &::before {
-        width: 24px;
-        height: 24px;
-        font-size: 12px;
-        top: 4px;
-      }
-    }
-  }
-
-  ol {
-    counter-reset: item;
   }
 
   strong {
@@ -470,12 +432,12 @@ const ArticleContent = styled.div`
   }
 
   blockquote {
-    margin: 32px 0;
-    padding: 20px 24px;
-    background: #faf8f5;
-    border-radius: 12px;
-    border-left: 3px solid #ff8c42;
-    font-size: 16px;
+    margin: 40px 0;
+    padding: 28px 32px;
+    background: linear-gradient(135deg, rgba(255, 140, 66, 0.08), rgba(255, 107, 53, 0.04));
+    border-radius: 16px;
+    border-left: 4px solid #ff8c42;
+    font-size: 18px;
     font-style: italic;
     color: #555555;
     line-height: 1.7;
@@ -484,32 +446,30 @@ const ArticleContent = styled.div`
     &::before {
       content: '"';
       position: absolute;
-      top: 12px;
-      left: 16px;
-      font-size: 36px;
+      top: 16px;
+      left: 20px;
+      font-size: 48px;
       color: rgba(255, 140, 66, 0.2);
       font-family: Georgia, serif;
       line-height: 1;
     }
 
     ${media.md} {
-      margin: 48px 0;
-      padding: 32px 40px;
-      border-radius: 16px;
-      border-left-width: 4px;
+      margin: 56px 0;
+      padding: 36px 44px;
       font-size: 20px;
-
-      &::before {
-        top: 16px;
-        left: 24px;
-        font-size: 48px;
-      }
     }
   }
 `;
 
-// Sidebar
+// ============================================
+// SIDEBAR
+// ============================================
 const Sidebar = styled.aside`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
   ${media.lg} {
     position: sticky;
     top: 140px;
@@ -518,39 +478,38 @@ const Sidebar = styled.aside`
 `;
 
 const SidebarCard = styled.div`
-  background: #faf8f5;
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 16px;
-
-  ${media.md} {
-    border-radius: 20px;
-    padding: 32px;
-    margin-bottom: 24px;
-  }
-
-  ${media.lg} {
-    background: #ffffff;
-  }
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 `;
 
 const SidebarTitle = styled.h3`
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #1a1a1a;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #eeeeee;
-
-  ${media.md} {
-    font-size: 14px;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-  }
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 `;
 
+const SidebarIcon = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, rgba(255, 140, 66, 0.15), rgba(255, 107, 53, 0.1));
+  border-radius: 8px;
+  color: #ff8c42;
+`;
+
+// Author Card
 const AuthorInfo = styled.div`
   display: flex;
   flex-direction: column;
@@ -570,6 +529,7 @@ const AuthorAvatar = styled.div`
   font-weight: 700;
   color: #ffffff;
   margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(255, 140, 66, 0.3);
 `;
 
 const AuthorName = styled.div`
@@ -591,20 +551,22 @@ const AuthorBio = styled.p`
   line-height: 1.6;
 `;
 
+// Tags Card
 const TagsList = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 `;
 
 const Tag = styled.span`
-  padding: 8px 16px;
+  padding: 10px 18px;
   background: #faf8f5;
   border-radius: 100px;
   font-size: 13px;
   font-weight: 500;
   color: #666666;
   transition: all 0.3s ease;
+  cursor: pointer;
 
   &:hover {
     background: #ff8c42;
@@ -612,13 +574,14 @@ const Tag = styled.span`
   }
 `;
 
+// Share Card
 const ShareButtons = styled.div`
   display: flex;
   gap: 12px;
 `;
 
 const ShareButton = styled.button`
-  width: 48px;
+  flex: 1;
   height: 48px;
   display: flex;
   align-items: center;
@@ -636,106 +599,190 @@ const ShareButton = styled.button`
   }
 `;
 
-// Related Section
+// ============================================
+// RELATED ARTICLES
+// ============================================
 const RelatedSection = styled.section`
-  padding: 48px 0;
-  background: #faf8f5;
-
-  ${media.md} {
-    padding: 60px 0;
-    background: #ffffff;
-  }
-
-  ${media.lg} {
-    padding: 120px 0;
-  }
+  padding: 100px 0;
+  background: #ffffff;
 `;
 
-const RelatedHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  margin-bottom: 32px;
-
-  ${media.md} {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 48px;
-  }
+const SectionHeader = styled.div`
+  text-align: center;
+  margin-bottom: 60px;
 `;
 
-const RelatedTitleGroup = styled.div``;
-
-const RelatedLabel = styled.div`
+const SectionTag = styled.div`
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-
-  ${media.md} {
-    gap: 12px;
-    margin-bottom: 12px;
-  }
+  gap: 12px;
+  margin-bottom: 20px;
 `;
 
-const LabelLine = styled.span`
-  width: 24px;
+const TagLine = styled.span`
+  width: 40px;
   height: 2px;
   background: #ff8c42;
-
-  ${media.md} {
-    width: 40px;
-  }
 `;
 
-const LabelText = styled.span`
-  font-size: 11px;
+const TagText = styled.span`
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.15em;
   color: #ff8c42;
+`;
 
-  ${media.md} {
-    font-size: 12px;
+const SectionTitle = styled.h2`
+  font-size: 36px;
+  font-weight: 800;
+  color: #1a1a1a;
+  line-height: 1.2;
+
+  ${media.lg} {
+    font-size: 44px;
   }
 `;
 
-const RelatedTitle = styled.h2`
-  font-size: 24px;
-  font-weight: 800;
-  color: #1a1a1a;
-  margin: 0;
+const RelatedGrid = styled.div`
+  display: grid;
+  gap: 24px;
 
   ${media.md} {
-    font-size: 32px;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   ${media.lg} {
-    font-size: 40px;
+    grid-template-columns: repeat(3, 1fr);
   }
 `;
 
-function parseContent(content) {
-  return content
-    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/^- (.*$)/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
-    .split('\n\n')
-    .map((para) => {
-      if (
-        para.startsWith('<h2>') ||
-        para.startsWith('<h3>') ||
-        para.startsWith('<ul>')
-      ) {
-        return para;
-      }
-      return `<p>${para}</p>`;
-    })
-    .join('');
-}
+const RelatedCard = styled(Link)`
+  display: block;
+  background: #faf8f5;
+  border-radius: 20px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: all 0.4s ease;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const RelatedImage = styled.div`
+  aspect-ratio: 16/10;
+  position: relative;
+  overflow: hidden;
+
+  img {
+    transition: transform 0.6s ease;
+  }
+
+  ${RelatedCard}:hover & img {
+    transform: scale(1.05);
+  }
+`;
+
+const RelatedContent = styled.div`
+  padding: 24px;
+`;
+
+const RelatedCategory = styled.div`
+  font-size: 12px;
+  font-weight: 600;
+  color: #ff8c42;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+`;
+
+const RelatedTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  line-height: 1.4;
+  transition: color 0.3s ease;
+
+  ${RelatedCard}:hover & {
+    color: #ff8c42;
+  }
+`;
+
+const RelatedMeta = styled.div`
+  font-size: 14px;
+  color: #888888;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+`;
+
+// ============================================
+// CTA SECTION
+// ============================================
+const CTASection = styled.section`
+  padding: 100px 0;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d1f1f 100%);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+`;
+
+const CTAOrb = styled.div`
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 140, 66, 0.15), transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(100px);
+  pointer-events: none;
+`;
+
+const CTAContent = styled.div`
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+`;
+
+const CTATitle = styled.h2`
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 20px;
+  line-height: 1.2;
+
+  ${media.lg} {
+    font-size: 48px;
+  }
+`;
+
+const CTAHighlight = styled.span`
+  color: #ff8c42;
+`;
+
+const CTAText = styled.p`
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 40px;
+  line-height: 1.7;
+`;
+
+const CTAButtons = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+`;
+
+// ============================================
+// HELPERS
+// ============================================
 
 // Map slugs to images
 const blogImages = {
@@ -750,36 +797,72 @@ const blogImages = {
   'google-ads-vs-meta-ads': 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=1200&h=600&fit=crop',
 };
 
+// Category to icon mapping
+const categoryIcons = {
+  'Paid Social': TargetIcon,
+  'Strategy': ChartIcon,
+  'Creative': PaletteIcon,
+  'Analytics': ChartIcon,
+  'Case Study': RocketIcon,
+  'Business': LightbulbIcon,
+  'Consulting': DocumentIcon,
+};
+
+// Content parser
+function parseContent(content) {
+  return content
+    .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+    .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^- (.*$)/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+    .split('\n\n')
+    .map((para) => {
+      if (para.startsWith('<h2>') || para.startsWith('<h3>') || para.startsWith('<ul>')) {
+        return para;
+      }
+      return `<p>${para}</p>`;
+    })
+    .join('');
+}
+
+// Helper to save reading progress
+const saveReadingProgress = (slug, progress) => {
+  if (typeof window === 'undefined') return;
+  const currentProgress = localStorage.getItem(`blog-progress-${slug}`);
+  const current = currentProgress ? parseInt(currentProgress, 10) : 0;
+  if (progress > current) {
+    localStorage.setItem(`blog-progress-${slug}`, Math.min(progress, 100).toString());
+  }
+};
+
+// ============================================
+// MAIN COMPONENT
+// ============================================
 export function BlogPostContent({ post }) {
   const relatedPosts = getRelatedPosts(post.slug, 3);
-  const authorInitials = post.author.name
-    .split(' ')
-    .map((n) => n[0])
-    .join('');
-
+  const authorInitials = post.author.name.split(' ').map((n) => n[0]).join('');
   const heroImage = blogImages[post.slug] || 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop';
+  const category = post.tags[0] || 'Article';
+  const CategoryIconComponent = categoryIcons[category] || DocumentIcon;
+
   const contentRef = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Track reading progress based on scroll position
   const handleScroll = useCallback(() => {
-    // Calculate overall page scroll progress for the progress bar
     const scrollTop = window.scrollY;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
     const scrollPercent = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
     setScrollProgress(Math.min(scrollPercent, 100));
 
-    // Save reading progress based on content section
+    // Save reading progress
     if (!contentRef.current) return;
-
     const contentElement = contentRef.current;
     const contentRect = contentElement.getBoundingClientRect();
     const contentTop = contentRect.top + window.scrollY;
     const contentHeight = contentElement.offsetHeight;
     const windowHeight = window.innerHeight;
     const scrollPosition = window.scrollY;
-
-    // Calculate how much of the content has been scrolled past
     const scrolledPastContent = scrollPosition + windowHeight - contentTop;
     const totalScrollableContent = contentHeight;
 
@@ -791,97 +874,90 @@ export function BlogPostContent({ post }) {
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
-    // Initial check
     handleScroll();
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
   return (
     <>
       {/* Reading Progress Bar */}
-      <ReadingProgressBar $progress={scrollProgress} />
+      <ProgressBar $progress={scrollProgress} />
 
-      {/* Hero Section - 100vh */}
+      {/* Hero Section */}
       <HeroSection>
-        <HeroContainer>
-          <HeroInner>
-            <HeaderContent>
-              <Breadcrumb>
-                <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                <BreadcrumbSeparator>—</BreadcrumbSeparator>
-                <BreadcrumbLink href="/blog">Blog</BreadcrumbLink>
-              </Breadcrumb>
+        <HeroOrb $size={700} $top="-20%" $left="-15%" $delay={0} />
+        <HeroOrb $size={500} $top="60%" $left="80%" $delay={2} $color="radial-gradient(circle, rgba(107, 99, 255, 0.15), transparent 70%)" />
+        <HeroGrid />
 
-              <CategoryBadge>
-                <CategoryLine />
-                <CategoryText>{post.tags[0] || 'Article'}</CategoryText>
-                <CategoryLine />
-              </CategoryBadge>
+        <Container>
+          <HeroContent>
+            <Breadcrumb>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbSeparator>/</BreadcrumbSeparator>
+              <BreadcrumbLink href="/blog">Blog</BreadcrumbLink>
+              <BreadcrumbSeparator>/</BreadcrumbSeparator>
+              <BreadcrumbCurrent>{category}</BreadcrumbCurrent>
+            </Breadcrumb>
 
-              <Title>{post.title}</Title>
+            <CategoryBadge>
+              <CategoryIcon><CategoryIconComponent size={18} /></CategoryIcon>
+              <CategoryText>{category}</CategoryText>
+            </CategoryBadge>
 
-              <MetaRow>
-                <MetaItem>
-                  <MetaIcon>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                      <line x1="16" y1="2" x2="16" y2="6"/>
-                      <line x1="8" y1="2" x2="8" y2="6"/>
-                      <line x1="3" y1="10" x2="21" y2="10"/>
-                    </svg>
-                  </MetaIcon>
-                  <MetaInfo>
-                    <MetaLabel>Published</MetaLabel>
-                    <MetaValue>{post.date}</MetaValue>
-                  </MetaInfo>
-                </MetaItem>
+            <HeroTitle>{post.title}</HeroTitle>
 
-                <MetaItem>
-                  <MetaIcon>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10"/>
-                      <polyline points="12 6 12 12 16 14"/>
-                    </svg>
-                  </MetaIcon>
-                  <MetaInfo>
-                    <MetaLabel>Read Time</MetaLabel>
-                    <MetaValue>{post.readTime}</MetaValue>
-                  </MetaInfo>
-                </MetaItem>
+            <HeroExcerpt>{post.excerpt}</HeroExcerpt>
 
-                <MetaItem>
-                  <MetaIcon>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                      <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                  </MetaIcon>
-                  <MetaInfo>
-                    <MetaLabel>Author</MetaLabel>
-                    <MetaValue>{post.author.name}</MetaValue>
-                  </MetaInfo>
-                </MetaItem>
-              </MetaRow>
-            </HeaderContent>
+            <MetaRow>
+              <MetaItem>
+                <MetaIcon>
+                  <CalendarIcon size={20} />
+                </MetaIcon>
+                <MetaInfo>
+                  <MetaLabel>Published</MetaLabel>
+                  <MetaValue>{post.date}</MetaValue>
+                </MetaInfo>
+              </MetaItem>
 
-            <ImageContainer>
-              <ImageWrapper>
-                <Image
-                  src={heroImage}
-                  alt={post.title}
-                  fill
-                  priority
-                  unoptimized
-                  style={{ objectFit: 'cover' }}
-                />
-              </ImageWrapper>
-            </ImageContainer>
-          </HeroInner>
-        </HeroContainer>
+              <MetaItem>
+                <MetaIcon>
+                  <ClockIcon size={20} />
+                </MetaIcon>
+                <MetaInfo>
+                  <MetaLabel>Read Time</MetaLabel>
+                  <MetaValue>{post.readTime}</MetaValue>
+                </MetaInfo>
+              </MetaItem>
+
+              <MetaItem>
+                <MetaIcon>
+                  <PenIcon size={20} />
+                </MetaIcon>
+                <MetaInfo>
+                  <MetaLabel>Author</MetaLabel>
+                  <MetaValue>{post.author.name}</MetaValue>
+                </MetaInfo>
+              </MetaItem>
+            </MetaRow>
+          </HeroContent>
+        </Container>
       </HeroSection>
+
+      {/* Featured Image */}
+      <ImageSection>
+        <Container>
+          <ImageWrapper>
+            <Image
+              src={heroImage}
+              alt={post.title}
+              fill
+              priority
+              unoptimized
+              style={{ objectFit: 'cover' }}
+            />
+          </ImageWrapper>
+        </Container>
+      </ImageSection>
 
       {/* Content Section */}
       <ContentSection ref={contentRef}>
@@ -896,7 +972,10 @@ export function BlogPostContent({ post }) {
             <Sidebar>
               {/* Author Card */}
               <SidebarCard>
-                <SidebarTitle>About the Author</SidebarTitle>
+                <SidebarTitle>
+                  <SidebarIcon><PenIcon size={14} /></SidebarIcon>
+                  About the Author
+                </SidebarTitle>
                 <AuthorInfo>
                   <AuthorAvatar>{authorInitials}</AuthorAvatar>
                   <AuthorName>{post.author.name}</AuthorName>
@@ -909,7 +988,10 @@ export function BlogPostContent({ post }) {
 
               {/* Tags Card */}
               <SidebarCard>
-                <SidebarTitle>Topics</SidebarTitle>
+                <SidebarTitle>
+                  <SidebarIcon><TagIcon size={14} /></SidebarIcon>
+                  Topics
+                </SidebarTitle>
                 <TagsList>
                   {post.tags.map((tag) => (
                     <Tag key={tag}>{tag}</Tag>
@@ -919,7 +1001,10 @@ export function BlogPostContent({ post }) {
 
               {/* Share Card */}
               <SidebarCard>
-                <SidebarTitle>Share Article</SidebarTitle>
+                <SidebarTitle>
+                  <SidebarIcon><ShareIcon size={14} /></SidebarIcon>
+                  Share Article
+                </SidebarTitle>
                 <ShareButtons>
                   <ShareButton aria-label="Share on Twitter">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -955,24 +1040,64 @@ export function BlogPostContent({ post }) {
       {relatedPosts.length > 0 && (
         <RelatedSection>
           <Container>
-            <RelatedHeader>
-              <RelatedTitleGroup>
-                <RelatedLabel>
-                  <LabelLine />
-                  <LabelText>Keep Reading</LabelText>
-                </RelatedLabel>
-                <RelatedTitle>Related Articles</RelatedTitle>
-              </RelatedTitleGroup>
-              <AnimatedButton href="/blog" variant="orange">View All Articles</AnimatedButton>
-            </RelatedHeader>
-            <Grid $columns={{ mobile: 1, tablet: 2, desktop: 3 }} $gap="24px">
+            <SectionHeader>
+              <SectionTag>
+                <TagLine />
+                <TagText>Keep Reading</TagText>
+                <TagLine />
+              </SectionTag>
+              <SectionTitle>Related Articles</SectionTitle>
+            </SectionHeader>
+
+            <RelatedGrid>
               {relatedPosts.map((relatedPost) => (
-                <BlogCard key={relatedPost.id} post={relatedPost} />
+                <RelatedCard key={relatedPost.id} href={`/blog/${relatedPost.slug}`}>
+                  <RelatedImage>
+                    <Image
+                      src={blogImages[relatedPost.slug] || 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=500&fit=crop'}
+                      alt={relatedPost.title}
+                      fill
+                      unoptimized
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </RelatedImage>
+                  <RelatedContent>
+                    <RelatedCategory>{relatedPost.tags[0] || 'Article'}</RelatedCategory>
+                    <RelatedTitle>{relatedPost.title}</RelatedTitle>
+                    <RelatedMeta>
+                      <span>{relatedPost.date}</span>
+                      <span>{relatedPost.readTime}</span>
+                    </RelatedMeta>
+                  </RelatedContent>
+                </RelatedCard>
               ))}
-            </Grid>
+            </RelatedGrid>
+
+            <div style={{ textAlign: 'center', marginTop: '48px' }}>
+              <AnimatedButton href="/blog" variant="orange">View All Articles</AnimatedButton>
+            </div>
           </Container>
         </RelatedSection>
       )}
+
+      {/* CTA Section */}
+      <CTASection>
+        <CTAOrb />
+        <Container>
+          <CTAContent>
+            <CTATitle>
+              Ready to transform your <CTAHighlight>marketing?</CTAHighlight>
+            </CTATitle>
+            <CTAText>
+              Get more insights like this delivered to your inbox, or let&apos;s chat about how we can help grow your brand.
+            </CTAText>
+            <CTAButtons>
+              <AnimatedButton href="/contact" variant="orange">Get in Touch</AnimatedButton>
+              <AnimatedButton href="/blog" variant="outline">More Articles</AnimatedButton>
+            </CTAButtons>
+          </CTAContent>
+        </Container>
+      </CTASection>
     </>
   );
 }

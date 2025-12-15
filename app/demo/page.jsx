@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { media } from '@/styles/theme';
 import AnimatedButton from '@/components/ui/AnimatedButton';
+import { Icon } from '@/components/icons';
 
 // Animations
 const pulse = keyframes`
@@ -1452,7 +1453,7 @@ const HexagonShape = styled.div`
 const HexagonIcon = styled.div`
   position: relative;
   z-index: 1;
-  font-size: 36px;
+  color: #ff8c42;
 `;
 
 const HexagonNumber = styled.div`
@@ -1585,7 +1586,7 @@ const FloatingCardIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
+  color: ${({ $color }) => $color};
   position: relative;
 
   &::after {
@@ -2011,7 +2012,7 @@ export default function DemoPage() {
             {processSteps.map((step) => (
               <HexagonCard key={step.number}>
                 <HexagonShape>
-                  <HexagonIcon>{step.icon}</HexagonIcon>
+                  <HexagonIcon><Icon name={step.icon} size={36} /></HexagonIcon>
                 </HexagonShape>
                 <HexagonNumber>{step.number}</HexagonNumber>
                 <HexagonTitle>{step.title}</HexagonTitle>
@@ -2029,7 +2030,7 @@ export default function DemoPage() {
               {processSteps.map((step, index) => (
                 <FloatingCard key={step.number} $color={step.color} $index={index}>
                   <FloatingCardNumber $color={step.color}>{step.number}</FloatingCardNumber>
-                  <FloatingCardIcon $color={step.color}>{step.icon}</FloatingCardIcon>
+                  <FloatingCardIcon $color={step.color}><Icon name={step.icon} size={32} /></FloatingCardIcon>
                   <FloatingCardTitle>{step.title}</FloatingCardTitle>
                   <FloatingCardDesc>{step.description}</FloatingCardDesc>
                 </FloatingCard>

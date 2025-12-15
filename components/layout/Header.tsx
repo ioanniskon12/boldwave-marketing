@@ -17,10 +17,11 @@ const StyledHeader = styled.header<{ $scrolled: boolean; $isLightPage: boolean }
   left: 0;
   right: 0;
   z-index: ${({ theme }) => theme.zIndex.sticky};
-  background-color: #000000;
+  background-color: ${({ $scrolled }) => $scrolled ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.1)'};
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: ${({ $scrolled }) => $scrolled ? '0 1px 20px rgba(0, 0, 0, 0.1)' : 'none'};
+  border-bottom: 1px solid ${({ $scrolled }) => $scrolled ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)'};
   transition: all 0.3s ease;
   padding-bottom: 12px;
 
@@ -119,7 +120,8 @@ const NavLink = styled(Link)<{ $isActive: boolean; $scrolled?: boolean; $isLight
 
   ${media.lg} {
     font-size: ${({ theme }) => theme.fontSizes.base};
-    color: ${({ $isActive }) => $isActive ? '#ff8c42' : '#ffffff'};
+    color: ${({ $isActive, $scrolled }) =>
+      $isActive ? '#ff8c42' : ($scrolled ? '#1a1a1a' : '#ffffff')};
   }
 `;
 
@@ -144,7 +146,7 @@ const MobileMenuButton = styled.button<{ $isOpen: boolean; $scrolled: boolean; $
     display: block;
     width: 24px;
     height: 2px;
-    background-color: #ffffff;
+    background-color: ${({ $isOpen, $scrolled }) => $isOpen ? '#ffffff' : ($scrolled ? '#1a1a1a' : '#ffffff')};
     transition: all 0.3s ease;
     position: absolute;
 
@@ -228,7 +230,7 @@ export default function Header() {
       <Container>
         <HeaderInner>
           <LeftSection>
-            <Logo $variant="light" $scrolled={false} $noLink={isMinimalNavbar} />
+            <Logo $variant="light" $scrolled={scrolled} $noLink={isMinimalNavbar} />
           </LeftSection>
 
           <CenterSection>

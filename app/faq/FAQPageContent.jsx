@@ -6,6 +6,7 @@ import AnimatedButton from '@/components/ui/AnimatedButton';
 import { PageHero, FAQAccordion } from '@/components/sections';
 import { getGeneralFaqs } from '@/data';
 import { media } from '@/styles/theme';
+import { Icon } from '@/components/icons';
 
 const FAQSection = styled.section`
   padding: 80px 0;
@@ -90,7 +91,14 @@ const CategoryHeader = styled.div`
 `;
 
 const CategoryIcon = styled.span`
-  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(255, 140, 66, 0.1), rgba(255, 107, 53, 0.1));
+  border-radius: 12px;
+  color: #ff8c42;
 `;
 
 const CategoryTitle = styled.h3`
@@ -221,7 +229,7 @@ export function FAQPageContent() {
             return (
               <CategorySection key={cat.category}>
                 <CategoryHeader>
-                  <CategoryIcon>{data.icon}</CategoryIcon>
+                  <CategoryIcon><Icon name={data.icon} size={24} /></CategoryIcon>
                   <CategoryTitle>{cat.category}</CategoryTitle>
                   <CategoryCount>{cat.items.length} questions</CategoryCount>
                 </CategoryHeader>

@@ -2,6 +2,7 @@
 
 import styled, { keyframes } from 'styled-components';
 import { media } from '@/styles/theme';
+import { Icon } from '@/components/icons';
 
 const scroll = keyframes`
   0% { transform: translateX(0); }
@@ -93,15 +94,11 @@ const LogoItem = styled.div<{ $color: string }>`
   }
 `;
 
-const LogoIcon = styled.span`
-  font-size: 24px;
+const LogoIcon = styled.span<{ $color: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-
-  ${media.lg} {
-    font-size: 28px;
-  }
+  color: ${({ $color }) => $color};
 `;
 
 const LogoText = styled.span<{ $color: string }>`
@@ -139,7 +136,7 @@ export default function ClientLogos() {
           <LogoTrack>
             {repeatedLogos.map((logo, index) => (
               <LogoItem key={`${logo.name}-${index}`} $color={logo.color}>
-                <LogoIcon>{logo.icon}</LogoIcon>
+                <LogoIcon $color={logo.color}><Icon name={logo.icon} size={24} /></LogoIcon>
                 <LogoText $color={logo.color}>{logo.name}</LogoText>
               </LogoItem>
             ))}

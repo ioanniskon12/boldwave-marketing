@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
+import { Icon } from '@/components/icons';
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
@@ -166,7 +167,7 @@ const ProductIconWrapper = styled.div`
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  font-size: 28px;
+  color: #ffffff;
   animation: ${float} 4s ease-in-out infinite;
   z-index: 1;
 `;
@@ -274,7 +275,7 @@ export default function SaasPreview() {
           {products.map((product) => (
             <ProductCard key={product.id} href={product.link} $gradient={product.gradient}>
               <ProductBadge>{product.badge}</ProductBadge>
-              <ProductIconWrapper>{product.icon}</ProductIconWrapper>
+              <ProductIconWrapper><Icon name={product.icon} size={28} /></ProductIconWrapper>
               <ProductContent>
                 <ProductTitle>{product.name}</ProductTitle>
                 <ProductDescription>{product.description}</ProductDescription>

@@ -6,6 +6,7 @@ import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { PageHero } from '@/components/sections';
+import { Icon } from '@/components/icons';
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
@@ -158,7 +159,7 @@ const ProductIconWrapper = styled.div`
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   border-radius: 20px;
-  font-size: 36px;
+  color: #ffffff;
   animation: ${float} 4s ease-in-out infinite;
   z-index: 1;
 `;
@@ -358,7 +359,7 @@ const WhyIcon = styled.div`
   justify-content: center;
   background: linear-gradient(135deg, #ff8c42, #ff6b35);
   border-radius: 18px;
-  font-size: 28px;
+  color: #ffffff;
 `;
 
 const WhyTitle = styled.h4`
@@ -422,7 +423,7 @@ const ComingSoonIcon = styled.div`
   justify-content: center;
   background: #faf8f5;
   border-radius: 14px;
-  font-size: 24px;
+  color: #ff8c42;
   opacity: 0.6;
 `;
 
@@ -608,7 +609,7 @@ export function SaasPageContent() {
             {products.map((product) => (
               <ProductCard key={product.id} $gradient={product.gradient}>
                 <ProductBadge>{product.badge}</ProductBadge>
-                <ProductIconWrapper>{product.icon}</ProductIconWrapper>
+                <ProductIconWrapper><Icon name={product.icon} size={36} /></ProductIconWrapper>
                 <ProductContent>
                   <ProductTitle>{product.name}</ProductTitle>
                   <ProductDescription>{product.description}</ProductDescription>
@@ -668,7 +669,7 @@ export function SaasPageContent() {
           <WhyGrid>
             {whyItems.map((item) => (
               <WhyCard key={item.title}>
-                <WhyIcon>{item.icon}</WhyIcon>
+                <WhyIcon><Icon name={item.icon} size={28} /></WhyIcon>
                 <WhyTitle>{item.title}</WhyTitle>
                 <WhyDesc>{item.desc}</WhyDesc>
               </WhyCard>
@@ -694,7 +695,7 @@ export function SaasPageContent() {
           <ComingSoonGrid>
             {comingSoon.map((item) => (
               <ComingSoonCard key={item.title}>
-                <ComingSoonIcon>{item.icon}</ComingSoonIcon>
+                <ComingSoonIcon><Icon name={item.icon} size={24} /></ComingSoonIcon>
                 <ComingSoonTitle>{item.title}</ComingSoonTitle>
                 <ComingSoonBadge>Coming Soon</ComingSoonBadge>
               </ComingSoonCard>

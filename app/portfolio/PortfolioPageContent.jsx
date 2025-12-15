@@ -125,23 +125,24 @@ const FilterCount = styled.span`
 
 // Portfolio Grid Section
 const PortfolioSection = styled.section`
-  padding: 60px 0 120px;
-  background: #faf8f5;
+  padding: 80px 0 120px;
+  background: linear-gradient(180deg, #faf8f5 0%, #ffffff 100%);
 `;
 
 // Bento Grid Layout
 const BentoGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 24px;
+  gap: 32px;
 
   ${media.md} {
     grid-template-columns: repeat(2, 1fr);
   }
 
   ${media.lg} {
-    grid-template-columns: repeat(3, 1fr);
-    grid-auto-rows: minmax(300px, auto);
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: minmax(280px, auto);
+    gap: 24px;
   }
 `;
 
@@ -149,7 +150,30 @@ const CardImage = styled(Image)`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), filter 0.4s ease;
+`;
+
+const ViewButton = styled.div`
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #ff8c42;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 100px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 5;
+
+  svg {
+    transition: transform 0.3s ease;
+  }
 `;
 
 const CaseStudyCard = styled(Link)`
@@ -157,64 +181,59 @@ const CaseStudyCard = styled(Link)`
   display: flex;
   flex-direction: column;
   background: #ffffff;
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
   text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
 
-  ${({ $isFeatured }) =>
-    $isFeatured &&
-    `
-    @media (min-width: 1024px) {
-      grid-column: span 2;
+  ${media.lg} {
+    grid-column: span 4;
+
+    ${({ $isFeatured }) =>
+      $isFeatured &&
+      `
+      grid-column: span 8;
       grid-row: span 2;
-    }
-  `}
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 24px;
-    right: 24px;
-    height: 4px;
-    background: linear-gradient(90deg, #ff8c42, #ffb380);
-    border-radius: 0 0 4px 4px;
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-    z-index: 2;
+    `}
   }
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.12);
+    transform: translateY(-12px);
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.15);
 
-    &::before {
-      transform: scaleX(1);
+    ${CardImage} {
+      transform: scale(1.1);
+      filter: brightness(0.9);
     }
-  }
 
-  &:hover ${CardImage} {
-    transform: scale(1.08);
+    ${ViewButton} {
+      opacity: 1;
+      transform: translateY(0);
+
+      svg {
+        transform: translateX(4px);
+      }
+    }
   }
 `;
 
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: ${({ $isFeatured }) => ($isFeatured ? '400px' : '220px')};
+  height: ${({ $isFeatured }) => ($isFeatured ? '300px' : '200px')};
   overflow: hidden;
 
   ${media.lg} {
-    height: ${({ $isFeatured }) => ($isFeatured ? '100%' : '240px')};
-    min-height: ${({ $isFeatured }) => ($isFeatured ? '400px' : 'auto')};
+    height: ${({ $isFeatured }) => ($isFeatured ? '100%' : '220px')};
+    min-height: ${({ $isFeatured }) => ($isFeatured ? '100%' : 'auto')};
   }
 `;
 
 const ImageOverlay = styled.div`
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0, 0, 0, 0.6) 100%);
   z-index: 1;
 `;
 
@@ -222,18 +241,53 @@ const IndustryBadge = styled.span`
   position: absolute;
   top: 20px;
   left: 20px;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  color: #1a1a1a;
-  font-size: 12px;
+  padding: 10px 18px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(20px);
+  color: #ffffff;
+  font-size: 11px;
   font-weight: 600;
-  border-radius: 30px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 100px;
   z-index: 2;
+`;
+
+const ServiceTags = styled.div`
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.4s ease;
+
+  ${CaseStudyCard}:hover & {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+const ServiceTag = styled.span`
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 `;
 
 const CardContent = styled.div`
   padding: 28px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 
   ${({ $isFeatured }) =>
     $isFeatured &&
@@ -244,29 +298,29 @@ const CardContent = styled.div`
     right: 0;
     z-index: 2;
     padding: 40px;
-    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.9));
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.95));
   `}
 `;
 
 const ClientName = styled.div`
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: #ff8c42;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 10px;
+  letter-spacing: 0.15em;
+  margin-bottom: 12px;
 `;
 
 const CardTitle = styled.h3`
-  font-size: ${({ $isFeatured }) => ($isFeatured ? '28px' : '20px')};
+  font-size: ${({ $isFeatured }) => ($isFeatured ? '26px' : '18px')};
   font-weight: 700;
   color: ${({ $isFeatured }) => ($isFeatured ? '#ffffff' : '#1a1a1a')};
-  line-height: 1.3;
+  line-height: 1.35;
   margin: 0 0 16px 0;
   transition: color 0.3s ease;
 
   ${media.lg} {
-    font-size: ${({ $isFeatured }) => ($isFeatured ? '32px' : '22px')};
+    font-size: ${({ $isFeatured }) => ($isFeatured ? '32px' : '20px')};
   }
 
   ${CaseStudyCard}:hover & {
@@ -277,8 +331,8 @@ const CardTitle = styled.h3`
 const CardDescription = styled.p`
   font-size: 15px;
   color: ${({ $isFeatured }) => ($isFeatured ? 'rgba(255,255,255,0.8)' : '#666666')};
-  line-height: 1.6;
-  margin: 0 0 20px 0;
+  line-height: 1.7;
+  margin: 0 0 24px 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -286,10 +340,12 @@ const CardDescription = styled.p`
 `;
 
 const ResultsPreview = styled.div`
-  display: flex;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: repeat(${({ $count }) => $count || 2}, 1fr);
+  gap: 16px;
   padding-top: 20px;
-  border-top: 1px solid ${({ $isFeatured }) => ($isFeatured ? 'rgba(255,255,255,0.2)' : '#f0f0f0')};
+  margin-top: auto;
+  border-top: 1px solid ${({ $isFeatured }) => ($isFeatured ? 'rgba(255,255,255,0.15)' : '#eee')};
 `;
 
 const ResultItem = styled.div`
@@ -297,22 +353,23 @@ const ResultItem = styled.div`
 `;
 
 const ResultValue = styled.div`
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 800;
-  color: ${({ $isFeatured }) => ($isFeatured ? '#ff8c42' : '#1a1a1a')};
+  color: ${({ $isFeatured }) => ($isFeatured ? '#ff8c42' : '#ff8c42')};
   line-height: 1;
+  margin-bottom: 6px;
 
   ${media.lg} {
-    font-size: 28px;
+    font-size: ${({ $isFeatured }) => ($isFeatured ? '28px' : '24px')};
   }
 `;
 
 const ResultLabel = styled.div`
-  font-size: 12px;
-  color: ${({ $isFeatured }) => ($isFeatured ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)')};
-  margin-top: 6px;
+  font-size: 11px;
+  color: ${({ $isFeatured }) => ($isFeatured ? 'rgba(255,255,255,0.6)' : '#888')};
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  font-weight: 500;
 `;
 
 // Section Header
@@ -552,6 +609,7 @@ export function PortfolioPageContent() {
             <BentoGrid>
               {filteredStudies.map((study, index) => {
                 const isFeatured = study.featured && index === 0;
+                const resultsCount = isFeatured ? 3 : 2;
                 return (
                   <CaseStudyCard
                     key={study.id}
@@ -566,8 +624,23 @@ export function PortfolioPageContent() {
                         height={600}
                         unoptimized
                       />
-                      {isFeatured && <ImageOverlay />}
+                      <ImageOverlay />
                       <IndustryBadge>{study.industry}</IndustryBadge>
+                      {study.services && (
+                        <ServiceTags>
+                          {study.services.slice(0, 3).map((service, idx) => (
+                            <ServiceTag key={idx}>{service}</ServiceTag>
+                          ))}
+                        </ServiceTags>
+                      )}
+                      {isFeatured && (
+                        <ViewButton>
+                          View Case Study
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        </ViewButton>
+                      )}
                     </ImageWrapper>
                     <CardContent $isFeatured={isFeatured}>
                       <ClientName $isFeatured={isFeatured}>{study.client}</ClientName>
@@ -577,8 +650,8 @@ export function PortfolioPageContent() {
                           {study.description}
                         </CardDescription>
                       )}
-                      <ResultsPreview $isFeatured={isFeatured}>
-                        {study.results.slice(0, isFeatured ? 3 : 2).map((result, idx) => (
+                      <ResultsPreview $isFeatured={isFeatured} $count={resultsCount}>
+                        {study.results.slice(0, resultsCount).map((result, idx) => (
                           <ResultItem key={idx}>
                             <ResultValue $isFeatured={isFeatured}>{result.value}</ResultValue>
                             <ResultLabel $isFeatured={isFeatured}>{result.metric}</ResultLabel>

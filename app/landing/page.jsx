@@ -6,6 +6,7 @@ import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { FAQAccordion } from '@/components/sections';
+import { Icon } from '@/components/icons';
 
 // Animations
 const fadeInUp = keyframes`
@@ -266,7 +267,7 @@ const BenefitIcon = styled.div`
   align-items: center;
   justify-content: center;
   margin-bottom: 24px;
-  font-size: 28px;
+  color: #ff8c42;
 `;
 
 const BenefitTitle = styled.h3`
@@ -376,7 +377,7 @@ const AudienceIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  color: #ff8c42;
 `;
 
 const AudienceText = styled.p`
@@ -482,7 +483,7 @@ const ToolIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  color: #ff8c42;
 `;
 
 const ToolName = styled.span`
@@ -984,7 +985,7 @@ export default function LandingPage() {
           <BenefitsGrid>
             {benefits.map((benefit, index) => (
               <BenefitCard key={index}>
-                <BenefitIcon>{benefit.icon}</BenefitIcon>
+                <BenefitIcon><Icon name={benefit.icon} size={28} /></BenefitIcon>
                 <BenefitTitle>{benefit.title}</BenefitTitle>
                 <BenefitDescription>{benefit.description}</BenefitDescription>
               </BenefitCard>
@@ -1006,7 +1007,7 @@ export default function LandingPage() {
           <AudienceList>
             {audiences.map((item, index) => (
               <AudienceItem key={index}>
-                <AudienceIcon>{item.icon}</AudienceIcon>
+                <AudienceIcon><Icon name={item.icon} size={24} /></AudienceIcon>
                 <AudienceText>{item.text}</AudienceText>
               </AudienceItem>
             ))}
@@ -1061,7 +1062,7 @@ export default function LandingPage() {
           <ToolsGrid>
             {tools.map((tool, index) => (
               <ToolItem key={index}>
-                <ToolIcon>{tool.icon}</ToolIcon>
+                <ToolIcon><Icon name={tool.icon} size={20} /></ToolIcon>
                 <ToolName>{tool.name}</ToolName>
               </ToolItem>
             ))}

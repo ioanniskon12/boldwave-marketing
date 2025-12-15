@@ -5,6 +5,7 @@ import styled, { keyframes } from 'styled-components';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
+import { Icon } from '@/components/icons';
 
 const glow = keyframes`
   0%, 100% { box-shadow: 0 0 20px rgba(255, 75, 75, 0.3); }
@@ -111,7 +112,7 @@ const ResultIcon = styled.div`
   justify-content: center;
   background: linear-gradient(135deg, rgba(255, 75, 75, 0.2), rgba(255, 75, 75, 0.1));
   border-radius: 16px;
-  font-size: 24px;
+  color: #FF4B4B;
   animation: ${glow} 3s ease-in-out infinite;
 `;
 
@@ -221,7 +222,7 @@ export default function ResultsShowcase() {
               $isVisible={isVisible}
               $delay={index * 0.1}
             >
-              <ResultIcon>{result.icon}</ResultIcon>
+              <ResultIcon><Icon name={result.icon} size={28} /></ResultIcon>
               <ResultValue>{result.value}</ResultValue>
               <ResultLabel>{result.label}</ResultLabel>
             </ResultCard>
