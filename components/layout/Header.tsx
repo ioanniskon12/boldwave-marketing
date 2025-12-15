@@ -60,34 +60,33 @@ const RightSection = styled.div`
 `;
 
 const Nav = styled.nav<{ $isOpen: boolean; $isLightPage: boolean }>`
-  position: absolute;
-  top: 100%;
+  position: fixed;
+  top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: #000000;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 48px 0;
+  justify-content: center;
   gap: ${({ theme }) => theme.spacing.xl};
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
   pointer-events: ${({ $isOpen }) => ($isOpen ? 'auto' : 'none')};
   transition: opacity 0.4s ease, visibility 0.4s ease;
   z-index: 9998;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 
   ${media.lg} {
     position: static;
     width: auto;
-    padding: 0;
+    height: auto;
     flex-direction: row;
     background-color: transparent;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
     gap: ${({ theme }) => theme.spacing.xl};
-    box-shadow: none;
   }
 `;
 
