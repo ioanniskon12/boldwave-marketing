@@ -1,3 +1,7 @@
 # Exclude demo pages from Vercel deployment
 app/services-demo
 app/demo
+
+# Exclude SaaS pages (local only for now)
+app/saas
+components/sections/SaasPreview.jsx

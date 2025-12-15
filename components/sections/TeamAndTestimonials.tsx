@@ -337,10 +337,10 @@ const CarouselTrack = styled.div`
   }
 `;
 
-const TestimonialCard = styled.div<{ $isFeatured?: boolean }>`
+const TestimonialCard = styled.div<{ $isFeatured?: boolean; $bgColor?: string }>`
   flex-shrink: 0;
   width: 280px;
-  background: ${({ $isFeatured }) => $isFeatured ? 'transparent' : 'rgba(255, 255, 255, 0.95)'};
+  background: ${({ $isFeatured, $bgColor }) => $isFeatured ? 'transparent' : ($bgColor || 'rgba(255, 255, 255, 0.95)')};
   border-radius: 20px;
   padding: ${({ $isFeatured }) => $isFeatured ? '0' : '24px'};
   display: flex;
@@ -450,11 +450,11 @@ const FeaturedRole = styled.div`
   color: rgba(255, 255, 255, 0.8);
 `;
 
-const CardAvatar = styled.div`
+const CardAvatar = styled.div<{ $gradient?: string }>`
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: ${({ $gradient }) => $gradient || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'};
   margin-bottom: 20px;
   overflow: hidden;
   display: flex;
@@ -507,6 +507,30 @@ const teamMembers: TeamMember[] = [
   { id: '2', name: 'Isabella Garcia', role: 'Marketing Specialist' },
   { id: '3', name: 'David Williams', role: 'Creative Director' },
   { id: '4', name: 'Sophia Martinez', role: 'Account Manager' },
+];
+
+// Testimonial card color schemes (5 colors that cycle)
+const testimonialColorSchemes = [
+  {
+    cardBg: '#fff5ee',
+    avatarGradient: 'linear-gradient(135deg, #ff8c42 0%, #ff6b35 100%)',
+  },
+  {
+    cardBg: 'rgba(255, 255, 255, 0.95)',
+    avatarGradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  },
+  {
+    cardBg: '#e6fffa',
+    avatarGradient: 'linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%)',
+  },
+  {
+    cardBg: '#f3e8ff',
+    avatarGradient: 'linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%)',
+  },
+  {
+    cardBg: '#fce7f3',
+    avatarGradient: 'linear-gradient(135deg, #f472b6 0%, #ec4899 100%)',
+  },
 ];
 
 const particles = [
@@ -661,9 +685,12 @@ export default function TeamAndTestimonials({ testimonials }: TeamAndTestimonial
                     );
                   }
 
+                  // Get color scheme based on index (cycling through 5 colors)
+                  const colorScheme = testimonialColorSchemes[index % testimonialColorSchemes.length];
+
                   return (
-                    <TestimonialCard key={item.id}>
-                      <CardAvatar>{initials}</CardAvatar>
+                    <TestimonialCard key={item.id} $bgColor={colorScheme.cardBg}>
+                      <CardAvatar $gradient={colorScheme.avatarGradient}>{initials}</CardAvatar>
                       <CardQuote>&ldquo;{item.quote}&rdquo;</CardQuote>
                       <div>
                         <CardSignature>{item.name}</CardSignature>
