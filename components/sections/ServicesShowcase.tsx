@@ -7,6 +7,7 @@ import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { Service } from '@/types';
+import { ServiceIcon } from '@/components/icons';
 
 const glow = keyframes`
   0%, 100% { box-shadow: 0 0 20px rgba(255, 75, 75, 0.2); }
@@ -178,8 +179,8 @@ const IconWrapper = styled.div<{ $isActive: boolean }>`
     ? 'linear-gradient(135deg, #FF4B4B, #FF8F8F)'
     : 'linear-gradient(135deg, rgba(255, 75, 75, 0.1), rgba(255, 75, 75, 0.05))'};
   border-radius: 16px;
-  font-size: 24px;
   transition: all 0.4s ease;
+  color: ${({ $isActive }) => $isActive ? '#ffffff' : '#FF4B4B'};
 
   ${({ $isActive }) => $isActive && css`
     animation: ${float} 3s ease-in-out infinite;
@@ -345,7 +346,7 @@ export default function ServicesShowcase({ services }: ServicesShowcaseProps) {
                 >
                   <CardHeader>
                     <IconWrapper $isActive={activeIndex === index}>
-                      {service.icon}
+                      <ServiceIcon slug={service.slug} size={24} />
                     </IconWrapper>
                     <CardNumber>{String(index + 1).padStart(2, '0')}</CardNumber>
                   </CardHeader>

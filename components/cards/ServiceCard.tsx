@@ -3,6 +3,7 @@
 import styled from 'styled-components';
 import Link from 'next/link';
 import { Service } from '@/types';
+import { ServiceIcon } from '@/components/icons';
 
 interface ServiceCardProps {
   service: Service;
@@ -35,8 +36,8 @@ const IconWrapper = styled.div`
   justify-content: center;
   background-color: ${({ theme }) => theme.colors.accentLight};
   border-radius: ${({ theme }) => theme.borderRadius.lg};
-  font-size: ${({ theme }) => theme.fontSizes['2xl']};
   margin-bottom: ${({ theme }) => theme.spacing.lg};
+  color: ${({ theme }) => theme.colors.accent};
 `;
 
 const Title = styled.h3`
@@ -63,7 +64,7 @@ const LearnMore = styled.span`
 export default function ServiceCard({ service }: ServiceCardProps) {
   return (
     <CardWrapper href={`/services/${service.slug}`}>
-      <IconWrapper>{service.icon}</IconWrapper>
+      <IconWrapper><ServiceIcon slug={service.slug} size={28} /></IconWrapper>
       <Title>{service.title}</Title>
       <Description>{service.shortDescription}</Description>
       <LearnMore className="learn-more">Learn more &rarr;</LearnMore>

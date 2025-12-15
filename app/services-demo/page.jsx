@@ -8,6 +8,7 @@ import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import { PageHero } from '@/components/sections';
 import AnimatedButton from '@/components/ui/AnimatedButton';
+import { ServiceIcon as ServiceIconSVG } from '@/components/icons';
 
 // ============================================
 // ANIMATIONS
@@ -205,7 +206,7 @@ const ServiceCard = styled.article`
   }
 `;
 
-const ServiceIcon = styled.div`
+const ServiceIconWrapper = styled.div`
   width: 64px;
   height: 64px;
   display: flex;
@@ -214,7 +215,7 @@ const ServiceIcon = styled.div`
   background: linear-gradient(135deg, rgba(255, 140, 66, 0.1), rgba(255, 107, 53, 0.1));
   border-radius: 16px;
   margin-bottom: 24px;
-  font-size: 32px;
+  color: #ff8c42;
 `;
 
 const ServiceTitle = styled.h3`
@@ -857,7 +858,7 @@ const FormSubmit = styled.button`
 // ============================================
 const services = [
   {
-    icon: '📱',
+    slug: 'social-media-management',
     title: 'Social Media Management',
     benefit: 'Build a loyal community and turn followers into customers.',
     outcomes: [
@@ -867,7 +868,7 @@ const services = [
     ]
   },
   {
-    icon: '🎬',
+    slug: 'content-creation',
     title: 'Content Creation',
     benefit: 'Scroll-stopping visuals that capture attention and drive action.',
     outcomes: [
@@ -877,7 +878,7 @@ const services = [
     ]
   },
   {
-    icon: '📈',
+    slug: 'paid-advertising',
     title: 'Paid Advertising',
     benefit: 'Targeted campaigns on Meta and Google that deliver ROI.',
     outcomes: [
@@ -887,7 +888,7 @@ const services = [
     ]
   },
   {
-    icon: '🎨',
+    slug: 'branding-creative-direction',
     title: 'Branding & Visual Identity',
     benefit: 'A distinctive brand that stands out and stays memorable.',
     outcomes: [
@@ -897,7 +898,7 @@ const services = [
     ]
   },
   {
-    icon: '💻',
+    slug: 'website-development',
     title: 'Website Design & Development',
     benefit: 'Fast, beautiful websites that convert visitors into leads.',
     outcomes: [
@@ -907,7 +908,7 @@ const services = [
     ]
   },
   {
-    icon: '🔍',
+    slug: 'seo-content-writing',
     title: 'SEO & Local SEO',
     benefit: 'Get found when customers are searching for what you offer.',
     outcomes: [
@@ -917,7 +918,7 @@ const services = [
     ]
   },
   {
-    icon: '📧',
+    slug: 'email-marketing',
     title: 'Email Marketing & Funnels',
     benefit: 'Automated sequences that nurture leads and drive sales.',
     outcomes: [
@@ -927,7 +928,7 @@ const services = [
     ]
   },
   {
-    icon: '📊',
+    slug: 'marketing-strategy',
     title: 'Analytics & Reporting',
     benefit: 'Clear insights that inform smarter marketing decisions.',
     outcomes: [
@@ -1087,7 +1088,7 @@ export default function ServicesDemo() {
           <ServicesGrid>
             {services.map((service, index) => (
               <ServiceCard key={index}>
-                <ServiceIcon>{service.icon}</ServiceIcon>
+                <ServiceIconWrapper><ServiceIconSVG slug={service.slug} size={32} /></ServiceIconWrapper>
                 <ServiceTitle>{service.title}</ServiceTitle>
                 <ServiceBenefit>{service.benefit}</ServiceBenefit>
                 <ServiceOutcomes>

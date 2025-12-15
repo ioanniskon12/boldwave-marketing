@@ -7,6 +7,7 @@ import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { PageHero } from '@/components/sections';
 import { services } from '@/data';
+import { ServiceIcon } from '@/components/icons';
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
@@ -163,13 +164,13 @@ const CardIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32px;
   z-index: 1;
   transition: all 0.5s ease;
+  color: #ff8c42;
 
   ${ServiceCard}:hover & {
     transform: scale(1.1);
-    filter: grayscale(1) brightness(10);
+    color: #ffffff;
   }
 `;
 
@@ -554,7 +555,7 @@ export function ServicesPageContent() {
                 <CardNumber>{String(index + 1).padStart(2, '0')}</CardNumber>
                 <CardIconWrapper>
                   <CardIconBg />
-                  <CardIcon>{service.icon}</CardIcon>
+                  <CardIcon><ServiceIcon slug={service.slug} size={36} /></CardIcon>
                 </CardIconWrapper>
                 <CardContent>
                   <CardTitle>{service.title}</CardTitle>

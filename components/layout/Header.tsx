@@ -17,13 +17,16 @@ const StyledHeader = styled.header<{ $scrolled: boolean; $isLightPage: boolean }
   left: 0;
   right: 0;
   z-index: ${({ theme }) => theme.zIndex.sticky};
-  background-color: ${({ $scrolled, $isLightPage }) =>
-    ($scrolled || $isLightPage) ? 'rgba(255, 255, 255, 0.98)' : 'transparent'};
-  backdrop-filter: ${({ $scrolled, $isLightPage }) => (($scrolled || $isLightPage) ? 'blur(20px)' : 'none')};
-  -webkit-backdrop-filter: ${({ $scrolled, $isLightPage }) => (($scrolled || $isLightPage) ? 'blur(20px)' : 'none')};
-  box-shadow: ${({ $scrolled, $isLightPage }) =>
-    ($scrolled || $isLightPage) ? '0 1px 20px rgba(0, 0, 0, 0.08)' : 'none'};
+  background-color: #000000;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
+  padding-bottom: 12px;
+
+  ${media.lg} {
+    padding-bottom: 0;
+  }
 `;
 
 const HeaderInner = styled.div`
@@ -57,42 +60,41 @@ const RightSection = styled.div`
 `;
 
 const Nav = styled.nav<{ $isOpen: boolean; $isLightPage: boolean }>`
-  position: fixed;
-  top: 0;
+  position: absolute;
+  top: 100%;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: ${({ $isLightPage }) =>
-    $isLightPage ? 'rgba(255, 255, 255, 0.98)' : 'rgba(10, 10, 15, 0.98)'};
+  width: 100%;
+  background-color: #000000;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding: 48px 0;
   gap: ${({ theme }) => theme.spacing.xl};
   opacity: ${({ $isOpen }) => ($isOpen ? 1 : 0)};
   visibility: ${({ $isOpen }) => ($isOpen ? 'visible' : 'hidden')};
   pointer-events: ${({ $isOpen }) => ($isOpen ? 'auto' : 'none')};
-  transition: all 0.3s ease;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
   z-index: 9998;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 
   ${media.lg} {
     position: static;
     width: auto;
-    height: auto;
+    padding: 0;
     flex-direction: row;
     background-color: transparent;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
     gap: ${({ theme }) => theme.spacing.xl};
+    box-shadow: none;
   }
 `;
 
 const NavLink = styled(Link)<{ $isActive: boolean; $scrolled?: boolean; $isLightPage?: boolean }>`
   font-size: ${({ theme }) => theme.fontSizes.lg};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
-  color: ${({ $isActive, $isLightPage }) =>
-    $isActive ? '#ff8c42' : ($isLightPage ? '#1a1a1a' : '#ffffff')};
+  color: ${({ $isActive }) => $isActive ? '#ff8c42' : '#ffffff'};
   text-decoration: none;
   transition: color 0.3s ease;
   position: relative;
@@ -118,12 +120,7 @@ const NavLink = styled(Link)<{ $isActive: boolean; $scrolled?: boolean; $isLight
 
   ${media.lg} {
     font-size: ${({ theme }) => theme.fontSizes.base};
-    color: ${({ $isActive, $scrolled, $isLightPage }) =>
-      $isActive
-        ? '#ff8c42'
-        : ($isLightPage || $scrolled)
-          ? '#1a1a1a'
-          : '#ffffff'};
+    color: ${({ $isActive }) => $isActive ? '#ff8c42' : '#ffffff'};
   }
 `;
 
@@ -148,8 +145,7 @@ const MobileMenuButton = styled.button<{ $isOpen: boolean; $scrolled: boolean; $
     display: block;
     width: 24px;
     height: 2px;
-    background-color: ${({ $scrolled, $isLightPage }) =>
-      ($scrolled || $isLightPage) ? '#1a1a1a' : '#ffffff'};
+    background-color: #ffffff;
     transition: all 0.3s ease;
     position: absolute;
 
@@ -233,7 +229,7 @@ export default function Header() {
       <Container>
         <HeaderInner>
           <LeftSection>
-            <Logo $variant={(isLightPage || scrolled) ? 'dark' : 'light'} $scrolled={scrolled} $noLink={isMinimalNavbar} />
+            <Logo $variant="light" $scrolled={false} $noLink={isMinimalNavbar} />
           </LeftSection>
 
           <CenterSection>

@@ -8,6 +8,7 @@ import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { services, getFaqsByServiceSlug } from '@/data';
 import { FAQAccordion } from '@/components/sections';
+import { ServiceIcon } from '@/components/icons';
 
 const fadeInUp = keyframes`
   from {
@@ -828,8 +829,8 @@ const RelatedCard = styled(Link)`
 `;
 
 const RelatedIcon = styled.div`
-  font-size: 40px;
   margin-bottom: 20px;
+  color: #ff8c42;
 `;
 
 const RelatedTitle = styled.h3`
@@ -1153,7 +1154,7 @@ export function ServicePageContent({ service }) {
           <RelatedGrid>
             {otherServices.map((otherService) => (
               <RelatedCard key={otherService.id} href={`/services/${otherService.slug}`}>
-                <RelatedIcon>{otherService.icon}</RelatedIcon>
+                <RelatedIcon><ServiceIcon slug={otherService.slug} size={40} /></RelatedIcon>
                 <RelatedTitle>{otherService.title}</RelatedTitle>
                 <RelatedDescription>{otherService.shortDescription}</RelatedDescription>
               </RelatedCard>

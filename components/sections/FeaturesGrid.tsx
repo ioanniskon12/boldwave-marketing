@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import { Service } from '@/types';
+import { ServiceIcon } from '@/components/icons';
 
 const shimmer = keyframes`
   0% { background-position: -200% 0; }
@@ -121,9 +122,9 @@ const IconWrapper = styled.div`
   justify-content: center;
   background: linear-gradient(135deg, rgba(255, 75, 75, 0.1), rgba(255, 75, 75, 0.05));
   border-radius: 16px;
-  font-size: 28px;
   margin-bottom: 24px;
   transition: all 0.3s ease;
+  color: #FF4B4B;
 
   ${Card}:hover & {
     transform: scale(1.1) rotate(-5deg);
@@ -194,7 +195,7 @@ export default function FeaturesGrid({ services }: FeaturesGridProps) {
         <Grid>
           {services.map((service) => (
             <Card key={service.id} href={`/services/${service.slug}`}>
-              <IconWrapper>{service.icon}</IconWrapper>
+              <IconWrapper><ServiceIcon slug={service.slug} size={28} /></IconWrapper>
               <CardTitle>{service.title}</CardTitle>
               <CardDescription>{service.shortDescription}</CardDescription>
               <CardLink>

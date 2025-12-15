@@ -64,8 +64,6 @@ const LogoIcon = styled.span`
   justify-content: center;
   width: 36px;
   height: 36px;
-  background-color: #ff8c42;
-  border-radius: 10px;
   flex-shrink: 0;
 `;
 
@@ -74,14 +72,19 @@ export default function Logo({ $variant = 'dark', $scrolled = false, $noLink = f
     <>
       <LogoIcon>
         <img
-          src="/owl.svg"
-          alt="Owl"
-          width={20}
-          height={20}
-          style={{ filter: 'invert(1)' }}
+          src="/owlLogo.webp"
+          alt="Owl Marketing Hub"
+          width={36}
+          height={36}
+          style={{ objectFit: 'contain' }}
         />
       </LogoIcon>
-      OwlMarketingHub
+      <img
+        src="/owlText.png"
+        alt="OwlMarketingHub"
+        height={24}
+        style={{ objectFit: 'contain' }}
+      />
     </>
   );
 

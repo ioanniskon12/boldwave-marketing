@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
+import { ServiceIcon } from '@/components/icons';
 
 interface ServiceItem {
   id: string;
@@ -227,8 +228,8 @@ const IconWrapper = styled.div<{ $isOpen: boolean }>`
   justify-content: center;
   background: ${({ $isOpen }) => ($isOpen ? 'rgba(255, 140, 66, 0.15)' : 'rgba(0, 0, 0, 0.05)')};
   border-radius: 12px;
-  font-size: 24px;
   transition: background 0.3s ease;
+  color: ${({ $isOpen }) => ($isOpen ? '#ff8c42' : '#666666')};
 `;
 
 const ContentPanel = styled.div<{ $isOpen: boolean }>`
@@ -371,7 +372,7 @@ export default function ServicesAccordion() {
                     {service.title}
                   </VerticalTitle>
                   <IconWrapper $isOpen={openId === service.id}>
-                    {service.icon}
+                    <ServiceIcon slug={service.slug} size={24} />
                   </IconWrapper>
                 </TabSection>
               )}
