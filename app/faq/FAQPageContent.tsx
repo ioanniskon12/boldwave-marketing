@@ -183,7 +183,7 @@ const FAQGrid = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 900px;
+  width: 100%;
 `;
 
 const FAQCard = styled.div<{ $isOpen: boolean }>`
@@ -468,7 +468,7 @@ export function FAQPageContent() {
             </SectionSubtitle>
           </SectionHeader>
 
-          {/* Search bar under section header */}
+          {/* Search bar under section header - commented out for now
           <SearchWrapper style={{ marginBottom: '60px' }}>
             <SearchIcon>
               <svg
@@ -492,6 +492,7 @@ export function FAQPageContent() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </SearchWrapper>
+          */}
 
           {filteredCategories.map((cat) => {
             const data = categoryData[cat.category] || { icon: '📋' };

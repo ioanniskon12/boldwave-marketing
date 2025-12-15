@@ -18,12 +18,6 @@ const shimmer = keyframes`
   100% { background-position: 200% 0; }
 `;
 
-const gradientMove = keyframes`
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-`;
-
 // Services Section
 const ServicesSection = styled.section`
   padding: 80px 0;
@@ -399,77 +393,64 @@ const ProcessDesc = styled.p`
 
 // CTA Section
 const CTASection = styled.section`
-  padding: 100px 0;
-  background: #faf8f5;
-
-  ${media.lg} {
-    padding: 120px 0;
-  }
-`;
-
-const CTACard = styled.div`
-  padding: 60px 40px;
-  background: linear-gradient(135deg, #0d0d12 0%, #1a1a2e 50%, #0d0d12 100%);
-  background-size: 200% 200%;
-  animation: ${gradientMove} 15s ease infinite;
-  border-radius: 32px;
+  padding: 120px 0;
+  background: #1a1a1a;
   text-align: center;
   position: relative;
   overflow: hidden;
-
-  ${media.lg} {
-    padding: 80px 60px;
-  }
 `;
 
-const CTAOrb = styled.div`
+const CTAPattern = styled.div`
   position: absolute;
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 140, 66, 0.25), transparent 70%);
-  top: -200px;
-  left: 50%;
-  transform: translateX(-50%);
-  filter: blur(60px);
-  pointer-events: none;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    radial-gradient(circle at 25% 25%, #ff8c42 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, #ff8c42 1px, transparent 1px);
+  background-size: 60px 60px;
 `;
 
-const CTAOrb2 = styled.div`
-  position: absolute;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(139, 69, 180, 0.2), transparent 70%);
-  bottom: -150px;
-  right: -100px;
-  filter: blur(60px);
-  pointer-events: none;
+const CTAContent = styled.div`
+  position: relative;
+  z-index: 1;
+`;
+
+const CTAHighlight = styled.span`
+  color: #ff8c42;
 `;
 
 const CTATitle = styled.h2`
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 16px;
-  position: relative;
-  z-index: 1;
+  margin-bottom: 20px;
+  line-height: 1.2;
 
   ${media.lg} {
-    font-size: 44px;
+    font-size: 48px;
   }
 `;
 
 const CTAText = styled.p`
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.7);
   margin-bottom: 40px;
-  position: relative;
-  z-index: 1;
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
   line-height: 1.7;
+`;
+
+const CTAButtons = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+
+  ${media.md} {
+    flex-direction: row;
+  }
 `;
 
 
@@ -604,16 +585,19 @@ export function ServicesPageContent() {
 
       {/* CTA Section */}
       <CTASection>
+        <CTAPattern />
         <Container>
-          <CTACard>
-            <CTAOrb />
-            <CTAOrb2 />
-            <CTATitle>Not sure which service you need?</CTATitle>
+          <CTAContent>
+            <CTATitle>
+              Ready to be our <CTAHighlight>next success story?</CTAHighlight>
+            </CTATitle>
             <CTAText>
               Book a free strategy call and we&apos;ll help you figure out the best approach for your goals.
             </CTAText>
-            <AnimatedButton href="/contact" variant="orange">Book a Free Strategy Call</AnimatedButton>
-          </CTACard>
+            <CTAButtons>
+              <AnimatedButton href="/contact" variant="orange">Book a Free Strategy Call</AnimatedButton>
+            </CTAButtons>
+          </CTAContent>
         </Container>
       </CTASection>
     </>

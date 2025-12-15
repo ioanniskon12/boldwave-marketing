@@ -77,6 +77,7 @@ const WaveTop = styled.div`
 const Header = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 20px;
   margin-bottom: 50px;
 

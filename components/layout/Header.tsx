@@ -17,22 +17,13 @@ const StyledHeader = styled.header<{ $scrolled: boolean; $isLightPage: boolean }
   left: 0;
   right: 0;
   z-index: ${({ theme }) => theme.zIndex.sticky};
-  background-color: ${({ $isLightPage }) =>
-    $isLightPage ? 'rgba(255, 255, 255, 0.98)' : 'transparent'};
-  backdrop-filter: ${({ $isLightPage }) => $isLightPage ? 'blur(20px)' : 'none'};
-  -webkit-backdrop-filter: ${({ $isLightPage }) => $isLightPage ? 'blur(20px)' : 'none'};
-  box-shadow: ${({ $isLightPage }) =>
-    $isLightPage ? '0 1px 20px rgba(0, 0, 0, 0.08)' : 'none'};
+  background-color: ${({ $scrolled, $isLightPage }) =>
+    ($scrolled || $isLightPage) ? 'rgba(255, 255, 255, 0.98)' : 'transparent'};
+  backdrop-filter: ${({ $scrolled, $isLightPage }) => (($scrolled || $isLightPage) ? 'blur(20px)' : 'none')};
+  -webkit-backdrop-filter: ${({ $scrolled, $isLightPage }) => (($scrolled || $isLightPage) ? 'blur(20px)' : 'none')};
+  box-shadow: ${({ $scrolled, $isLightPage }) =>
+    ($scrolled || $isLightPage) ? '0 1px 20px rgba(0, 0, 0, 0.08)' : 'none'};
   transition: all 0.3s ease;
-
-  ${media.lg} {
-    background-color: ${({ $scrolled, $isLightPage }) =>
-      ($scrolled || $isLightPage) ? 'rgba(255, 255, 255, 0.98)' : 'transparent'};
-    backdrop-filter: ${({ $scrolled, $isLightPage }) => (($scrolled || $isLightPage) ? 'blur(20px)' : 'none')};
-    -webkit-backdrop-filter: ${({ $scrolled, $isLightPage }) => (($scrolled || $isLightPage) ? 'blur(20px)' : 'none')};
-    box-shadow: ${({ $scrolled, $isLightPage }) =>
-      ($scrolled || $isLightPage) ? '0 1px 20px rgba(0, 0, 0, 0.08)' : 'none'};
-  }
 `;
 
 const HeaderInner = styled.div`
@@ -157,8 +148,8 @@ const MobileMenuButton = styled.button<{ $isOpen: boolean; $scrolled: boolean; $
     display: block;
     width: 24px;
     height: 2px;
-    background-color: ${({ $isLightPage }) =>
-      $isLightPage ? '#1a1a1a' : '#ffffff'};
+    background-color: ${({ $scrolled, $isLightPage }) =>
+      ($scrolled || $isLightPage) ? '#1a1a1a' : '#ffffff'};
     transition: all 0.3s ease;
     position: absolute;
 
@@ -178,8 +169,8 @@ const MobileMenuButton = styled.button<{ $isOpen: boolean; $scrolled: boolean; $
   }
 `;
 
-const CTAWrapper = styled.div`
-  display: none;
+const CTAWrapper = styled.div<{ $showOnMobile?: boolean }>`
+  display: ${({ $showOnMobile }) => ($showOnMobile ? 'block' : 'none')};
 
   ${media.lg} {
     display: block;
@@ -201,10 +192,16 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Determine if this is a light-background page (service detail pages and blog posts)
+  // Determine if this is a light-background page (service detail pages, blog posts, landing page, privacy, terms)
   const isLightPage =
     (pathname?.startsWith('/services/') && pathname !== '/services') ||
-    (pathname?.startsWith('/blog/') && pathname !== '/blog');
+    (pathname?.startsWith('/blog/') && pathname !== '/blog') ||
+    pathname === '/landing' ||
+    pathname === '/privacy' ||
+    pathname === '/terms';
+
+  // Determine if this is a minimal navbar page (only logo + contact button)
+  const isMinimalNavbar = pathname === '/landing';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -236,43 +233,47 @@ export default function Header() {
       <Container>
         <HeaderInner>
           <LeftSection>
-            <Logo $variant={isLightPage ? 'dark' : 'light'} $scrolled={scrolled} />
+            <Logo $variant={(isLightPage || scrolled) ? 'dark' : 'light'} $scrolled={scrolled} $noLink={isMinimalNavbar} />
           </LeftSection>
 
           <CenterSection>
-            <Nav $isOpen={isOpen} $isLightPage={isLightPage}>
-              {filteredNavigation.map((item) => (
-                <NavLink
-                  key={item.href}
-                  href={item.href}
-                  $isActive={pathname === item.href}
-                  $scrolled={scrolled}
-                  $isLightPage={isLightPage}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-              <MobileCTA>
-                <AnimatedButton href="/contact" variant="orange">Get in Touch</AnimatedButton>
-              </MobileCTA>
-            </Nav>
+            {!isMinimalNavbar && (
+              <Nav $isOpen={isOpen} $isLightPage={isLightPage}>
+                {filteredNavigation.map((item) => (
+                  <NavLink
+                    key={item.href}
+                    href={item.href}
+                    $isActive={pathname === item.href}
+                    $scrolled={scrolled}
+                    $isLightPage={isLightPage}
+                  >
+                    {item.label}
+                  </NavLink>
+                ))}
+                <MobileCTA>
+                  <AnimatedButton href="/contact" variant="orange">Get in Touch</AnimatedButton>
+                </MobileCTA>
+              </Nav>
+            )}
           </CenterSection>
 
           <RightSection>
-            <CTAWrapper>
+            <CTAWrapper $showOnMobile={isMinimalNavbar}>
               <AnimatedButton href="/contact" variant="orange">Contact Us</AnimatedButton>
             </CTAWrapper>
-            <MobileMenuButton
-              $isOpen={isOpen}
-              $scrolled={scrolled}
-              $isLightPage={isLightPage}
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label={isOpen ? 'Close menu' : 'Open menu'}
-            >
-              <span />
-              <span />
-              <span />
-            </MobileMenuButton>
+            {!isMinimalNavbar && (
+              <MobileMenuButton
+                $isOpen={isOpen}
+                $scrolled={scrolled}
+                $isLightPage={isLightPage}
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              >
+                <span />
+                <span />
+                <span />
+              </MobileMenuButton>
+            )}
           </RightSection>
         </HeaderInner>
       </Container>

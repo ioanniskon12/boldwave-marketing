@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -56,53 +56,103 @@ const StatLabel = styled.div`
 
 // Filter Section
 const FilterSection = styled.section`
-  padding: 60px 0 40px;
-  background: #faf8f5;
-  position: sticky;
-  top: 80px;
-  z-index: 50;
+  background: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+`;
 
-  ${media.lg} {
-    top: 100px;
+const FilterScrollWrapper = styled.div<{ $showLeftShadow?: boolean; $showRightShadow?: boolean }>`
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    background: linear-gradient(to left, transparent, #ffffff);
+    pointer-events: none;
+    z-index: 10;
+    opacity: ${({ $showLeftShadow }) => ($showLeftShadow ? 1 : 0)};
+    transition: opacity 0.2s ease;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 60px;
+    background: linear-gradient(to right, transparent, #ffffff);
+    pointer-events: none;
+    z-index: 10;
+    opacity: ${({ $showRightShadow }) => ($showRightShadow ? 1 : 0)};
+    transition: opacity 0.2s ease;
   }
 `;
 
 const FilterWrapper = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-`;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 2px solid #e0e0e0;
 
-const FilterButton = styled.button<{ $isActive: boolean }>`
-  padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 50px;
-  border: 2px solid ${({ $isActive }) => ($isActive ? '#ff8c42' : '#e0e0e0')};
-  background-color: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#ffffff')};
-  color: ${({ $isActive }) => ($isActive ? '#ffffff' : '#1a1a1a')};
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    border-color: #ff8c42;
-    background: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#fff5ee')};
+  &::-webkit-scrollbar {
+    display: none;
   }
 `;
 
-const FilterCount = styled.span`
+const FilterButton = styled.button<{ $isActive: boolean }>`
+  padding: 16px 8px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#666666')};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #ff8c42;
+    transform: scaleX(${({ $isActive }) => ($isActive ? 1 : 0)});
+    transition: transform 0.3s ease;
+    border-radius: 3px 3px 0 0;
+  }
+
+  &:hover {
+    color: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#1a1a1a')};
+  }
+`;
+
+const FilterCount = styled.span<{ $isActive?: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 24px;
   height: 24px;
   padding: 0 8px;
-  margin-left: 8px;
+  margin-left: 10px;
   font-size: 12px;
   font-weight: 700;
-  background: rgba(0, 0, 0, 0.1);
+  background: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#e0e0e0')};
+  color: ${({ $isActive }) => ($isActive ? '#ffffff' : '#666666')};
   border-radius: 12px;
+  transition: all 0.3s ease;
 `;
 
 // Portfolio Grid Section
@@ -462,7 +512,10 @@ const EmptyText = styled.p`
 
 export function PortfolioPageContent() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [showLeftShadow, setShowLeftShadow] = useState(false);
+  const [showRightShadow, setShowRightShadow] = useState(true);
   const industries = getAllIndustries();
+  const filterWrapperRef = useRef<HTMLDivElement>(null);
 
   const filteredStudies = activeFilter
     ? caseStudies.filter((study) => study.industry === activeFilter)
@@ -471,6 +524,28 @@ export function PortfolioPageContent() {
   // Get count for each industry
   const getIndustryCount = (industry: string) => {
     return caseStudies.filter((study) => study.industry === industry).length;
+  };
+
+  // Handle scroll to update shadow indicators
+  const handleScroll = () => {
+    if (filterWrapperRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = filterWrapperRef.current;
+      setShowLeftShadow(scrollLeft > 5);
+      setShowRightShadow(scrollLeft < scrollWidth - clientWidth - 5);
+    }
+  };
+
+  // Check scroll position on mount and resize
+  useEffect(() => {
+    handleScroll();
+    window.addEventListener('resize', handleScroll);
+    return () => window.removeEventListener('resize', handleScroll);
+  }, []);
+
+  // Handle filter click with scroll to show the clicked tab
+  const handleFilterClick = (filter: string | null, element: HTMLButtonElement) => {
+    setActiveFilter(filter);
+    element.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
   };
 
   return (
@@ -509,29 +584,31 @@ export function PortfolioPageContent() {
       {/* Filter Section */}
       <FilterSection>
         <Container>
-          <FilterWrapper>
-            <FilterButton
-              $isActive={activeFilter === null}
-              onClick={() => setActiveFilter(null)}
-            >
-              All Projects
-              <FilterCount style={{ background: activeFilter === null ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.08)' }}>
-                {caseStudies.length}
-              </FilterCount>
-            </FilterButton>
-            {industries.map((industry) => (
+          <FilterScrollWrapper $showLeftShadow={showLeftShadow} $showRightShadow={showRightShadow}>
+            <FilterWrapper ref={filterWrapperRef} onScroll={handleScroll}>
               <FilterButton
-                key={industry}
-                $isActive={activeFilter === industry}
-                onClick={() => setActiveFilter(industry)}
+                $isActive={activeFilter === null}
+                onClick={(e) => handleFilterClick(null, e.currentTarget)}
               >
-                {industry}
-                <FilterCount style={{ background: activeFilter === industry ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.08)' }}>
-                  {getIndustryCount(industry)}
+                All Projects
+                <FilterCount $isActive={activeFilter === null}>
+                  {caseStudies.length}
                 </FilterCount>
               </FilterButton>
-            ))}
-          </FilterWrapper>
+              {industries.map((industry) => (
+                <FilterButton
+                  key={industry}
+                  $isActive={activeFilter === industry}
+                  onClick={(e) => handleFilterClick(industry, e.currentTarget)}
+                >
+                  {industry}
+                  <FilterCount $isActive={activeFilter === industry}>
+                    {getIndustryCount(industry)}
+                  </FilterCount>
+                </FilterButton>
+              ))}
+            </FilterWrapper>
+          </FilterScrollWrapper>
         </Container>
       </FilterSection>
 

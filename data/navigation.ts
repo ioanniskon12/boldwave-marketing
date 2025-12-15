@@ -15,10 +15,12 @@ export const footerNavigation = {
     { label: 'Contact', href: '/contact' },
   ],
   services: [
-    { label: 'Paid Social', href: '/services/paid-social-advertising' },
-    { label: 'Search Ads', href: '/services/search-shopping-ads' },
-    { label: 'Creative Strategy', href: '/services/creative-strategy' },
-    { label: 'CRO', href: '/services/conversion-rate-optimisation' },
+    { label: 'Social Media Management', href: '/services/social-media-management' },
+    { label: 'Paid Advertising', href: '/services/paid-advertising' },
+    { label: 'Content Creation', href: '/services/content-creation' },
+    { label: 'Branding & Creative', href: '/services/branding-creative-direction' },
+    { label: 'Website Development', href: '/services/website-development' },
+    { label: 'Email Marketing', href: '/services/email-marketing' },
   ],
   resources: [
     { label: 'FAQ', href: '/faq' },

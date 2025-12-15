@@ -916,23 +916,37 @@ const RelatedDescription = styled.p`
 // CTA Section - Bold statement
 const CTASection = styled.section`
   padding: 120px 0;
-  background: #faf8f5;
+  background: #1a1a1a;
   text-align: center;
+  position: relative;
+  overflow: hidden;
 
   ${media.lg} {
     padding: 160px 0;
   }
 `;
 
+const CTAPattern = styled.div`
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    radial-gradient(circle at 25% 25%, #ff8c42 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, #ff8c42 1px, transparent 1px);
+  background-size: 60px 60px;
+`;
+
 const CTAContent = styled.div`
   max-width: 700px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 `;
 
 const CTATitle = styled.h2`
   font-size: 40px;
   font-weight: 800;
-  color: #1a1a1a;
+  color: #ffffff;
   margin-bottom: 24px;
   line-height: 1.2;
 
@@ -947,7 +961,7 @@ const CTAHighlight = styled.span`
 
 const CTAText = styled.p`
   font-size: 20px;
-  color: #666666;
+  color: rgba(255, 255, 255, 0.7);
   margin-bottom: 48px;
   line-height: 1.7;
 `;
@@ -973,7 +987,7 @@ const FAQGrid = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 900px;
+  width: 100%;
   margin-top: 60px;
 `;
 
@@ -1383,16 +1397,17 @@ export function ServicePageContent({ service }: ServicePageContentProps) {
 
       {/* CTA Section */}
       <CTASection>
+        <CTAPattern />
         <Container>
           <CTAContent>
             <CTATitle>
-              Ready to <CTAHighlight>transform</CTAHighlight> your brand?
+              Ready to be our next <CTAHighlight>success story?</CTAHighlight>
             </CTATitle>
             <CTAText>
-              Book a free strategy call and let&apos;s discuss how {service.title.toLowerCase()} can accelerate your growth.
+              Let&apos;s discuss how we can help your brand achieve extraordinary results.
             </CTAText>
             <CTAButtons>
-              <AnimatedButton href="/contact" variant="orange">Book a Strategy Call</AnimatedButton>
+              <AnimatedButton href="/contact" variant="orange">Start Your Project</AnimatedButton>
             </CTAButtons>
           </CTAContent>
         </Container>

@@ -1,13 +1,12 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Poppins } from 'next/font/google';
 import StyledComponentsRegistry from '@/lib/registry';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import Spotlight from '@/components/ui/Spotlight';
+import LayoutWrapper from '@/components/layout/LayoutWrapper';
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ['latin'],
   display: 'swap',
+  weight: ['300', '400', '500', '600', '700', '800'],
 });
 
 export const metadata: Metadata = {
@@ -27,6 +26,10 @@ export const metadata: Metadata = {
     'growth marketing',
   ],
   authors: [{ name: 'OwlMarketingHub' }],
+  icons: {
+    icon: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   openGraph: {
     type: 'website',
     locale: 'en_GB',
@@ -55,12 +58,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className={poppins.className}>
         <StyledComponentsRegistry>
-          <Spotlight />
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <LayoutWrapper>{children}</LayoutWrapper>
         </StyledComponentsRegistry>
       </body>
     </html>

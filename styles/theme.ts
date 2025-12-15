@@ -17,8 +17,8 @@ const theme = {
     error: '#EF4444',
   },
   fonts: {
-    heading: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-    body: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    heading: "'Poppins', -apple-system, BlinkMacSystemFont, sans-serif",
+    body: "'Poppins', -apple-system, BlinkMacSystemFont, sans-serif",
   },
   fontSizes: {
     xs: '0.75rem',

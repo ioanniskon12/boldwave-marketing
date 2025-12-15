@@ -730,62 +730,62 @@ const CaseClient = styled.div`
 
 // CTA Section
 const CTASection = styled.section`
-  padding: 80px 0;
-  background: #faf8f5;
-
-  ${media.lg} {
-    padding: 100px 0;
-  }
-`;
-
-const CTACard = styled.div`
-  padding: 60px 40px;
-  background: linear-gradient(135deg, #111111, #1a1a2e);
-  border-radius: 32px;
+  padding: 120px 0;
+  background: #1a1a1a;
   text-align: center;
   position: relative;
   overflow: hidden;
 
   ${media.lg} {
-    padding: 80px 60px;
+    padding: 160px 0;
   }
 `;
 
-const CTAOrb = styled.div`
+const CTAPattern = styled.div`
   position: absolute;
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 140, 66, 0.2), transparent 70%);
-  top: -200px;
-  left: 50%;
-  transform: translateX(-50%);
-  filter: blur(60px);
-  pointer-events: none;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    radial-gradient(circle at 25% 25%, #ff8c42 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, #ff8c42 1px, transparent 1px);
+  background-size: 60px 60px;
+`;
+
+const CTAContent = styled.div`
+  max-width: 700px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
 `;
 
 const CTATitle = styled.h2`
-  font-size: 32px;
+  font-size: 40px;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 16px;
-  position: relative;
-  z-index: 1;
+  margin-bottom: 24px;
+  line-height: 1.2;
 
   ${media.lg} {
-    font-size: 44px;
+    font-size: 56px;
   }
 `;
 
+const CTAHighlight = styled.span`
+  color: #ff8c42;
+`;
+
 const CTAText = styled.p`
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.6);
-  margin-bottom: 40px;
-  position: relative;
-  z-index: 1;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 48px;
+  line-height: 1.7;
+`;
+
+const CTAButtons = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 `;
 
 // Process steps data
@@ -1069,17 +1069,19 @@ export function CaseStudyPageContent({ caseStudy }: CaseStudyPageContentProps) {
 
       {/* CTA Section */}
       <CTASection>
+        <CTAPattern />
         <Container>
-          <CTACard>
-            <CTAOrb />
-            <CTATitle>Ready to achieve similar results?</CTATitle>
+          <CTAContent>
+            <CTATitle>
+              Ready to be our next <CTAHighlight>success story?</CTAHighlight>
+            </CTATitle>
             <CTAText>
-              Book a free strategy call and discover how we can help you grow your business.
+              Let&apos;s discuss how we can help your brand achieve extraordinary results.
             </CTAText>
-            <AnimatedButton href="/contact" variant="orange">
-              Book a Free Strategy Call
-            </AnimatedButton>
-          </CTACard>
+            <CTAButtons>
+              <AnimatedButton href="/contact" variant="orange">Start Your Project</AnimatedButton>
+            </CTAButtons>
+          </CTAContent>
         </Container>
       </CTASection>
     </>

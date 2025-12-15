@@ -355,17 +355,6 @@ export default function AboutCompany() {
 
             <BottomRow>
               <AnimatedButton href="/contact" variant="orange">Free Consultation</AnimatedButton>
-
-              <TrustBadge>
-                <TrustLogo>
-                  <span>★</span> Trustpilot
-                </TrustLogo>
-                <TrustStars>
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i}>★</Star>
-                  ))}
-                </TrustStars>
-              </TrustBadge>
             </BottomRow>
           </RightColumn>
         </ContentGrid>

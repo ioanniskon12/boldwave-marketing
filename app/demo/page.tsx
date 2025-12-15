@@ -1643,6 +1643,312 @@ const ProcessDivider = styled.div`
   margin: 60px 0;
 `;
 
+// ============================================
+// FONT SECTION
+// ============================================
+const FontSection = styled.section`
+  padding: 80px 20px;
+  background: #faf8f5;
+
+  ${media.lg} {
+    padding: 100px 40px;
+  }
+`;
+
+const FontContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const FontTabsWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+`;
+
+const FontTab = styled.button<{ $isActive: boolean }>`
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 50px;
+  border: 2px solid ${({ $isActive }) => ($isActive ? '#ff8c42' : 'transparent')};
+  background: ${({ $isActive }) => ($isActive ? 'rgba(255, 140, 66, 0.1)' : '#ffffff')};
+  color: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#666666')};
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #ff8c42;
+    color: #ff8c42;
+  }
+`;
+
+const FontPreviewCard = styled.div`
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 60px 40px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+`;
+
+const FontPreviewTitle = styled.h2<{ $fontFamily: string }>`
+  font-size: 48px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 24px;
+  font-family: ${({ $fontFamily }) => $fontFamily};
+  line-height: 1.2;
+
+  ${media.lg} {
+    font-size: 64px;
+  }
+`;
+
+const FontPreviewSubtitle = styled.h3<{ $fontFamily: string }>`
+  font-size: 24px;
+  font-weight: 600;
+  color: #ff8c42;
+  margin-bottom: 24px;
+  font-family: ${({ $fontFamily }) => $fontFamily};
+
+  ${media.lg} {
+    font-size: 32px;
+  }
+`;
+
+const FontPreviewText = styled.p<{ $fontFamily: string }>`
+  font-size: 18px;
+  color: #666666;
+  line-height: 1.8;
+  max-width: 700px;
+  margin: 0 auto 32px;
+  font-family: ${({ $fontFamily }) => $fontFamily};
+`;
+
+const FontPreviewSmall = styled.p<{ $fontFamily: string }>`
+  font-size: 14px;
+  color: #999999;
+  font-family: ${({ $fontFamily }) => $fontFamily};
+`;
+
+const FontName = styled.div`
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+  font-size: 14px;
+  color: #999999;
+
+  strong {
+    color: #1a1a1a;
+  }
+`;
+
+// ============================================
+// TABS SECTION
+// ============================================
+const TabsSection = styled.section`
+  padding: 80px 20px;
+  background: #ffffff;
+
+  ${media.lg} {
+    padding: 100px 40px;
+  }
+`;
+
+const TabsContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+`;
+
+const TabsOptionWrapper = styled.div`
+  margin-bottom: 80px;
+  padding: 40px;
+  background: #faf8f5;
+  border-radius: 24px;
+`;
+
+const TabsOptionTitle = styled.h3`
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 32px;
+  text-align: center;
+
+  span {
+    color: #ff8c42;
+  }
+`;
+
+// Option 1: Pill Tabs (like blog page current)
+const PillTabsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+`;
+
+const PillTab = styled.button<{ $isActive: boolean }>`
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 50px;
+  border: none;
+  background: ${({ $isActive }) => ($isActive ? '#1a1a1a' : 'transparent')};
+  color: ${({ $isActive }) => ($isActive ? '#ffffff' : '#666666')};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: ${({ $isActive }) => ($isActive ? '#1a1a1a' : '#f0f0f0')};
+    color: ${({ $isActive }) => ($isActive ? '#ffffff' : '#1a1a1a')};
+  }
+`;
+
+const PillTabCount = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 140, 66, 0.15);
+  color: #ff8c42;
+  border-radius: 10px;
+`;
+
+// Option 2: Underline Tabs
+const UnderlineTabsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  justify-content: center;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0;
+`;
+
+const UnderlineTab = styled.button<{ $isActive: boolean }>`
+  padding: 16px 8px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#666666')};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  white-space: nowrap;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #ff8c42;
+    transform: scaleX(${({ $isActive }) => ($isActive ? 1 : 0)});
+    transition: transform 0.3s ease;
+    border-radius: 3px 3px 0 0;
+  }
+
+  &:hover {
+    color: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#1a1a1a')};
+  }
+`;
+
+const UnderlineTabCount = styled.span<{ $isActive: boolean }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  margin-left: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  background: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#e0e0e0')};
+  color: ${({ $isActive }) => ($isActive ? '#ffffff' : '#666666')};
+  border-radius: 12px;
+  transition: all 0.3s ease;
+`;
+
+// Option 3: Card/Boxed Tabs
+const CardTabsContainer = styled.div`
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+`;
+
+const CardTab = styled.button<{ $isActive: boolean }>`
+  padding: 16px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 2px solid ${({ $isActive }) => ($isActive ? '#ff8c42' : '#e0e0e0')};
+  background: ${({ $isActive }) => ($isActive ? '#ff8c42' : '#ffffff')};
+  color: ${({ $isActive }) => ($isActive ? '#ffffff' : '#666666')};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &:hover {
+    border-color: #ff8c42;
+    color: ${({ $isActive }) => ($isActive ? '#ffffff' : '#ff8c42')};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 140, 66, 0.15);
+  }
+`;
+
+const CardTabIcon = styled.span<{ $isActive: boolean }>`
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: ${({ $isActive }) => ($isActive ? 'rgba(255, 255, 255, 0.2)' : '#f5f5f5')};
+  border-radius: 8px;
+  font-size: 14px;
+`;
+
+const CardTabCount = styled.span<{ $isActive: boolean }>`
+  font-size: 12px;
+  font-weight: 700;
+  color: ${({ $isActive }) => ($isActive ? 'rgba(255, 255, 255, 0.8)' : '#999999')};
+`;
+
+// Tab content preview
+const TabContentPreview = styled.div`
+  margin-top: 32px;
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 16px;
+  text-align: center;
+  color: #666666;
+  font-size: 14px;
+  border: 1px dashed #e0e0e0;
+`;
+
+// Tab data
+const tabItems = [
+  { id: 'all', label: 'All Posts', count: 12, icon: '📚' },
+  { id: 'strategy', label: 'Strategy', count: 4, icon: '🎯' },
+  { id: 'ads', label: 'Paid Ads', count: 5, icon: '📊' },
+  { id: 'creative', label: 'Creative', count: 3, icon: '🎨' },
+];
+
 // Color Palette Data
 const colorPalette = {
   brand: [
@@ -1724,6 +2030,29 @@ export default function DemoPage() {
   const [trail, setTrail] = useState<TrailPoint[]>([]);
   const heroRef = useRef<HTMLElement>(null);
   const trailIdRef = useRef(0);
+
+  // Tab selection state
+  const [activeTab1, setActiveTab1] = useState('all');
+  const [activeTab2, setActiveTab2] = useState('all');
+  const [activeTab3, setActiveTab3] = useState('all');
+
+  // Font selection state
+  const [activeFont, setActiveFont] = useState('inter');
+
+  // Font options data
+  const fontOptions = [
+    { id: 'sf-pro', name: 'SF Pro (Apple)', family: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif" },
+    { id: 'inter', name: 'Inter', family: "'Inter', sans-serif" },
+    { id: 'poppins', name: 'Poppins', family: "'Poppins', sans-serif" },
+    { id: 'montserrat', name: 'Montserrat', family: "'Montserrat', sans-serif" },
+    { id: 'playfair', name: 'Playfair Display', family: "'Playfair Display', serif" },
+    { id: 'dm-sans', name: 'DM Sans', family: "'DM Sans', sans-serif" },
+    { id: 'space-grotesk', name: 'Space Grotesk', family: "'Space Grotesk', sans-serif" },
+    { id: 'sora', name: 'Sora', family: "'Sora', sans-serif" },
+    { id: 'outfit', name: 'Outfit', family: "'Outfit', sans-serif" },
+  ];
+
+  const currentFont = fontOptions.find(f => f.id === activeFont);
 
   // Magnetic orbs base positions
   const magneticOrbs = [
@@ -2166,6 +2495,113 @@ export default function DemoPage() {
           </ColorCategory>
         </PaletteContainer>
       </PaletteSection>
+
+      <FontSection>
+        <FontContainer>
+          <SectionTitle>Font Families</SectionTitle>
+          <FontTabsWrapper>
+            {fontOptions.map((font) => (
+              <FontTab
+                key={font.id}
+                $isActive={activeFont === font.id}
+                onClick={() => setActiveFont(font.id)}
+              >
+                {font.name}
+              </FontTab>
+            ))}
+          </FontTabsWrapper>
+          <FontPreviewCard>
+            <FontPreviewTitle $fontFamily={currentFont?.family || "'Inter', sans-serif"}>
+              The Quick Brown Fox
+            </FontPreviewTitle>
+            <FontPreviewSubtitle $fontFamily={currentFont?.family || "'Inter', sans-serif"}>
+              Jumps Over The Lazy Dog
+            </FontPreviewSubtitle>
+            <FontPreviewText $fontFamily={currentFont?.family || "'Inter', sans-serif"}>
+              Typography is the art and technique of arranging type to make written language legible, readable and appealing when displayed. Great typography can elevate any design.
+            </FontPreviewText>
+            <FontPreviewSmall $fontFamily={currentFont?.family || "'Inter', sans-serif"}>
+              ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789
+            </FontPreviewSmall>
+            <FontName>
+              Current Font: <strong>{currentFont?.name}</strong> — {currentFont?.family}
+            </FontName>
+          </FontPreviewCard>
+        </FontContainer>
+      </FontSection>
+
+      <TabsSection>
+        <TabsContainer>
+          <SectionTitle>Tab Styles</SectionTitle>
+
+          {/* Option 1: Pill Tabs */}
+          <TabsOptionWrapper>
+            <TabsOptionTitle>Option 1: <span>Pill Tabs</span></TabsOptionTitle>
+            <PillTabsContainer>
+              {tabItems.map((tab) => (
+                <PillTab
+                  key={tab.id}
+                  $isActive={activeTab1 === tab.id}
+                  onClick={() => setActiveTab1(tab.id)}
+                >
+                  {tab.label}
+                  <PillTabCount>{tab.count}</PillTabCount>
+                </PillTab>
+              ))}
+            </PillTabsContainer>
+            <TabContentPreview>
+              Showing content for: <strong>{tabItems.find(t => t.id === activeTab1)?.label}</strong>
+            </TabContentPreview>
+          </TabsOptionWrapper>
+
+          {/* Option 2: Underline Tabs */}
+          <TabsOptionWrapper>
+            <TabsOptionTitle>Option 2: <span>Underline Tabs</span></TabsOptionTitle>
+            <UnderlineTabsContainer>
+              {tabItems.map((tab) => (
+                <UnderlineTab
+                  key={tab.id}
+                  $isActive={activeTab2 === tab.id}
+                  onClick={() => setActiveTab2(tab.id)}
+                >
+                  {tab.label}
+                  <UnderlineTabCount $isActive={activeTab2 === tab.id}>
+                    {tab.count}
+                  </UnderlineTabCount>
+                </UnderlineTab>
+              ))}
+            </UnderlineTabsContainer>
+            <TabContentPreview>
+              Showing content for: <strong>{tabItems.find(t => t.id === activeTab2)?.label}</strong>
+            </TabContentPreview>
+          </TabsOptionWrapper>
+
+          {/* Option 3: Card/Boxed Tabs */}
+          <TabsOptionWrapper style={{ marginBottom: 0 }}>
+            <TabsOptionTitle>Option 3: <span>Card Tabs</span></TabsOptionTitle>
+            <CardTabsContainer>
+              {tabItems.map((tab) => (
+                <CardTab
+                  key={tab.id}
+                  $isActive={activeTab3 === tab.id}
+                  onClick={() => setActiveTab3(tab.id)}
+                >
+                  <CardTabIcon $isActive={activeTab3 === tab.id}>
+                    {tab.icon}
+                  </CardTabIcon>
+                  {tab.label}
+                  <CardTabCount $isActive={activeTab3 === tab.id}>
+                    {tab.count}
+                  </CardTabCount>
+                </CardTab>
+              ))}
+            </CardTabsContainer>
+            <TabContentPreview>
+              Showing content for: <strong>{tabItems.find(t => t.id === activeTab3)?.label}</strong>
+            </TabContentPreview>
+          </TabsOptionWrapper>
+        </TabsContainer>
+      </TabsSection>
 
       <ButtonsSection>
         <ButtonsContainer>

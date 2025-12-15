@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -14,6 +15,34 @@ import { getRelatedPosts } from '@/data';
 interface BlogPostContentProps {
   post: BlogPost;
 }
+
+// Helper to save reading progress
+const saveReadingProgress = (slug: string, progress: number) => {
+  if (typeof window === 'undefined') return;
+  const currentProgress = localStorage.getItem(`blog-progress-${slug}`);
+  const current = currentProgress ? parseInt(currentProgress, 10) : 0;
+  // Only save if new progress is higher
+  if (progress > current) {
+    localStorage.setItem(`blog-progress-${slug}`, Math.min(progress, 100).toString());
+  }
+};
+
+// Reading Progress Bar - fixed under navbar
+const ReadingProgressBar = styled.div<{ $progress: number }>`
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: ${({ $progress }) => $progress}%;
+  height: 3px;
+  background: linear-gradient(90deg, #ff8c42, #ff6b35);
+  z-index: 1000;
+  transition: width 0.1s ease-out;
+
+  ${media.lg} {
+    top: 100px;
+    height: 4px;
+  }
+`;
 
 // Hero Section - Full viewport height
 const HeroSection = styled.section`
@@ -734,9 +763,52 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
     .join('');
 
   const heroImage = blogImages[post.slug] || 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop';
+  const contentRef = useRef<HTMLElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Track reading progress based on scroll position
+  const handleScroll = useCallback(() => {
+    // Calculate overall page scroll progress for the progress bar
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPercent = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
+    setScrollProgress(Math.min(scrollPercent, 100));
+
+    // Save reading progress based on content section
+    if (!contentRef.current) return;
+
+    const contentElement = contentRef.current;
+    const contentRect = contentElement.getBoundingClientRect();
+    const contentTop = contentRect.top + window.scrollY;
+    const contentHeight = contentElement.offsetHeight;
+    const windowHeight = window.innerHeight;
+    const scrollPosition = window.scrollY;
+
+    // Calculate how much of the content has been scrolled past
+    const scrolledPastContent = scrollPosition + windowHeight - contentTop;
+    const totalScrollableContent = contentHeight;
+
+    if (scrolledPastContent > 0 && totalScrollableContent > 0) {
+      const progress = Math.round((scrolledPastContent / totalScrollableContent) * 100);
+      saveReadingProgress(post.slug, progress);
+    }
+  }, [post.slug]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Initial check
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleScroll]);
 
   return (
     <>
+      {/* Reading Progress Bar */}
+      <ReadingProgressBar $progress={scrollProgress} />
+
       {/* Hero Section - 100vh */}
       <HeroSection>
         <HeroContainer>
@@ -817,7 +889,7 @@ export function BlogPostContent({ post }: BlogPostContentProps) {
       </HeroSection>
 
       {/* Content Section */}
-      <ContentSection>
+      <ContentSection ref={contentRef}>
         <Container>
           <ContentGrid>
             <MainContent>
