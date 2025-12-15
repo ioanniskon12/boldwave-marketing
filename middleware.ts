@@ -3,8 +3,8 @@ import type { NextRequest } from 'next/server';
 
 const ACCESS_KEY = 'owl2024';
 
-// TEMPORARILY DISABLED until December 16, 2024 midnight UTC
-const PROTECTION_DISABLED_UNTIL = new Date('2024-12-16T00:00:00Z');
+// TEMPORARILY DISABLED until December 16, 2025 midnight UTC
+const PROTECTION_DISABLED_UNTIL = new Date('2025-12-16T00:00:00Z');
 
 export function middleware(request: NextRequest) {
   // Temporarily allow all access until the specified date
