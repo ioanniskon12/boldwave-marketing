@@ -3,16 +3,12 @@ import type { NextRequest } from 'next/server';
 
 const ACCESS_KEY = 'owl2024';
 
-// Disable protection only for December 15, 2024
-const isProtectionDisabled = () => {
-  const now = new Date();
-  const disableDate = new Date('2024-12-15');
-  return now.toDateString() === disableDate.toDateString();
-};
+// TEMPORARILY DISABLED until December 16, 2024 midnight UTC
+const PROTECTION_DISABLED_UNTIL = new Date('2024-12-16T00:00:00Z');
 
 export function middleware(request: NextRequest) {
-  // Temporarily allow all access for today only
-  if (isProtectionDisabled()) {
+  // Temporarily allow all access until the specified date
+  if (new Date() < PROTECTION_DISABLED_UNTIL) {
     return NextResponse.next();
   }
 
