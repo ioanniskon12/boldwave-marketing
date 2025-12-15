@@ -23,6 +23,7 @@ const pulse = keyframes`
 const ContentSection = styled.section`
   padding: 80px 0 120px;
   background: #faf8f5;
+  overflow-x: hidden;
 
   ${media.lg} {
     padding: 100px 0 160px;
@@ -86,7 +87,7 @@ const SectionSubtitle = styled.p`
 const FormWrapper = styled.div`
   background: #ffffff;
   border-radius: 24px;
-  padding: 32px;
+  padding: 24px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   position: relative;
   overflow: hidden;
@@ -99,11 +100,16 @@ const FormWrapper = styled.div`
     content: '';
     position: absolute;
     top: 0;
-    left: 32px;
-    right: 32px;
+    left: 24px;
+    right: 24px;
     height: 4px;
     background: linear-gradient(90deg, #ff8c42, #ffb380);
     border-radius: 0 0 4px 4px;
+
+    ${media.md} {
+      left: 48px;
+      right: 48px;
+    }
   }
 `;
 

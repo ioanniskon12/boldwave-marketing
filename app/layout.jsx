@@ -45,8 +45,12 @@ export const metadata = {
     images: ['/og-image.jpg'],
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
   },
 };
 

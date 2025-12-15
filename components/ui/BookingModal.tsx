@@ -56,7 +56,7 @@ const Modal = styled.div`
 
 const LeftPanel = styled.div`
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  padding: 32px;
+  padding: 20px;
   color: #ffffff;
   position: relative;
   overflow: hidden;
@@ -64,6 +64,7 @@ const LeftPanel = styled.div`
   ${media.lg} {
     width: 320px;
     flex-shrink: 0;
+    padding: 32px;
   }
 `;
 
@@ -83,47 +84,91 @@ const LeftPanelContent = styled.div`
 `;
 
 const CompanyLogo = styled.div`
-  width: 48px;
-  height: 48px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(135deg, #ff8c42 0%, #ffb380 100%);
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  margin-bottom: 24px;
+  font-size: 20px;
+  margin-bottom: 12px;
+
+  ${media.lg} {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
 `;
 
 const LeftTitle = styled.h2`
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   line-height: 1.3;
+
+  ${media.lg} {
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
 `;
 
 const LeftDescription = styled.p`
-  font-size: 15px;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.7);
-  line-height: 1.6;
-  margin-bottom: 32px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+  display: none;
+
+  ${media.lg} {
+    display: block;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+`;
+
+const InfoItemsRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+
+  ${media.lg} {
+    display: block;
+    margin-top: 0;
+  }
 `;
 
 const InfoItem = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  font-size: 14px;
+  gap: 6px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.8);
+
+  ${media.lg} {
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
 `;
 
 const InfoIcon = styled.div`
-  width: 36px;
-  height: 36px;
+  width: 24px;
+  height: 24px;
   background: rgba(255, 140, 66, 0.15);
-  border-radius: 10px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
+
+  ${media.lg} {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
   justify-content: center;
   color: #ff8c42;
 `;
@@ -709,31 +754,33 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
             <LeftDescription>
               Schedule a free 30-minute consultation to discuss your marketing goals and how we can help you achieve them.
             </LeftDescription>
-            <InfoItem>
-              <InfoIcon>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-              </InfoIcon>
-              30 minutes
-            </InfoItem>
-            <InfoItem>
-              <InfoIcon>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" />
-                </svg>
-              </InfoIcon>
-              Google Meet / Zoom
-            </InfoItem>
-            <InfoItem>
-              <InfoIcon>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
-                </svg>
-              </InfoIcon>
-              Free consultation
-            </InfoItem>
+            <InfoItemsRow>
+              <InfoItem>
+                <InfoIcon>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </InfoIcon>
+                30 min
+              </InfoItem>
+              <InfoItem>
+                <InfoIcon>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 10l-4 4l6 6l4 -16l-18 7l4 2l2 6l3 -4" />
+                  </svg>
+                </InfoIcon>
+                Video Call
+              </InfoItem>
+              <InfoItem>
+                <InfoIcon>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
+                  </svg>
+                </InfoIcon>
+                Free
+              </InfoItem>
+            </InfoItemsRow>
           </LeftPanelContent>
         </LeftPanel>
 

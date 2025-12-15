@@ -1,6 +1,7 @@
 # Exclude demo pages from Vercel deployment
 app/services-demo
 app/demo
+app/dashboard-demo
 
 # Exclude SaaS pages (local only for now)
 app/saas

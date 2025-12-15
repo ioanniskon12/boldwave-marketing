@@ -126,15 +126,21 @@ const ServicesGrid = styled.div`
 const ServiceCheckbox = styled.label<{ $isChecked: boolean }>`
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
+  gap: 8px;
+  padding: 10px 12px;
   background: ${({ $isChecked }) => ($isChecked ? '#fff5ee' : '#f8f8f8')};
   border: 2px solid ${({ $isChecked }) => ($isChecked ? '#ff8c42' : 'transparent')};
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 14px;
+  font-size: 13px;
   color: #1a1a1a;
+
+  ${media.md} {
+    padding: 12px 16px;
+    gap: 10px;
+    font-size: 14px;
+  }
 
   &:hover {
     background: ${({ $isChecked }) => ($isChecked ? '#fff5ee' : '#f0f0f0')};

@@ -15,45 +15,6 @@ const lineGrow = keyframes`
   to { width: 60px; }
 `;
 
-// Stats Bar under Hero
-const StatsBar = styled.section`
-  background: #1a1a1a;
-  padding: 40px 0;
-`;
-
-const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-
-  ${media.md} {
-    grid-template-columns: repeat(4, 1fr);
-  }
-`;
-
-const StatItem = styled.div`
-  text-align: center;
-`;
-
-const StatValue = styled.div`
-  font-size: 36px;
-  font-weight: 800;
-  color: #ff8c42;
-  line-height: 1;
-  margin-bottom: 8px;
-
-  ${media.lg} {
-    font-size: 48px;
-  }
-`;
-
-const StatLabel = styled.div`
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-`;
-
 // Filter Section
 const FilterSection = styled.section`
   background: #ffffff;
@@ -539,30 +500,6 @@ export function PortfolioPageContent() {
         description="Real results for real brands. Explore our case studies and see how we've helped businesses achieve remarkable growth."
         bigText="PORTFOLIO"
       />
-
-      {/* Stats Bar */}
-      <StatsBar>
-        <Container>
-          <StatsGrid>
-            <StatItem>
-              <StatValue>50+</StatValue>
-              <StatLabel>Projects Delivered</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>$12M+</StatValue>
-              <StatLabel>Revenue Generated</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>4.2x</StatValue>
-              <StatLabel>Average ROAS</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>95%</StatValue>
-              <StatLabel>Client Retention</StatLabel>
-            </StatItem>
-          </StatsGrid>
-        </Container>
-      </StatsBar>
 
       {/* Filter Section */}
       <FilterSection>
