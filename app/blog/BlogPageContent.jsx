@@ -585,9 +585,16 @@ export function BlogPageContent() {
     return () => window.removeEventListener('resize', handleScroll);
   }, []);
 
+  // Sort posts by date (newest first)
+  const sortedPosts = [...blogPosts].sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return dateB - dateA;
+  });
+
   const filteredPosts = activeTag
-    ? blogPosts.filter((post) => post.tags.includes(activeTag))
-    : blogPosts;
+    ? sortedPosts.filter((post) => post.tags.includes(activeTag))
+    : sortedPosts;
 
   const featuredPost = filteredPosts[0];
   const remainingPosts = filteredPosts.slice(1);

@@ -1,38 +1,58 @@
 'use client';
 
+/**
+ * PROCESS TIMELINE COMPONENT
+ *
+ * Design 3: Dark Modern Cards with glass-morphism effect
+ *
+ * IMPORTANT: Icon Usage Guidelines
+ * ================================
+ * Always use professional SVG icon components directly from '@/components/icons'.
+ */
+
 import styled from 'styled-components';
 import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import { ProcessStep } from '@/types';
+import {
+  SearchIcon,
+  LightbulbIcon,
+  RocketIcon,
+  GrowthIcon
+} from '@/components/icons';
 
+// ============================================
+// STYLED COMPONENTS
+// ============================================
 const Section = styled.section`
-  padding: 60px 0 0 0;
-  background: #faf8f5;
+  padding: 80px 0 100px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a12 100%);
+  position: relative;
   overflow: hidden;
+`;
 
-  ${media.md} {
-    padding: 80px 0 0 0;
-  }
-
-  ${media.lg} {
-    padding: 120px 0 0 0;
-  }
+const BackgroundGrid = styled.div`
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
 `;
 
 const SectionHeader = styled.div`
   text-align: center;
-  margin-bottom: 40px;
-
-  ${media.md} {
-    margin-bottom: 60px;
-  }
+  margin-bottom: 64px;
+  position: relative;
+  z-index: 1;
 `;
 
 const Badge = styled.div`
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 `;
 
 const BadgeLine = styled.span`
@@ -42,23 +62,22 @@ const BadgeLine = styled.span`
 `;
 
 const BadgeText = styled.span`
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: #ff8c42;
 `;
 
 const Title = styled.h2`
-  font-size: 26px;
-  font-weight: 700;
-  color: #111111;
+  font-size: 32px;
+  font-weight: 800;
+  color: #ffffff;
   line-height: 1.2;
-  max-width: 600px;
-  margin: 0 auto;
+  margin-bottom: 16px;
 
   ${media.md} {
-    font-size: 32px;
+    font-size: 40px;
   }
 
   ${media.lg} {
@@ -66,25 +85,19 @@ const Title = styled.h2`
   }
 `;
 
-const GridWrapper = styled.div`
-  max-width: 1400px;
+const Subtitle = styled.p`
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 600px;
   margin: 0 auto;
-  padding: 0 24px;
-
-  ${media.md} {
-    padding: 0 32px;
-  }
-
-  ${media.lg} {
-    padding: 0 48px;
-  }
+  line-height: 1.7;
 `;
 
-const StepsGrid = styled.div`
+const ProcessGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-  width: 100%;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
 
   ${media.md} {
     grid-template-columns: repeat(2, 1fr);
@@ -92,198 +105,158 @@ const StepsGrid = styled.div`
 
   ${media.lg} {
     grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
   }
 `;
 
-const StepCard = styled.div`
+const ProcessCard = styled.div`
   position: relative;
-  padding: 24px 20px 0 20px;
-  border-left: none;
-  border-top: 1px solid #e8e8e8;
-  display: flex;
-  flex-direction: column;
-  min-height: 280px;
-
-  &:first-child {
-    border-top: none;
-  }
-
-  ${media.md} {
-    padding: 32px 24px 0 24px;
-    min-height: 320px;
-    border-top: none;
-    border-left: 1px solid #e8e8e8;
-
-    &:nth-child(1),
-    &:nth-child(3) {
-      border-left: none;
-    }
-  }
-
-  ${media.lg} {
-    padding: 40px 32px 0 32px;
-    min-height: 400px;
-
-    &:nth-child(1) {
-      border-left: none;
-    }
-
-    &:nth-child(3) {
-      border-left: 1px solid #e8e8e8;
-    }
-  }
-`;
-
-const StepContent = styled.div`
-  flex: 1;
-`;
-
-const StepTitle = styled.h3`
-  font-size: 18px;
-  font-weight: 700;
-  color: #111111;
-  margin-bottom: 12px;
-
-  ${media.md} {
-    font-size: 20px;
-    margin-bottom: 16px;
-  }
-
-  ${media.lg} {
-    font-size: 22px;
-  }
-`;
-
-const StepDescription = styled.p`
-  font-size: 14px;
-  color: #666666;
-  line-height: 1.6;
-
-  ${media.md} {
-    font-size: 15px;
-    line-height: 1.7;
-  }
-`;
-
-const SemicircleContainer = styled.div`
-  position: relative;
-  width: 100%;
-  margin-top: auto;
-  display: flex;
-  justify-content: center;
-  padding-top: 30px;
-
-  ${media.md} {
-    padding-top: 40px;
-  }
-`;
-
-const SemicircleClip = styled.div`
-  position: relative;
-  width: 200px;
-  height: 100px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 40px 28px;
+  text-align: center;
+  transition: all 0.4s ease;
   overflow: hidden;
 
-  ${media.md} {
-    width: 240px;
-    height: 120px;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff8c42, #ff6b35);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
   }
 
-  ${media.lg} {
-    width: 280px;
-    height: 140px;
-  }
-`;
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 140, 66, 0.3);
+    transform: translateY(-4px);
 
-const Semicircle = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 200px;
-  height: 200px;
-  border: 1px solid rgba(255, 140, 66, 0.25);
-  border-radius: 50%;
-  background: linear-gradient(180deg, rgba(255, 200, 170, 0.12) 0%, rgba(255, 220, 200, 0.05) 100%);
-
-  ${media.md} {
-    width: 240px;
-    height: 240px;
-  }
-
-  ${media.lg} {
-    width: 280px;
-    height: 280px;
+    &::before {
+      transform: scaleX(1);
+    }
   }
 `;
 
-const StepNumber = styled.div`
+const ProcessNumber = styled.div`
   position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 44px;
-  height: 44px;
+  top: 20px;
+  right: 20px;
+  font-size: 64px;
+  font-weight: 800;
+  color: rgba(255, 140, 66, 0.08);
+  line-height: 1;
+`;
+
+const ProcessIcon = styled.div`
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 140, 66, 0.2), rgba(255, 107, 53, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #ff8c42;
-  border-radius: 50%;
-  font-size: 15px;
+  color: #ff8c42;
+  position: relative;
+  z-index: 1;
+`;
+
+const ProcessTitle = styled.h3`
+  font-size: 20px;
   font-weight: 700;
   color: #ffffff;
-  z-index: 2;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+`;
 
-  ${media.md} {
-    top: 16px;
-    width: 48px;
-    height: 48px;
-    font-size: 16px;
-  }
+const ProcessDesc = styled.p`
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.7;
+  position: relative;
+  z-index: 1;
+`;
+
+const ArrowConnector = styled.div`
+  display: none;
 
   ${media.lg} {
-    top: 14px;
-    width: 52px;
-    height: 52px;
-    font-size: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    color: #ff8c42;
+    opacity: 0.6;
   }
 `;
 
+// ============================================
+// ICON MAPPING
+// ============================================
+const stepIcons = [SearchIcon, LightbulbIcon, RocketIcon, GrowthIcon];
+
+// ============================================
+// MAIN COMPONENT
+// ============================================
 interface ProcessTimelineProps {
   steps: ProcessStep[];
+  title?: string;
+  subtitle?: string;
 }
 
-export default function ProcessTimeline({ steps }: ProcessTimelineProps) {
+export default function ProcessTimeline({
+  steps,
+  title = "Turning Insights into Impactful Strategies",
+  subtitle = "A proven methodology refined over 100+ successful campaigns."
+}: ProcessTimelineProps) {
   return (
     <Section>
+      <BackgroundGrid />
       <Container>
         <SectionHeader>
           <Badge>
             <BadgeLine />
             <BadgeText>Work Process</BadgeText>
+            <BadgeLine />
           </Badge>
-          <Title>Turning Insights into Impactful Strategies</Title>
+          <Title>{title}</Title>
+          <Subtitle>{subtitle}</Subtitle>
         </SectionHeader>
+
+        <ProcessGrid>
+          {steps.map((step, index) => {
+            const IconComponent = stepIcons[index] || SearchIcon;
+            const stepNumber = String(index + 1).padStart(2, '0');
+            return (
+              <ProcessCard key={step.id}>
+                <ProcessNumber>{stepNumber}</ProcessNumber>
+                <ProcessIcon>
+                  <IconComponent size={28} />
+                </ProcessIcon>
+                <ProcessTitle>{step.title}</ProcessTitle>
+                <ProcessDesc>{step.description}</ProcessDesc>
+                {index < steps.length - 1 && (
+                  <ArrowConnector>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </ArrowConnector>
+                )}
+              </ProcessCard>
+            );
+          })}
+        </ProcessGrid>
       </Container>
-
-      <GridWrapper>
-        <StepsGrid>
-          {steps.map((step, index) => (
-            <StepCard key={step.id}>
-              <StepContent>
-                <StepTitle>{step.title}</StepTitle>
-                <StepDescription>{step.description}</StepDescription>
-              </StepContent>
-
-              <SemicircleContainer>
-                <StepNumber>{String(index + 1).padStart(2, '0')}</StepNumber>
-                <SemicircleClip>
-                  <Semicircle />
-                </SemicircleClip>
-              </SemicircleContainer>
-            </StepCard>
-          ))}
-        </StepsGrid>
-      </GridWrapper>
     </Section>
   );
 }

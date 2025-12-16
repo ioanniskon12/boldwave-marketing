@@ -8,20 +8,21 @@ import { media } from '@/styles/theme';
 // STYLED COMPONENTS
 // ============================================
 const FAQList = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+
+  ${media.lg} {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
 `;
 
 const FAQItem = styled.div`
   background: #ffffff;
   border-radius: 20px;
-  margin-bottom: 16px;
   overflow: hidden;
   transition: all 0.4s ease;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+  height: fit-content;
 
   &:hover {
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
@@ -111,8 +112,8 @@ const FAQAnswerInner = styled.div`
   line-height: 1.7;
 
   ${media.md} {
-    padding: 0 32px 28px 110px;
-    font-size: 16px;
+    padding: 0 24px 24px;
+    font-size: 15px;
   }
 `;
 

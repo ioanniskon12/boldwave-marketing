@@ -7,7 +7,7 @@ import { media } from '@/styles/theme';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { caseStudies } from '@/data';
-import { Icon } from '@/components/icons';
+import { Icon, SearchIcon, LightbulbIcon, RocketIcon, GrowthIcon } from '@/components/icons';
 
 // Animations
 const gradientMove = keyframes`
@@ -426,77 +426,133 @@ const ComparisonText = styled.p`
 `;
 
 // ============================================
-// PROCESS SECTION
+// PROCESS SECTION - Design 3: Dark Modern Cards
 // ============================================
 const ProcessSection = styled.section`
-  padding: 100px 0;
-  background: #ffffff;
+  padding: 80px 0 100px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a12 100%);
+  position: relative;
+  overflow: hidden;
 `;
 
-const ProcessTimeline = styled.div`
+const ProcessBackgroundGrid = styled.div`
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+`;
+
+const ProcessGrid = styled.div`
   display: grid;
-  gap: 0;
+  gap: 24px;
   position: relative;
+  z-index: 1;
+
+  ${media.md} {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
   ${media.lg} {
     grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
   }
 `;
 
-const ProcessStep = styled.div`
+const ProcessCard = styled.div`
   position: relative;
-  padding: 40px 32px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 40px 28px;
   text-align: center;
-  border: 1px solid #f0f0f0;
-  background: #ffffff;
   transition: all 0.4s ease;
+  overflow: hidden;
 
-  &:hover {
-    background: #faf8f5;
-    border-color: rgba(255, 140, 66, 0.2);
-    z-index: 1;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff8c42, #ff6b35);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
   }
 
-  ${media.lg} {
-    &:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      right: -20px;
-      width: 40px;
-      height: 2px;
-      background: linear-gradient(90deg, #ff8c42, transparent);
-      z-index: 2;
+  &:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 140, 66, 0.3);
+    transform: translateY(-4px);
+
+    &::before {
+      transform: scaleX(1);
     }
   }
 `;
 
 const ProcessNumber = styled.div`
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 20px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #ff8c42, #ff6b35);
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 64px;
+  font-weight: 800;
+  color: rgba(255, 140, 66, 0.08);
+  line-height: 1;
+`;
+
+const ProcessIcon = styled.div`
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 140, 66, 0.2), rgba(255, 107, 53, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  font-weight: 800;
-  color: #ffffff;
+  color: #ff8c42;
+  position: relative;
+  z-index: 1;
 `;
 
 const ProcessTitle = styled.h3`
   font-size: 20px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #ffffff;
   margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
 `;
 
 const ProcessDesc = styled.p`
   font-size: 14px;
-  color: #666666;
-  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.7;
+  position: relative;
+  z-index: 1;
 `;
+
+const ArrowConnector = styled.div`
+  display: none;
+
+  ${media.lg} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    color: #ff8c42;
+    opacity: 0.6;
+  }
+`;
+
+const processStepIcons = [SearchIcon, LightbulbIcon, RocketIcon, GrowthIcon];
 
 // ============================================
 // WHAT WE DID SECTION
@@ -804,25 +860,39 @@ const CaseClient = styled.div`
 // CTA SECTION
 // ============================================
 const CTASection = styled.section`
-  padding: 120px 0;
-  background: #ffffff;
+  padding: 60px 0;
+  background: #1a1a1a;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+`;
+
+const CTAPattern = styled.div`
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    radial-gradient(circle at 25% 25%, #ff8c42 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, #ff8c42 1px, transparent 1px);
+  background-size: 60px 60px;
 `;
 
 const CTAContent = styled.div`
   max-width: 700px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 `;
 
 const CTATitle = styled.h2`
-  font-size: 40px;
+  font-size: 28px;
   font-weight: 800;
-  color: #1a1a1a;
-  margin-bottom: 20px;
+  color: #ffffff;
+  margin-bottom: 16px;
   line-height: 1.2;
 
   ${media.lg} {
-    font-size: 52px;
+    font-size: 36px;
   }
 `;
 
@@ -831,10 +901,13 @@ const CTAHighlight = styled.span`
 `;
 
 const CTAText = styled.p`
-  font-size: 18px;
-  color: #666666;
-  margin-bottom: 40px;
-  line-height: 1.7;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 28px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
 `;
 
 const CTAButtons = styled.div`
@@ -989,6 +1062,7 @@ export function CaseStudyPageContent({ caseStudy }) {
 
       {/* Process */}
       <ProcessSection>
+        <ProcessBackgroundGrid />
         <Container>
           <SectionHeader style={{ marginBottom: '48px' }}>
             <SectionTag>
@@ -996,21 +1070,35 @@ export function CaseStudyPageContent({ caseStudy }) {
               <TagText>Our Process</TagText>
               <TagLine />
             </SectionTag>
-            <SectionTitle>How we delivered results</SectionTitle>
-            <SectionSubtitle>
+            <SectionTitle $light>How we delivered results</SectionTitle>
+            <SectionSubtitle $light>
               A proven methodology refined over 100+ successful campaigns.
             </SectionSubtitle>
           </SectionHeader>
 
-          <ProcessTimeline>
-            {processSteps.map((step, index) => (
-              <ProcessStep key={index}>
-                <ProcessNumber>{index + 1}</ProcessNumber>
-                <ProcessTitle>{step.title}</ProcessTitle>
-                <ProcessDesc>{step.desc}</ProcessDesc>
-              </ProcessStep>
-            ))}
-          </ProcessTimeline>
+          <ProcessGrid>
+            {processSteps.map((step, index) => {
+              const IconComponent = processStepIcons[index] || SearchIcon;
+              const stepNumber = String(index + 1).padStart(2, '0');
+              return (
+                <ProcessCard key={index}>
+                  <ProcessNumber>{stepNumber}</ProcessNumber>
+                  <ProcessIcon>
+                    <IconComponent size={28} />
+                  </ProcessIcon>
+                  <ProcessTitle>{step.title}</ProcessTitle>
+                  <ProcessDesc>{step.desc}</ProcessDesc>
+                  {index < processSteps.length - 1 && (
+                    <ArrowConnector>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </ArrowConnector>
+                  )}
+                </ProcessCard>
+              );
+            })}
+          </ProcessGrid>
         </Container>
       </ProcessSection>
 
@@ -1146,6 +1234,7 @@ export function CaseStudyPageContent({ caseStudy }) {
 
       {/* CTA */}
       <CTASection>
+        <CTAPattern />
         <Container>
           <CTAContent>
             <CTATitle>
@@ -1157,7 +1246,6 @@ export function CaseStudyPageContent({ caseStudy }) {
             </CTAText>
             <CTAButtons>
               <AnimatedButton href="/contact" variant="orange">Start Your Project</AnimatedButton>
-              <AnimatedButton href="/portfolio" variant="outline">View More Case Studies</AnimatedButton>
             </CTAButtons>
           </CTAContent>
         </Container>

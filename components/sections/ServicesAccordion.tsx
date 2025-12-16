@@ -151,13 +151,13 @@ const AccordionWrapper = styled.div`
 const AccordionItem = styled.div<{ $isOpen: boolean }>`
   display: flex;
   flex-direction: column;
-  border: 1px solid ${({ $isOpen }) => ($isOpen ? 'rgba(255, 140, 66, 0.3)' : 'rgba(0, 0, 0, 0.08)')};
+  border: 1px solid ${({ $isOpen }) => ($isOpen ? 'rgba(255, 140, 66, 0.4)' : 'rgba(0, 0, 0, 0.08)')};
   border-radius: ${({ $isOpen }) => ($isOpen ? '24px' : '12px')};
   overflow: hidden;
   cursor: pointer;
   transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1);
-  background: ${({ $isOpen }) => ($isOpen ? '#ffffff' : '#ffffff')};
-  box-shadow: ${({ $isOpen }) => ($isOpen ? '0 10px 40px rgba(0, 0, 0, 0.08)' : '0 2px 8px rgba(0, 0, 0, 0.04)')};
+  background: ${({ $isOpen }) => ($isOpen ? '#1a1a1a' : '#ffffff')};
+  box-shadow: ${({ $isOpen }) => ($isOpen ? '0 10px 40px rgba(0, 0, 0, 0.2)' : '0 2px 8px rgba(0, 0, 0, 0.04)')};
 
   ${media.lg} {
     flex-direction: row;
@@ -258,7 +258,7 @@ const ContentHeader = styled.div`
 const ContentTitle = styled.h3`
   font-size: 24px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #ffffff;
   margin: 0;
 
   ${media.lg} {
@@ -269,7 +269,7 @@ const ContentTitle = styled.h3`
 const ContentDescription = styled.p`
   font-size: 15px;
   line-height: 1.7;
-  color: #666666;
+  color: rgba(255, 255, 255, 0.7);
   margin: 0 0 24px;
 `;
 
@@ -310,14 +310,14 @@ const ImageWrapper = styled.div`
 const ImagePlaceholder = styled.div`
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: rgba(0, 0, 0, 0.3);
-  border: 2px dashed rgba(0, 0, 0, 0.15);
+  color: rgba(255, 255, 255, 0.3);
+  border: 2px dashed rgba(255, 255, 255, 0.15);
   border-radius: 12px;
 
   span {

@@ -454,24 +454,20 @@ const PartnerLogo = styled.div`
 
 // CTA Section
 const CTASection = styled.section`
-  padding: 100px 0;
-  background: linear-gradient(135deg, #ff8c42 0%, #ff7a2e 100%);
+  padding: 60px 0;
+  background: #1a1a1a;
   text-align: center;
   position: relative;
   overflow: hidden;
-
-  ${media.lg} {
-    padding: 140px 0;
-  }
 `;
 
 const CTAPattern = styled.div`
   position: absolute;
   inset: 0;
-  opacity: 0.1;
+  opacity: 0.03;
   background-image:
-    radial-gradient(circle at 25% 25%, #ffffff 1px, transparent 1px),
-    radial-gradient(circle at 75% 75%, #ffffff 1px, transparent 1px);
+    radial-gradient(circle at 25% 25%, #ff8c42 1px, transparent 1px),
+    radial-gradient(circle at 75% 75%, #ff8c42 1px, transparent 1px);
   background-size: 60px 60px;
 `;
 
@@ -483,22 +479,26 @@ const CTAContent = styled.div`
 `;
 
 const CTATitle = styled.h2`
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   line-height: 1.2;
 
   ${media.lg} {
-    font-size: 48px;
+    font-size: 36px;
   }
 `;
 
+const CTAHighlight = styled.span`
+  color: #ff8c42;
+`;
+
 const CTAText = styled.p`
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 40px;
-  line-height: 1.7;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 28px;
+  line-height: 1.6;
 `;
 
 const CTAButton = styled.a`

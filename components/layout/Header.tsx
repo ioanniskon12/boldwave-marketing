@@ -17,11 +17,9 @@ const StyledHeader = styled.header<{ $scrolled: boolean; $isLightPage: boolean }
   left: 0;
   right: 0;
   z-index: ${({ theme }) => theme.zIndex.sticky};
-  background-color: ${({ $scrolled }) => $scrolled ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.1)'};
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: ${({ $scrolled }) => $scrolled ? '0 1px 20px rgba(0, 0, 0, 0.1)' : 'none'};
-  border-bottom: 1px solid ${({ $scrolled }) => $scrolled ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)'};
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  box-shadow: ${({ $scrolled }) => $scrolled ? '0 4px 20px rgba(0, 0, 0, 0.3)' : 'none'};
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   transition: all 0.3s ease;
   padding-bottom: 12px;
 
@@ -66,7 +64,7 @@ const Nav = styled.nav<{ $isOpen: boolean; $isLightPage: boolean }>`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: #000000;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -83,7 +81,7 @@ const Nav = styled.nav<{ $isOpen: boolean; $isLightPage: boolean }>`
     width: auto;
     height: auto;
     flex-direction: row;
-    background-color: transparent;
+    background: transparent;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -120,8 +118,7 @@ const NavLink = styled(Link)<{ $isActive: boolean; $scrolled?: boolean; $isLight
 
   ${media.lg} {
     font-size: ${({ theme }) => theme.fontSizes.base};
-    color: ${({ $isActive, $scrolled }) =>
-      $isActive ? '#ff8c42' : ($scrolled ? '#1a1a1a' : '#ffffff')};
+    color: ${({ $isActive }) => $isActive ? '#ff8c42' : '#ffffff'};
   }
 `;
 
@@ -146,7 +143,7 @@ const MobileMenuButton = styled.button<{ $isOpen: boolean; $scrolled: boolean; $
     display: block;
     width: 24px;
     height: 2px;
-    background-color: ${({ $isOpen, $scrolled }) => $isOpen ? '#ffffff' : ($scrolled ? '#1a1a1a' : '#ffffff')};
+    background-color: #ffffff;
     transition: all 0.3s ease;
     position: absolute;
 

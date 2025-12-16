@@ -85,9 +85,6 @@ const CategoryHeader = styled.div`
   margin-bottom: 32px;
   padding-bottom: 20px;
   border-bottom: 1px solid #e8e8e8;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
 `;
 
 const CategoryIcon = styled.span`

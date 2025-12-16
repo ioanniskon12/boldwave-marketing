@@ -428,15 +428,11 @@ const SectionSubtitle = styled.p`
 
 // CTA Section
 const CTASection = styled.section`
-  padding: 120px 0;
+  padding: 60px 0;
   background: #1a1a1a;
   text-align: center;
   position: relative;
   overflow: hidden;
-
-  ${media.lg} {
-    padding: 160px 0;
-  }
 `;
 
 const CTAPattern = styled.div`
@@ -457,14 +453,14 @@ const CTAContent = styled.div`
 `;
 
 const CTATitle = styled.h2`
-  font-size: 40px;
+  font-size: 28px;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   line-height: 1.2;
 
   ${media.lg} {
-    font-size: 56px;
+    font-size: 36px;
   }
 `;
 
@@ -473,10 +469,10 @@ const CTAHighlight = styled.span`
 `;
 
 const CTAText = styled.p`
-  font-size: 20px;
+  font-size: 16px;
   color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 48px;
-  line-height: 1.7;
+  margin-bottom: 28px;
+  line-height: 1.6;
 `;
 
 const CTAButtons = styled.div`

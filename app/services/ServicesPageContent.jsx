@@ -7,7 +7,7 @@ import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { PageHero } from '@/components/sections';
 import { services } from '@/data';
-import { ServiceIcon } from '@/components/icons';
+import { ServiceIcon, SearchIcon, LightbulbIcon, RocketIcon, GrowthIcon } from '@/components/icons';
 
 const float = keyframes`
   0%, 100% { transform: translateY(0); }
@@ -363,24 +363,36 @@ const StatLabel = styled.div`
   font-weight: 500;
 `;
 
-// Process Section
+// Process Section - Design 3: Dark Modern Cards
 const ProcessSection = styled.section`
-  padding: 100px 0;
-  background: #ffffff;
+  padding: 80px 0 100px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0a0a12 100%);
+  position: relative;
+  overflow: hidden;
+`;
 
-  ${media.lg} {
-    padding: 120px 0;
-  }
+const ProcessBackgroundGrid = styled.div`
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
 `;
 
 const ProcessHeader = styled.div`
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 64px;
+  position: relative;
+  z-index: 1;
 `;
 
 const ProcessGrid = styled.div`
   display: grid;
-  gap: 20px;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
 
   ${media.md} {
     grid-template-columns: repeat(2, 1fr);
@@ -388,54 +400,106 @@ const ProcessGrid = styled.div`
 
   ${media.lg} {
     grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
   }
 `;
 
 const ProcessCard = styled.div`
   position: relative;
-  padding: 32px;
-  background: #faf8f5;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 40px 28px;
   text-align: center;
   transition: all 0.4s ease;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff8c42, #ff6b35);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+  }
 
   &:hover {
-    transform: translateY(-8px);
-    background: #ffffff;
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 140, 66, 0.3);
+    transform: translateY(-4px);
+
+    &::before {
+      transform: scaleX(1);
+    }
   }
 `;
 
 const ProcessNumber = styled.div`
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 20px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 64px;
+  font-weight: 800;
+  color: rgba(255, 140, 66, 0.08);
+  line-height: 1;
+`;
+
+const ProcessIcon = styled.div`
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 140, 66, 0.2), rgba(255, 107, 53, 0.1));
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ff8c42, #ff6b35);
-  border-radius: 14px;
-  font-size: 20px;
-  font-weight: 800;
-  color: #ffffff;
+  color: #ff8c42;
+  position: relative;
+  z-index: 1;
 `;
 
 const ProcessTitle = styled.h4`
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 8px;
+  color: #ffffff;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
 `;
 
 const ProcessDesc = styled.p`
   font-size: 14px;
-  color: #666666;
-  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.7;
+  position: relative;
+  z-index: 1;
 `;
+
+const ArrowConnector = styled.div`
+  display: none;
+
+  ${media.lg} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: -14px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    color: #ff8c42;
+    opacity: 0.6;
+  }
+`;
+
+const processStepIcons = [SearchIcon, LightbulbIcon, RocketIcon, GrowthIcon];
 
 // CTA Section
 const CTASection = styled.section`
-  padding: 120px 0;
+  padding: 60px 0;
   background: #1a1a1a;
   text-align: center;
   position: relative;
@@ -462,25 +526,25 @@ const CTAHighlight = styled.span`
 `;
 
 const CTATitle = styled.h2`
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   line-height: 1.2;
 
   ${media.lg} {
-    font-size: 48px;
+    font-size: 36px;
   }
 `;
 
 const CTAText = styled.p`
-  font-size: 18px;
+  font-size: 16px;
   color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 40px;
+  margin-bottom: 28px;
   max-width: 500px;
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.7;
+  line-height: 1.6;
 `;
 
 const CTAButtons = styled.div`
@@ -590,43 +654,43 @@ export function ServicesPageContent() {
         </Container>
       </ServicesSection>
 
-      {/* Stats Section */}
-      <StatsSection>
-        <StatsGlow />
-        <Container>
-          <StatsGrid>
-            {stats.map((stat) => (
-              <StatItem key={stat.label}>
-                <StatValue>{stat.value}</StatValue>
-                <StatLabel>{stat.label}</StatLabel>
-              </StatItem>
-            ))}
-          </StatsGrid>
-        </Container>
-      </StatsSection>
-
       {/* Process Section */}
       <ProcessSection>
+        <ProcessBackgroundGrid />
         <Container>
           <ProcessHeader>
             <SectionLabel>
               <LabelLine />
               <LabelText>How We Work</LabelText>
+              <LabelLine />
             </SectionLabel>
-            <SectionTitle>Our Process</SectionTitle>
-            <SectionDescription>
+            <SectionTitle style={{ color: '#ffffff' }}>Our Process</SectionTitle>
+            <SectionDescription style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
               A proven framework that delivers consistent results for every client.
             </SectionDescription>
           </ProcessHeader>
 
           <ProcessGrid>
-            {process.map((step) => (
-              <ProcessCard key={step.number}>
-                <ProcessNumber>{step.number}</ProcessNumber>
-                <ProcessTitle>{step.title}</ProcessTitle>
-                <ProcessDesc>{step.desc}</ProcessDesc>
-              </ProcessCard>
-            ))}
+            {process.map((step, index) => {
+              const IconComponent = processStepIcons[index] || SearchIcon;
+              return (
+                <ProcessCard key={step.number}>
+                  <ProcessNumber>{step.number}</ProcessNumber>
+                  <ProcessIcon>
+                    <IconComponent size={28} />
+                  </ProcessIcon>
+                  <ProcessTitle>{step.title}</ProcessTitle>
+                  <ProcessDesc>{step.desc}</ProcessDesc>
+                  {index < process.length - 1 && (
+                    <ArrowConnector>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                      </svg>
+                    </ArrowConnector>
+                  )}
+                </ProcessCard>
+              );
+            })}
           </ProcessGrid>
         </Container>
       </ProcessSection>
