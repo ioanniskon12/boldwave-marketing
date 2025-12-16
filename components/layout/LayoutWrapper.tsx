@@ -11,7 +11,7 @@ const PAGES_WITH_LANDING_FOOTER = ['/landing'];
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideLayout = PAGES_WITHOUT_LAYOUT.includes(pathname);
+  const hideLayout = PAGES_WITHOUT_LAYOUT.includes(pathname) || pathname?.startsWith('/admin');
   const useLandingFooter = PAGES_WITH_LANDING_FOOTER.includes(pathname);
 
   if (hideLayout) {

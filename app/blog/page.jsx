@@ -1,10 +1,13 @@
 import { BlogPageContent } from './BlogPageContent';
+import { generatePageMetadata } from '@/lib/supabase/seo';
 
-export const metadata = {
-  title: 'Blog',
-  description:
-    'Insights, strategies, and lessons from the trenches of performance marketing.',
-};
+export async function generateMetadata() {
+  return generatePageMetadata(
+    '/blog',
+    'Blog | OwlMarketingHub',
+    'Insights, strategies, and lessons from the trenches of performance marketing.'
+  );
+}
 
 export default function BlogPage() {
   return <BlogPageContent />;

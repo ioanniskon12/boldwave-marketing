@@ -1,0 +1,592 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
+import { BlogPost } from '@/lib/supabase/types';
+import { blogPosts as staticBlogPosts, getAllTags } from '@/data/blog';
+
+// Get all available tags
+const availableTags = getAllTags();
+
+const PageHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+`;
+
+const HeaderLeft = styled.div``;
+
+const Title = styled.h1`
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+`;
+
+const Subtitle = styled.p`
+  font-size: 15px;
+  color: #666666;
+`;
+
+const AddButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #ff8c42;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e67d35;
+    transform: translateY(-1px);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+`;
+
+const FilterBar = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+`;
+
+const FilterButton = styled.button<{ $active: boolean }>`
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  background: ${({ $active }) => ($active ? '#1a1a1a' : '#ffffff')};
+  color: ${({ $active }) => ($active ? '#ffffff' : '#666666')};
+  border: 1px solid ${({ $active }) => ($active ? '#1a1a1a' : '#e5e5e5')};
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${({ $active }) => ($active ? '#1a1a1a' : '#f5f5f5')};
+  }
+`;
+
+const PostsTable = styled.div`
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const TableHeader = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 150px 120px 100px 100px;
+  gap: 16px;
+  padding: 16px 24px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+`;
+
+const TableRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 150px 120px 100px 100px;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  align-items: center;
+  transition: background 0.2s ease;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #fafafa;
+  }
+`;
+
+const PostInfo = styled.div``;
+
+const PostTitle = styled.div`
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+`;
+
+const PostSlug = styled.div`
+  font-size: 13px;
+  color: #999999;
+`;
+
+const PostDate = styled.div`
+  font-size: 14px;
+  color: #666666;
+`;
+
+const PostStatus = styled.span<{ $published: boolean }>`
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: ${({ $published }) => ($published ? '#dcfce7' : '#fef3c7')};
+  color: ${({ $published }) => ($published ? '#16a34a' : '#d97706')};
+`;
+
+const Actions = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+const ActionButton = styled.button<{ $variant?: 'danger' }>`
+  padding: 8px;
+  background: ${({ $variant }) => ($variant === 'danger' ? '#fef2f2' : '#f5f5f5')};
+  color: ${({ $variant }) => ($variant === 'danger' ? '#dc2626' : '#666666')};
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${({ $variant }) => ($variant === 'danger' ? '#fee2e2' : '#e5e5e5')};
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+const EditLink = styled(Link)`
+  padding: 8px;
+  background: #f5f5f5;
+  color: #666666;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e5e5e5;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 60px 20px;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 14px;
+    color: #666666;
+    margin-bottom: 24px;
+  }
+`;
+
+const LoadingState = styled.div`
+  text-align: center;
+  padding: 60px 20px;
+  color: #666666;
+`;
+
+const Tags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+`;
+
+const Tag = styled.span`
+  font-size: 11px;
+  padding: 2px 8px;
+  background: #f0f0f0;
+  color: #666666;
+  border-radius: 4px;
+`;
+
+const SourceBadge = styled.span<{ $source: 'supabase' | 'static' }>`
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  background: ${({ $source }) => ($source === 'supabase' ? '#dbeafe' : '#fef3c7')};
+  color: ${({ $source }) => ($source === 'supabase' ? '#1d4ed8' : '#b45309')};
+`;
+
+const FiltersSection = styled.div`
+  margin-bottom: 24px;
+`;
+
+const FilterRow = styled.div`
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+`;
+
+const FilterLabel = styled.span`
+  font-size: 13px;
+  font-weight: 500;
+  color: #666666;
+  min-width: 60px;
+`;
+
+const TagsFilter = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+const TagFilterButton = styled.button<{ $active: boolean }>`
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  background: ${({ $active }) => ($active ? '#ff8c42' : '#ffffff')};
+  color: ${({ $active }) => ($active ? '#ffffff' : '#666666')};
+  border: 1px solid ${({ $active }) => ($active ? '#ff8c42' : '#e5e5e5')};
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${({ $active }) => ($active ? '#e67d35' : '#f5f5f5')};
+    border-color: ${({ $active }) => ($active ? '#e67d35' : '#cccccc')};
+  }
+`;
+
+const SourceFilter = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+const SourceButton = styled.button<{ $active: boolean }>`
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  background: ${({ $active }) => ($active ? '#1a1a1a' : '#ffffff')};
+  color: ${({ $active }) => ($active ? '#ffffff' : '#666666')};
+  border: 1px solid ${({ $active }) => ($active ? '#1a1a1a' : '#e5e5e5')};
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${({ $active }) => ($active ? '#1a1a1a' : '#f5f5f5')};
+  }
+`;
+
+type Filter = 'all' | 'published' | 'draft';
+type SourceType = 'all' | 'supabase' | 'static';
+
+interface CombinedPost {
+  id: string;
+  title: string;
+  slug: string;
+  tags: string[];
+  date: string;
+  published: boolean;
+  source: 'supabase' | 'static';
+}
+
+export default function BlogListPage() {
+  const [supabasePosts, setSupabasePosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<Filter>('all');
+  const [sourceFilter, setSourceFilter] = useState<SourceType>('all');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const supabase = createClient();
+
+  const fetchPosts = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && data) {
+      setSupabasePosts(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  // Convert static posts to combined format
+  const staticPostsCombined: CombinedPost[] = staticBlogPosts.map((post) => ({
+    id: `static-${post.id}`,
+    title: post.title,
+    slug: post.slug,
+    tags: post.tags,
+    date: post.date,
+    published: true,
+    source: 'static' as const,
+  }));
+
+  // Convert supabase posts to combined format
+  const supabasePostsCombined: CombinedPost[] = supabasePosts.map((post) => ({
+    id: post.id,
+    title: post.title,
+    slug: post.slug,
+    tags: post.tags,
+    date: post.date,
+    published: post.published,
+    source: 'supabase' as const,
+  }));
+
+  // Combine and filter posts
+  let allPosts: CombinedPost[] = [...supabasePostsCombined, ...staticPostsCombined];
+
+  // Filter by source
+  if (sourceFilter === 'supabase') {
+    allPosts = allPosts.filter((p) => p.source === 'supabase');
+  } else if (sourceFilter === 'static') {
+    allPosts = allPosts.filter((p) => p.source === 'static');
+  }
+
+  // Filter by status
+  if (filter === 'published') {
+    allPosts = allPosts.filter((p) => p.published);
+  } else if (filter === 'draft') {
+    allPosts = allPosts.filter((p) => !p.published);
+  }
+
+  // Filter by tags
+  if (selectedTags.length > 0) {
+    allPosts = allPosts.filter((p) =>
+      selectedTags.some((tag) => p.tags.includes(tag))
+    );
+  }
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
+
+  const handleDelete = async (id: string) => {
+    if (id.startsWith('static-')) {
+      alert('Static posts cannot be deleted from here. They are stored in the code.');
+      return;
+    }
+    if (!confirm('Are you sure you want to delete this post?')) return;
+
+    const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+
+    if (!error) {
+      setSupabasePosts(supabasePosts.filter((p) => p.id !== id));
+    }
+  };
+
+  const handleTogglePublish = async (id: string, currentStatus: boolean) => {
+    if (id.startsWith('static-')) {
+      alert('Static posts are always published. Import them to Supabase to manage their status.');
+      return;
+    }
+    const { error } = await supabase
+      .from('blog_posts')
+      .update({ published: !currentStatus })
+      .eq('id', id);
+
+    if (!error) {
+      setSupabasePosts(
+        supabasePosts.map((p) =>
+          p.id === id ? { ...p, published: !currentStatus } : p
+        )
+      );
+    }
+  };
+
+  return (
+    <>
+      <PageHeader>
+        <HeaderLeft>
+          <Title>Blog Posts</Title>
+          <Subtitle>Manage your blog content</Subtitle>
+        </HeaderLeft>
+        <AddButton href="/admin/blog/new">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          New Post
+        </AddButton>
+      </PageHeader>
+
+      <FiltersSection>
+        <FilterRow>
+          <FilterLabel>Status:</FilterLabel>
+          <FilterBar style={{ marginBottom: 0 }}>
+            <FilterButton $active={filter === 'all'} onClick={() => setFilter('all')}>
+              All
+            </FilterButton>
+            <FilterButton
+              $active={filter === 'published'}
+              onClick={() => setFilter('published')}
+            >
+              Published
+            </FilterButton>
+            <FilterButton $active={filter === 'draft'} onClick={() => setFilter('draft')}>
+              Drafts
+            </FilterButton>
+          </FilterBar>
+        </FilterRow>
+
+        <FilterRow>
+          <FilterLabel>Source:</FilterLabel>
+          <SourceFilter>
+            <SourceButton $active={sourceFilter === 'all'} onClick={() => setSourceFilter('all')}>
+              All ({supabasePosts.length + staticBlogPosts.length})
+            </SourceButton>
+            <SourceButton $active={sourceFilter === 'supabase'} onClick={() => setSourceFilter('supabase')}>
+              Database ({supabasePosts.length})
+            </SourceButton>
+            <SourceButton $active={sourceFilter === 'static'} onClick={() => setSourceFilter('static')}>
+              Static ({staticBlogPosts.length})
+            </SourceButton>
+          </SourceFilter>
+        </FilterRow>
+
+        <FilterRow>
+          <FilterLabel>Tags:</FilterLabel>
+          <TagsFilter>
+            {availableTags.map((tag) => (
+              <TagFilterButton
+                key={tag}
+                $active={selectedTags.includes(tag)}
+                onClick={() => toggleTag(tag)}
+              >
+                {tag}
+              </TagFilterButton>
+            ))}
+            {selectedTags.length > 0 && (
+              <TagFilterButton $active={false} onClick={() => setSelectedTags([])}>
+                Clear
+              </TagFilterButton>
+            )}
+          </TagsFilter>
+        </FilterRow>
+      </FiltersSection>
+
+      <PostsTable>
+        <TableHeader style={{ gridTemplateColumns: '1fr 100px 150px 120px 100px 100px' }}>
+          <span>Title</span>
+          <span>Source</span>
+          <span>Tags</span>
+          <span>Date</span>
+          <span>Status</span>
+          <span>Actions</span>
+        </TableHeader>
+
+        {loading ? (
+          <LoadingState>Loading posts...</LoadingState>
+        ) : allPosts.length === 0 ? (
+          <EmptyState>
+            <h3>No posts found</h3>
+            <p>Create your first blog post to get started.</p>
+            <AddButton href="/admin/blog/new">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              New Post
+            </AddButton>
+          </EmptyState>
+        ) : (
+          allPosts.map((post) => (
+            <TableRow key={post.id} style={{ gridTemplateColumns: '1fr 100px 150px 120px 100px 100px' }}>
+              <PostInfo>
+                <PostTitle>{post.title}</PostTitle>
+                <PostSlug>/blog/{post.slug}</PostSlug>
+              </PostInfo>
+              <div>
+                <SourceBadge $source={post.source}>
+                  {post.source === 'supabase' ? 'DB' : 'Static'}
+                </SourceBadge>
+              </div>
+              <Tags>
+                {post.tags.slice(0, 2).map((tag) => (
+                  <Tag key={tag}>{tag}</Tag>
+                ))}
+                {post.tags.length > 2 && <Tag>+{post.tags.length - 2}</Tag>}
+              </Tags>
+              <PostDate>{post.date}</PostDate>
+              <PostStatus $published={post.published}>
+                {post.published ? 'Published' : 'Draft'}
+              </PostStatus>
+              <Actions>
+                {post.source === 'supabase' ? (
+                  <EditLink href={`/admin/blog/${post.id}`}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </EditLink>
+                ) : (
+                  <ActionButton title="Static posts cannot be edited here" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </ActionButton>
+                )}
+                <ActionButton
+                  onClick={() => handleTogglePublish(post.id, post.published)}
+                  title={post.published ? 'Unpublish' : 'Publish'}
+                  style={post.source === 'static' ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                >
+                  {post.published ? (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                      <line x1="1" y1="1" x2="23" y2="23" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  )}
+                </ActionButton>
+                <ActionButton
+                  $variant="danger"
+                  onClick={() => handleDelete(post.id)}
+                  style={post.source === 'static' ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                </ActionButton>
+              </Actions>
+            </TableRow>
+          ))
+        )}
+      </PostsTable>
+    </>
+  );
+}

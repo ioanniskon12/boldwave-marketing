@@ -431,6 +431,37 @@ const ArticleContent = styled.div`
     color: #1a1a1a;
   }
 
+  a {
+    color: #ff8c42;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 140, 66, 0.4);
+    text-underline-offset: 3px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      color: #ff6b35;
+      text-decoration-color: #ff6b35;
+    }
+  }
+
+  code {
+    background: rgba(255, 140, 66, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 0.9em;
+    color: #ff6b35;
+  }
+
+  .content-image {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 24px 0;
+  }
+
   blockquote {
     margin: 40px 0;
     padding: 28px 32px;
@@ -813,11 +844,16 @@ function parseContent(content) {
     .replace(/^## (.*$)/gm, '<h2>$1</h2>')
     .replace(/^### (.*$)/gm, '<h3>$1</h3>')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" class="content-image" />')
+    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
     .replace(/^- (.*$)/gm, '<li>$1</li>')
     .replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>')
+    .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
     .split('\n\n')
     .map((para) => {
-      if (para.startsWith('<h2>') || para.startsWith('<h3>') || para.startsWith('<ul>')) {
+      if (para.startsWith('<h2>') || para.startsWith('<h3>') || para.startsWith('<ul>') || para.startsWith('<blockquote>') || para.startsWith('<img')) {
         return para;
       }
       return `<p>${para}</p>`;

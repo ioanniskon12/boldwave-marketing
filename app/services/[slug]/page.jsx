@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getServiceBySlug, services } from '@/data';
 import { ServicePageContent } from './ServicePageContent';
+import { generatePageMetadata } from '@/lib/supabase/seo';
 
 export async function generateStaticParams() {
   return services.map((service) => ({
@@ -18,10 +19,12 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  return {
-    title: service.title,
-    description: service.shortDescription,
-  };
+  // Try to get custom SEO from Supabase, fall back to service data
+  return generatePageMetadata(
+    `/services/${slug}`,
+    `${service.title} | OwlMarketingHub`,
+    service.shortDescription
+  );
 }
 
 export default async function ServicePage({ params }) {

@@ -6,8 +6,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Container from '@/components/layout/Container';
 import { PageHero } from '@/components/sections';
-import { blogPosts, getAllTags } from '@/data';
+import { blogPosts as staticBlogPosts, getAllTags } from '@/data';
 import { media } from '@/styles/theme';
+import { createClient } from '@/lib/supabase/client';
 
 // Helper to get reading progress from localStorage
 const getReadingProgress = (slug) => {
@@ -554,8 +555,68 @@ export function BlogPageContent() {
   const [readingProgress, setReadingProgress] = useState({});
   const [showLeftShadow, setShowLeftShadow] = useState(false);
   const [showRightShadow, setShowRightShadow] = useState(true);
+  const [supabasePosts, setSupabasePosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const filterInnerRef = useRef(null);
-  const allTags = getAllTags();
+  const supabase = createClient();
+
+  // Fetch posts from Supabase
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('blog_posts')
+          .select('*')
+          .eq('published', true)
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          // Transform Supabase posts to match static format
+          const transformedPosts = data.map((post) => ({
+            id: post.id,
+            slug: post.slug,
+            title: post.title,
+            excerpt: post.excerpt,
+            content: post.content,
+            date: post.date,
+            readTime: post.read_time,
+            tags: post.tags || [],
+            thumbnail: post.thumbnail || post.meta_image || '',
+            author: {
+              name: post.author_name,
+              image: post.author_image || '',
+            },
+            source: 'supabase',
+          }));
+          setSupabasePosts(transformedPosts);
+        }
+      } catch (err) {
+        console.error('Error fetching posts:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  // Combine static and Supabase posts, avoiding duplicates by slug
+  const staticPostsFormatted = staticBlogPosts.map((post) => ({
+    ...post,
+    source: 'static',
+  }));
+
+  // Remove static posts that have been imported to Supabase (same slug)
+  const supabaseSlugs = supabasePosts.map((p) => p.slug);
+  const filteredStaticPosts = staticPostsFormatted.filter(
+    (p) => !supabaseSlugs.includes(p.slug)
+  );
+
+  // Combine: Supabase posts first, then static posts
+  const blogPosts = [...supabasePosts, ...filteredStaticPosts];
+
+  // Get all unique tags from combined posts
+  const allTags = [...new Set(blogPosts.flatMap((post) => post.tags))];
 
   // Load reading progress from localStorage on mount
   useEffect(() => {
@@ -567,7 +628,7 @@ export function BlogPageContent() {
       }
     });
     setReadingProgress(progress);
-  }, []);
+  }, [supabasePosts]);
 
   // Handle scroll to update shadow indicators
   const handleScroll = () => {
@@ -604,8 +665,13 @@ export function BlogPageContent() {
     return blogPosts.filter((post) => post.tags.includes(tag)).length;
   };
 
-  const getImage = (slug) => {
-    return blogImages[slug] || 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop';
+  const getImage = (post) => {
+    // First check if post has a thumbnail
+    if (post.thumbnail) {
+      return post.thumbnail;
+    }
+    // Fall back to mapped images for static posts
+    return blogImages[post.slug] || 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop';
   };
 
   return (
@@ -645,14 +711,18 @@ export function BlogPageContent() {
 
       <BlogSection>
         <Container>
-          {filteredPosts.length > 0 ? (
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#666666' }}>
+              Loading posts...
+            </div>
+          ) : filteredPosts.length > 0 ? (
             <>
               {/* Featured Post */}
               {featuredPost && (
                 <FeaturedPost href={`/blog/${featuredPost.slug}`}>
                   <FeaturedImageWrapper>
                     <FeaturedImage
-                      src={getImage(featuredPost.slug)}
+                      src={getImage(featuredPost)}
                       alt={featuredPost.title}
                       width={800}
                       height={600}
@@ -706,7 +776,7 @@ export function BlogPageContent() {
                   <BlogCard key={post.id} href={`/blog/${post.slug}`} $index={index}>
                     <CardImageWrapper>
                       <CardImage
-                        src={getImage(post.slug)}
+                        src={getImage(post)}
                         alt={post.title}
                         width={600}
                         height={400}
