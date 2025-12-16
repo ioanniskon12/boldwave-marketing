@@ -18,6 +18,8 @@ export async function middleware(request: NextRequest) {
     // If secret key is provided in URL, set cookie and continue
     if (adminKey === ADMIN_SECRET_KEY) {
       let response = NextResponse.next({ request });
+      // Add noindex header to prevent search engine indexing
+      response.headers.set('X-Robots-Tag', 'noindex, nofollow');
       response.cookies.set('admin-access', ADMIN_SECRET_KEY, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -80,6 +82,8 @@ export async function middleware(request: NextRequest) {
 
     // Has cookie, proceed with Supabase auth check
     let supabaseResponse = NextResponse.next({ request });
+    // Add noindex header to prevent search engine indexing
+    supabaseResponse.headers.set('X-Robots-Tag', 'noindex, nofollow');
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

@@ -1,0 +1,10 @@
+# Block admin pages from all crawlers
+User-agent: *
+Disallow: /admin
+Disallow: /admin/
+
+# Allow everything else
+Allow: /
+
+# Sitemap
+Sitemap: https://www.owlmarketinghub.com/sitemap.xml

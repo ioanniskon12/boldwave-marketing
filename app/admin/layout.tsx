@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -151,6 +152,26 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
+
+  // Add noindex, nofollow meta tag to prevent search engine indexing
+  useEffect(() => {
+    // Check if meta tag already exists
+    let metaRobots = document.querySelector('meta[name="robots"]');
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta');
+      metaRobots.setAttribute('name', 'robots');
+      document.head.appendChild(metaRobots);
+    }
+    metaRobots.setAttribute('content', 'noindex, nofollow');
+
+    // Cleanup on unmount
+    return () => {
+      const meta = document.querySelector('meta[name="robots"][content="noindex, nofollow"]');
+      if (meta) {
+        meta.remove();
+      }
+    };
+  }, []);
 
   // Don't show sidebar on login page
   if (pathname === '/admin/login') {
