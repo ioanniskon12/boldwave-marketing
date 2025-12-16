@@ -248,7 +248,7 @@ export default function ImportBlogPosts() {
           author_name: post.author.name,
           author_image: post.author.image || null,
           published: true,
-        }, {
+        } as never, {
           onConflict: 'slug'
         });
 

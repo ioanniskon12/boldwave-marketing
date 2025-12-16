@@ -708,7 +708,7 @@ export default function NewBlogPost() {
         ...formData,
         read_time: calculateReadTime(formData.content),
         published: publish,
-      });
+      } as never);
 
       if (error) throw error;
 

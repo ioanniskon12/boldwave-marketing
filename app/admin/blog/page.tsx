@@ -410,7 +410,7 @@ export default function BlogListPage() {
     }
     const { error } = await supabase
       .from('blog_posts')
-      .update({ published: !currentStatus })
+      .update({ published: !currentStatus } as never)
       .eq('id', id);
 
     if (!error) {

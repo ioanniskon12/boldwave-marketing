@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { createClient } from '@/lib/supabase/client';
 
@@ -474,7 +474,7 @@ const SectionCount = styled.span`
 `;
 
 const getIcon = (type: string) => {
-  const icons: { [key: string]: JSX.Element } = {
+  const icons: { [key: string]: React.ReactNode } = {
     home: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -593,7 +593,8 @@ export default function SettingsPage() {
           .single();
 
         if (pagesData) {
-          setPagesMeta(pagesData.value as AllPagesMeta);
+          const settingsData = pagesData as { value: AllPagesMeta };
+          setPagesMeta(settingsData.value);
         }
 
         // Fetch global settings
@@ -604,7 +605,8 @@ export default function SettingsPage() {
           .single();
 
         if (globalData) {
-          setGlobalSettings(globalData.value as GlobalSettings);
+          const settingsData = globalData as { value: GlobalSettings };
+          setGlobalSettings(settingsData.value);
         }
       } catch (err) {
         // Use defaults
@@ -700,7 +702,7 @@ export default function SettingsPage() {
           key: 'pages_meta',
           value: pagesMeta,
           updated_at: new Date().toISOString(),
-        }, {
+        } as never, {
           onConflict: 'key'
         });
 
@@ -726,7 +728,7 @@ export default function SettingsPage() {
           key: 'global_seo',
           value: globalSettings,
           updated_at: new Date().toISOString(),
-        }, {
+        } as never, {
           onConflict: 'key'
         });
 
@@ -740,9 +742,9 @@ export default function SettingsPage() {
     }
   };
 
-  const isPageConfigured = (path: string) => {
+  const isPageConfigured = (path: string): boolean => {
     const meta = pagesMeta[path];
-    return meta && (meta.title || meta.description || meta.image);
+    return !!(meta && (meta.title || meta.description || meta.image));
   };
 
   if (loading) {

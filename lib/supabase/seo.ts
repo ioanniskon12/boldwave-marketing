@@ -39,8 +39,10 @@ export async function getPageSEO(path: string) {
     .eq('key', 'global_seo')
     .single();
 
-  const pagesMeta = (pagesData?.value as AllPagesMeta) || {};
-  const globalSettings = (globalData?.value as GlobalSettings) || defaultGlobalSettings;
+  const pagesRecord = pagesData as { value: AllPagesMeta } | null;
+  const globalRecord = globalData as { value: GlobalSettings } | null;
+  const pagesMeta = pagesRecord?.value || {};
+  const globalSettings = globalRecord?.value || defaultGlobalSettings;
 
   const pageMeta = pagesMeta[path] || {};
 

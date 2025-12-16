@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
-import { BlogPost } from '@/lib/supabase/types';
+import { BlogPost, BlogPostUpdate } from '@/lib/supabase/types';
 
 const PageHeader = styled.div`
   display: flex;
@@ -425,21 +425,24 @@ export default function EditBlogPost() {
 
       if (error || !data) {
         setError('Post not found');
-      } else {
-        setFormData({
-          title: data.title,
-          slug: data.slug,
-          excerpt: data.excerpt,
-          content: data.content,
-          date: data.date,
-          tags: data.tags,
-          thumbnail: data.thumbnail || '',
-          author_name: data.author_name,
-          meta_title: data.meta_title || '',
-          meta_description: data.meta_description || '',
-          published: data.published,
-        });
+        setLoading(false);
+        return;
       }
+
+      const post = data as BlogPost;
+      setFormData({
+        title: post.title,
+        slug: post.slug,
+        excerpt: post.excerpt,
+        content: post.content,
+        date: post.date,
+        tags: post.tags,
+        thumbnail: post.thumbnail || '',
+        author_name: post.author_name,
+        meta_title: post.meta_title || '',
+        meta_description: post.meta_description || '',
+        published: post.published,
+      });
       setLoading(false);
     };
 
@@ -509,19 +512,25 @@ export default function EditBlogPost() {
     setError('');
 
     try {
-      const updateData: any = {
-        ...formData,
+      const updateData: BlogPostUpdate = {
+        title: formData.title,
+        slug: formData.slug,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        date: formData.date,
+        tags: formData.tags,
+        thumbnail: formData.thumbnail || null,
+        author_name: formData.author_name,
+        meta_title: formData.meta_title || null,
+        meta_description: formData.meta_description || null,
         read_time: calculateReadTime(formData.content),
         updated_at: new Date().toISOString(),
+        published: publish !== undefined ? publish : formData.published,
       };
-
-      if (publish !== undefined) {
-        updateData.published = publish;
-      }
 
       const { error } = await supabase
         .from('blog_posts')
-        .update(updateData)
+        .update(updateData as never)
         .eq('id', postId);
 
       if (error) throw error;
@@ -545,7 +554,7 @@ export default function EditBlogPost() {
 
     setSaving(true);
     try {
-      const { error } = await supabase.from('blog_posts').delete().eq('id', postId);
+      const { error } = await supabase.from('blog_posts').delete().eq('id', postId as never);
 
       if (error) throw error;
 

@@ -15,7 +15,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     return [];
   }
 
-  return data || [];
+  return (data as BlogPost[]) || [];
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
@@ -33,7 +33,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
     return null;
   }
 
-  return data;
+  return data as BlogPost;
 }
 
 export async function getRelatedPosts(currentSlug: string, tags: string[], limit = 3): Promise<BlogPost[]> {
@@ -52,7 +52,7 @@ export async function getRelatedPosts(currentSlug: string, tags: string[], limit
     return [];
   }
 
-  return data || [];
+  return (data as BlogPost[]) || [];
 }
 
 export async function getAllTags(): Promise<string[]> {
@@ -68,6 +68,7 @@ export async function getAllTags(): Promise<string[]> {
     return [];
   }
 
-  const allTags = data?.flatMap((post) => post.tags) || [];
+  const posts = data as { tags: string[] }[];
+  const allTags = posts?.flatMap((post) => post.tags) || [];
   return [...new Set(allTags)];
 }
