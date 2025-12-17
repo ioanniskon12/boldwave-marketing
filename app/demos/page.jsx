@@ -6,10 +6,10 @@ import dynamic from 'next/dynamic';
 import { media } from '@/styles/theme';
 
 // Dynamically import demo components to reduce initial bundle
-const StyleShowcase = dynamic(() => import('../demo/page'), { ssr: false });
-const DashboardDemo = dynamic(() => import('../dashboard-demo/page'), { ssr: false });
-const ServicesDemo = dynamic(() => import('../services-demo/page'), { ssr: false });
-const WorkProcessDemo = dynamic(() => import('../work-process-demo/page'), { ssr: false });
+const StyleShowcase = dynamic(() => import('./components/StyleShowcase'), { ssr: false });
+const DashboardDemo = dynamic(() => import('./components/DashboardDemo'), { ssr: false });
+const ServicesDemo = dynamic(() => import('./components/ServicesDemo'), { ssr: false });
+const WorkProcessDemo = dynamic(() => import('./components/WorkProcessDemo'), { ssr: false });
 
 // ============================================
 // STYLED COMPONENTS

@@ -1,12 +1,8 @@
-# Block admin and demo pages from all crawlers
+# Block admin and demos pages from all crawlers
 User-agent: *
 Disallow: /admin
 Disallow: /admin/
-Disallow: /demo
 Disallow: /demos
-Disallow: /dashboard-demo
-Disallow: /services-demo
-Disallow: /work-process-demo
 
 # Allow everything else
 Allow: /

@@ -9,9 +9,8 @@ const ADMIN_SECRET_KEY = 'owladmin2024'; // Secret key to access admin panel
 const PROTECTION_DISABLED_UNTIL = new Date('2025-12-16T00:00:00Z');
 
 export async function middleware(request: NextRequest) {
-  // Handle all demo routes - localhost only
-  const demoRoutes = ['/demos', '/demo', '/dashboard-demo', '/services-demo', '/work-process-demo'];
-  if (demoRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
+  // Handle demos route - localhost only
+  if (request.nextUrl.pathname.startsWith('/demos')) {
     if (process.env.NODE_ENV === 'production') {
       return NextResponse.rewrite(new URL('/not-found', request.url));
     }
