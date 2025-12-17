@@ -10,6 +10,7 @@ const StyleShowcase = dynamic(() => import('./components/StyleShowcase'), { ssr:
 const DashboardDemo = dynamic(() => import('./components/DashboardDemo'), { ssr: false });
 const ServicesDemo = dynamic(() => import('./components/ServicesDemo'), { ssr: false });
 const WorkProcessDemo = dynamic(() => import('./components/WorkProcessDemo'), { ssr: false });
+const ColorPalette = dynamic(() => import('./components/ColorPalette'), { ssr: false });
 
 // ============================================
 // STYLED COMPONENTS
@@ -183,9 +184,9 @@ const LoadingState = styled.div`
 // ============================================
 const tabs = [
   {
-    id: 'style-showcase',
-    name: 'Style Showcase',
-    description: 'Hero backgrounds, buttons, colors',
+    id: 'color-palette',
+    name: 'Color Palette',
+    description: 'Light & dark mode colors',
     icon: '🎨',
   },
   {
@@ -193,6 +194,12 @@ const tabs = [
     name: 'Dashboard',
     description: 'UI themes for SaaS apps',
     icon: '📊',
+  },
+  {
+    id: 'style-showcase',
+    name: 'Style Showcase',
+    description: 'Hero backgrounds, buttons',
+    icon: '✨',
   },
   {
     id: 'services',
@@ -212,14 +219,16 @@ const tabs = [
 // MAIN COMPONENT
 // ============================================
 export default function DemosPage() {
-  const [activeTab, setActiveTab] = useState('style-showcase');
+  const [activeTab, setActiveTab] = useState('color-palette');
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'style-showcase':
-        return <StyleShowcase />;
+      case 'color-palette':
+        return <ColorPalette />;
       case 'dashboard':
         return <DashboardDemo />;
+      case 'style-showcase':
+        return <StyleShowcase />;
       case 'services':
         return <ServicesDemo />;
       case 'work-process':

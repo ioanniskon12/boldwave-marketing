@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import Link from 'next/link';
@@ -100,6 +100,162 @@ const LogoutButton = styled.button`
   }
 `;
 
+const SidebarButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 140, 66, 0.15);
+    color: #ffffff;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+  }
+`;
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+`;
+
+const ModalTitle = styled.h2`
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+`;
+
+const ModalDescription = styled.p`
+  font-size: 14px;
+  color: #666666;
+  margin-bottom: 24px;
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 16px;
+`;
+
+const Label = styled.label`
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  border: 2px solid #e5e5e5;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #ff8c42;
+  }
+
+  &::placeholder {
+    color: #999999;
+  }
+
+  &:disabled {
+    background: #f5f5f5;
+    color: #666;
+  }
+`;
+
+const ModalButtons = styled.div`
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+`;
+
+const Button = styled.button<{ $primary?: boolean }>`
+  flex: 1;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+
+  ${({ $primary }) =>
+    $primary
+      ? `
+    background: #ff8c42;
+    color: #ffffff;
+    &:hover {
+      background: #e67d35;
+    }
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  `
+      : `
+    background: #f5f5f5;
+    color: #666666;
+    &:hover {
+      background: #e5e5e5;
+    }
+  `}
+`;
+
+const SuccessMessage = styled.div`
+  padding: 12px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #16a34a;
+  font-size: 14px;
+  margin-bottom: 16px;
+`;
+
+const ErrorMessage = styled.div`
+  padding: 12px 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 14px;
+  margin-bottom: 16px;
+`;
+
 const MainContent = styled.main`
   flex: 1;
   margin-left: 260px;
@@ -152,6 +308,74 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email) {
+        setUserEmail(user.email);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleChangePassword = async () => {
+    setPasswordSuccess('');
+    setPasswordError('');
+
+    if (!newPassword || !confirmPassword) {
+      setPasswordError('Please fill in all password fields');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Passwords do not match');
+      return;
+    }
+
+    setPasswordSaving(true);
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) throw error;
+
+      setPasswordSuccess('Password updated successfully!');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => {
+        setShowPasswordModal(false);
+        setPasswordSuccess('');
+      }, 1500);
+    } catch (err: any) {
+      setPasswordError(err.message || 'Failed to update password');
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
+  const closeModal = () => {
+    setShowPasswordModal(false);
+    setNewPassword('');
+    setConfirmPassword('');
+    setPasswordSuccess('');
+    setPasswordError('');
+  };
 
   // Add noindex, nofollow meta tag to prevent search engine indexing
   useEffect(() => {
@@ -209,6 +433,13 @@ export default function AdminLayout({
         </SidebarNav>
 
         <SidebarFooter>
+          <SidebarButton onClick={() => setShowPasswordModal(true)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            Change Password
+          </SidebarButton>
           <NavItem href="/" $active={false}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
@@ -229,6 +460,54 @@ export default function AdminLayout({
       </Sidebar>
 
       <MainContent>{children}</MainContent>
+
+      {showPasswordModal && (
+        <ModalOverlay onClick={closeModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ModalTitle>Change Password</ModalTitle>
+            <ModalDescription>
+              Enter your new password below. Make sure it&apos;s at least 6 characters.
+            </ModalDescription>
+
+            {passwordSuccess && <SuccessMessage>{passwordSuccess}</SuccessMessage>}
+            {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+
+            {userEmail && (
+              <FormGroup>
+                <Label>Email</Label>
+                <Input type="email" value={userEmail} disabled />
+              </FormGroup>
+            )}
+
+            <FormGroup>
+              <Label>New Password</Label>
+              <Input
+                type="password"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <Label>Confirm New Password</Label>
+              <Input
+                type="password"
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </FormGroup>
+
+            <ModalButtons>
+              <Button onClick={closeModal}>Cancel</Button>
+              <Button $primary onClick={handleChangePassword} disabled={passwordSaving}>
+                {passwordSaving ? 'Updating...' : 'Update Password'}
+              </Button>
+            </ModalButtons>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </AdminContainer>
   );
 }

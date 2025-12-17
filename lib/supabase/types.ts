@@ -25,6 +25,7 @@ export interface Database {
           meta_title: string | null;
           meta_description: string | null;
           meta_image: string | null;
+          noindex: boolean | null;
           published: boolean;
           created_at: string;
           updated_at: string;
@@ -44,6 +45,7 @@ export interface Database {
           meta_title?: string | null;
           meta_description?: string | null;
           meta_image?: string | null;
+          noindex?: boolean | null;
           published?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -63,6 +65,7 @@ export interface Database {
           meta_title?: string | null;
           meta_description?: string | null;
           meta_image?: string | null;
+          noindex?: boolean | null;
           published?: boolean;
           created_at?: string;
           updated_at?: string;

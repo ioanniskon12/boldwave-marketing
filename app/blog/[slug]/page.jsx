@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getBlogPostBySlug, blogPosts } from '@/data';
 import { BlogPostContent } from './BlogPostContent';
 import { createClient } from '@/lib/supabase/server';
+import { getGlobalNoindex } from '@/lib/supabase/seo';
 
 // Helper to get post from Supabase
 async function getSupabasePost(slug) {
@@ -33,6 +34,7 @@ async function getSupabasePost(slug) {
     meta_title: data.meta_title,
     meta_description: data.meta_description,
     meta_image: data.meta_image,
+    noindex: data.noindex || false,
   };
 }
 
@@ -47,9 +49,15 @@ export const dynamicParams = true;
 export async function generateMetadata({ params }) {
   const { slug } = await params;
 
+  // Check global noindex setting
+  const globalNoindex = await getGlobalNoindex();
+
   // Try Supabase first
   const supabasePost = await getSupabasePost(slug);
   if (supabasePost) {
+    // Determine if this post should be noindex (global or post-specific)
+    const shouldNoindex = globalNoindex || supabasePost.noindex;
+
     return {
       title: supabasePost.meta_title || supabasePost.title,
       description: supabasePost.meta_description || supabasePost.excerpt,
@@ -58,6 +66,17 @@ export async function generateMetadata({ params }) {
         description: supabasePost.meta_description || supabasePost.excerpt,
         ...(supabasePost.meta_image && { images: [{ url: supabasePost.meta_image }] }),
       },
+      // Add robots meta if noindex is enabled
+      ...(shouldNoindex && {
+        robots: {
+          index: false,
+          follow: false,
+          googleBot: {
+            index: false,
+            follow: false,
+          },
+        },
+      }),
     };
   }
 
@@ -72,6 +91,17 @@ export async function generateMetadata({ params }) {
   return {
     title: post.title,
     description: post.excerpt,
+    // Apply global noindex to static posts too
+    ...(globalNoindex && {
+      robots: {
+        index: false,
+        follow: false,
+        googleBot: {
+          index: false,
+          follow: false,
+        },
+      },
+    }),
   };
 }
 

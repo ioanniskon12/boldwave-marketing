@@ -368,6 +368,58 @@ const LoadingState = styled.div`
   color: #666666;
 `;
 
+const ToggleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  margin-top: 16px;
+`;
+
+const ToggleLabel = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+const ToggleLabelText = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+`;
+
+const ToggleLabelHint = styled.span`
+  font-size: 12px;
+  color: #666666;
+`;
+
+const ToggleSwitch = styled.button<{ $active: boolean }>`
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  background: ${({ $active }) => ($active ? '#ff8c42' : '#d1d5db')};
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: ${({ $active }) => ($active ? '22px' : '2px')};
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: left 0.2s ease;
+  }
+`;
+
 const StatusBadge = styled.span<{ $published: boolean }>`
   display: inline-flex;
   align-items: center;
@@ -410,6 +462,7 @@ export default function EditBlogPost() {
     author_name: '',
     meta_title: '',
     meta_description: '',
+    noindex: false,
     published: false,
   });
 
@@ -441,6 +494,7 @@ export default function EditBlogPost() {
         author_name: post.author_name,
         meta_title: post.meta_title || '',
         meta_description: post.meta_description || '',
+        noindex: post.noindex || false,
         published: post.published,
       });
       setLoading(false);
@@ -523,6 +577,7 @@ export default function EditBlogPost() {
         author_name: formData.author_name,
         meta_title: formData.meta_title || null,
         meta_description: formData.meta_description || null,
+        noindex: formData.noindex,
         read_time: calculateReadTime(formData.content),
         updated_at: new Date().toISOString(),
         published: publish !== undefined ? publish : formData.published,
@@ -746,6 +801,16 @@ export default function EditBlogPost() {
                 style={{ minHeight: '80px' }}
               />
             </FormGroup>
+            <ToggleContainer style={{ background: formData.noindex ? '#fef2f2' : '#f9f9f9' }}>
+              <ToggleLabel>
+                <ToggleLabelText>Hide from Search Engines</ToggleLabelText>
+                <ToggleLabelHint>Add noindex, nofollow to this post</ToggleLabelHint>
+              </ToggleLabel>
+              <ToggleSwitch
+                $active={formData.noindex}
+                onClick={() => setFormData((prev) => ({ ...prev, noindex: !prev.noindex }))}
+              />
+            </ToggleContainer>
           </Card>
         </Sidebar>
       </EditorContainer>

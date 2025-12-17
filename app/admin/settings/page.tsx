@@ -296,6 +296,71 @@ const RemoveImageButton = styled.button`
   }
 `;
 
+const ToggleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  margin-top: 8px;
+`;
+
+const ToggleLabel = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const ToggleLabelText = styled.span`
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+`;
+
+const ToggleLabelHint = styled.span`
+  font-size: 12px;
+  color: #666666;
+`;
+
+const ToggleSwitch = styled.button<{ $active: boolean }>`
+  width: 48px;
+  height: 26px;
+  border-radius: 13px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  background: ${({ $active }) => ($active ? '#ff8c42' : '#d1d5db')};
+  flex-shrink: 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: ${({ $active }) => ($active ? '25px' : '3px')};
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: left 0.2s ease;
+  }
+`;
+
+const WarningBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #fef3c7;
+  color: #d97706;
+  margin-left: 8px;
+`;
+
 const SaveButton = styled.button`
   display: inline-flex;
   align-items: center;
@@ -403,6 +468,7 @@ interface PageMeta {
   title: string;
   description: string;
   image: string;
+  noindex?: boolean;
 }
 
 interface AllPagesMeta {
@@ -413,12 +479,26 @@ interface GlobalSettings {
   site_name: string;
   default_image: string;
   twitter_handle: string;
+  global_noindex?: boolean;
+}
+
+interface IntegrationSettings {
+  google_search_console?: string;
+  google_analytics?: string;
+  facebook_pixel?: string;
 }
 
 const defaultGlobalSettings: GlobalSettings = {
   site_name: 'Owl Marketing Hub',
   default_image: '',
   twitter_handle: '@owlmarketinghub',
+  global_noindex: false,
+};
+
+const defaultIntegrationSettings: IntegrationSettings = {
+  google_search_console: '',
+  google_analytics: '',
+  facebook_pixel: '',
 };
 
 const SectionHeader = styled.div<{ $clickable?: boolean }>`
@@ -559,7 +639,7 @@ const getIcon = (type: string) => {
 };
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<'pages' | 'global'>('pages');
+  const [activeTab, setActiveTab] = useState<'pages' | 'global' | 'integrations'>('pages');
   const [expandedPage, setExpandedPage] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
     main: true,
@@ -568,6 +648,7 @@ export default function SettingsPage() {
   });
   const [pagesMeta, setPagesMeta] = useState<AllPagesMeta>({});
   const [globalSettings, setGlobalSettings] = useState<GlobalSettings>(defaultGlobalSettings);
+  const [integrationSettings, setIntegrationSettings] = useState<IntegrationSettings>(defaultIntegrationSettings);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [success, setSuccess] = useState('');
@@ -607,6 +688,18 @@ export default function SettingsPage() {
         if (globalData) {
           const settingsData = globalData as { value: GlobalSettings };
           setGlobalSettings(settingsData.value);
+        }
+
+        // Fetch integration settings
+        const { data: integrationData } = await supabase
+          .from('site_settings')
+          .select('*')
+          .eq('key', 'integrations')
+          .single();
+
+        if (integrationData) {
+          const settingsData = integrationData as { value: IntegrationSettings };
+          setIntegrationSettings(settingsData.value);
         }
       } catch (err) {
         // Use defaults
@@ -742,6 +835,38 @@ export default function SettingsPage() {
     }
   };
 
+  const handleIntegrationChange = (field: keyof IntegrationSettings, value: string) => {
+    setIntegrationSettings((prev) => ({ ...prev, [field]: value }));
+    setSuccess('');
+    setError('');
+  };
+
+  const saveIntegrationSettings = async () => {
+    setSaving('integrations');
+    setSuccess('');
+    setError('');
+
+    try {
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({
+          key: 'integrations',
+          value: integrationSettings,
+          updated_at: new Date().toISOString(),
+        } as never, {
+          onConflict: 'key'
+        });
+
+      if (error) throw error;
+
+      setSuccess('Integration settings saved!');
+    } catch (err: any) {
+      setError(err.message || 'Failed to save settings');
+    } finally {
+      setSaving(null);
+    }
+  };
+
   const isPageConfigured = (path: string): boolean => {
     const meta = pagesMeta[path];
     return !!(meta && (meta.title || meta.description || meta.image));
@@ -754,8 +879,8 @@ export default function SettingsPage() {
   return (
     <>
       <PageHeader>
-        <Title>SEO Settings</Title>
-        <Subtitle>Manage meta titles, descriptions, and images for all pages.</Subtitle>
+        <Title>Settings</Title>
+        <Subtitle>Manage SEO, integrations, and site configuration.</Subtitle>
       </PageHeader>
 
       {success && <SuccessMessage>{success}</SuccessMessage>}
@@ -763,10 +888,13 @@ export default function SettingsPage() {
 
       <TabsContainer>
         <Tab $active={activeTab === 'pages'} onClick={() => setActiveTab('pages')}>
-          Page Settings
+          Page SEO
         </Tab>
         <Tab $active={activeTab === 'global'} onClick={() => setActiveTab('global')}>
-          Global Settings
+          Global SEO
+        </Tab>
+        <Tab $active={activeTab === 'integrations'} onClick={() => setActiveTab('integrations')}>
+          Integrations
         </Tab>
       </TabsContainer>
 
@@ -878,6 +1006,20 @@ export default function SettingsPage() {
                     </ImageUploadArea>
                   </FormGroup>
                 </FormGrid>
+
+                <ToggleContainer>
+                  <ToggleLabel>
+                    <ToggleLabelText>
+                      Hide from Search Engines
+                      {pagesMeta[page.path]?.noindex && <WarningBadge>Hidden</WarningBadge>}
+                    </ToggleLabelText>
+                    <ToggleLabelHint>Enable to add noindex, nofollow meta tag to this page</ToggleLabelHint>
+                  </ToggleLabel>
+                  <ToggleSwitch
+                    $active={pagesMeta[page.path]?.noindex || false}
+                    onClick={() => handlePageMetaChange(page.path, 'noindex', !pagesMeta[page.path]?.noindex as any)}
+                  />
+                </ToggleContainer>
 
                 <SaveButton onClick={() => savePageMeta(page.path)} disabled={saving === page.path}>
                   {saving === page.path ? 'Saving...' : 'Save Changes'}
@@ -993,6 +1135,20 @@ export default function SettingsPage() {
                   </FormGroup>
                 </FormGrid>
 
+                <ToggleContainer>
+                  <ToggleLabel>
+                    <ToggleLabelText>
+                      Hide from Search Engines
+                      {pagesMeta[page.path]?.noindex && <WarningBadge>Hidden</WarningBadge>}
+                    </ToggleLabelText>
+                    <ToggleLabelHint>Enable to add noindex, nofollow meta tag to this page</ToggleLabelHint>
+                  </ToggleLabel>
+                  <ToggleSwitch
+                    $active={pagesMeta[page.path]?.noindex || false}
+                    onClick={() => handlePageMetaChange(page.path, 'noindex', !pagesMeta[page.path]?.noindex as any)}
+                  />
+                </ToggleContainer>
+
                 <SaveButton onClick={() => savePageMeta(page.path)} disabled={saving === page.path}>
                   {saving === page.path ? 'Saving...' : 'Save Changes'}
                 </SaveButton>
@@ -1107,6 +1263,20 @@ export default function SettingsPage() {
                   </FormGroup>
                 </FormGrid>
 
+                <ToggleContainer>
+                  <ToggleLabel>
+                    <ToggleLabelText>
+                      Hide from Search Engines
+                      {pagesMeta[page.path]?.noindex && <WarningBadge>Hidden</WarningBadge>}
+                    </ToggleLabelText>
+                    <ToggleLabelHint>Enable to add noindex, nofollow meta tag to this page</ToggleLabelHint>
+                  </ToggleLabel>
+                  <ToggleSwitch
+                    $active={pagesMeta[page.path]?.noindex || false}
+                    onClick={() => handlePageMetaChange(page.path, 'noindex', !pagesMeta[page.path]?.noindex as any)}
+                  />
+                </ToggleContainer>
+
                 <SaveButton onClick={() => savePageMeta(page.path)} disabled={saving === page.path}>
                   {saving === page.path ? 'Saving...' : 'Save Changes'}
                 </SaveButton>
@@ -1182,11 +1352,85 @@ export default function SettingsPage() {
             </FormGroup>
           </FormGrid>
 
+          <ToggleContainer style={{ marginTop: '24px', background: globalSettings.global_noindex ? '#fef2f2' : '#f9f9f9' }}>
+            <ToggleLabel>
+              <ToggleLabelText>
+                Hide Entire Website from Search Engines
+                {globalSettings.global_noindex && <WarningBadge>All Pages Hidden</WarningBadge>}
+              </ToggleLabelText>
+              <ToggleLabelHint>Enable to add noindex, nofollow to ALL pages (overrides individual settings)</ToggleLabelHint>
+            </ToggleLabel>
+            <ToggleSwitch
+              $active={globalSettings.global_noindex || false}
+              onClick={() => handleGlobalChange('global_noindex', !globalSettings.global_noindex as any)}
+            />
+          </ToggleContainer>
+
           <SaveButton onClick={saveGlobalSettings} disabled={saving === 'global'}>
             {saving === 'global' ? 'Saving...' : 'Save Global Settings'}
           </SaveButton>
         </GlobalSettingsCard>
       )}
-    </>
+
+      {activeTab === 'integrations' && (
+        <GlobalSettingsCard>
+          <CardTitle>Google Search Console</CardTitle>
+          <CardDescription>
+            Add your Google Search Console verification code to verify ownership of your website.
+          </CardDescription>
+
+          <FormGrid>
+            <FormGroup $fullWidth>
+              <Label>Verification Code</Label>
+              <Input
+                placeholder="e.g., abc123xyz..."
+                value={integrationSettings.google_search_console || ''}
+                onChange={(e) => handleIntegrationChange('google_search_console', e.target.value)}
+              />
+              <CharCount style={{ textAlign: 'left', marginTop: '8px', color: '#666' }}>
+                Enter only the content value from: &lt;meta name=&quot;google-site-verification&quot; content=&quot;YOUR_CODE&quot; /&gt;
+              </CharCount>
+            </FormGroup>
+          </FormGrid>
+
+          <div style={{ borderTop: '1px solid #f0f0f0', margin: '24px 0', paddingTop: '24px' }}>
+            <CardTitle style={{ marginBottom: '8px' }}>Google Analytics</CardTitle>
+            <CardDescription style={{ marginBottom: '24px', paddingBottom: '0', borderBottom: 'none' }}>
+              Add your Google Analytics 4 Measurement ID to track website visitors.
+            </CardDescription>
+
+            <FormGroup $fullWidth>
+              <Label>Measurement ID</Label>
+              <Input
+                placeholder="e.g., G-XXXXXXXXXX"
+                value={integrationSettings.google_analytics || ''}
+                onChange={(e) => handleIntegrationChange('google_analytics', e.target.value)}
+              />
+            </FormGroup>
+          </div>
+
+          <div style={{ borderTop: '1px solid #f0f0f0', margin: '24px 0', paddingTop: '24px' }}>
+            <CardTitle style={{ marginBottom: '8px' }}>Facebook Pixel</CardTitle>
+            <CardDescription style={{ marginBottom: '24px', paddingBottom: '0', borderBottom: 'none' }}>
+              Add your Facebook Pixel ID for conversion tracking and audience building.
+            </CardDescription>
+
+            <FormGroup $fullWidth>
+              <Label>Pixel ID</Label>
+              <Input
+                placeholder="e.g., 123456789012345"
+                value={integrationSettings.facebook_pixel || ''}
+                onChange={(e) => handleIntegrationChange('facebook_pixel', e.target.value)}
+              />
+            </FormGroup>
+          </div>
+
+          <SaveButton onClick={saveIntegrationSettings} disabled={saving === 'integrations'}>
+            {saving === 'integrations' ? 'Saving...' : 'Save Integration Settings'}
+          </SaveButton>
+        </GlobalSettingsCard>
+      )}
+
+      </>
   );
 }
