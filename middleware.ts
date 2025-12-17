@@ -9,6 +9,36 @@ const ADMIN_SECRET_KEY = 'owladmin2024'; // Secret key to access admin panel
 const PROTECTION_DISABLED_UNTIL = new Date('2025-12-16T00:00:00Z');
 
 export async function middleware(request: NextRequest) {
+  // Handle demos route - requires secret key (local review only)
+  if (request.nextUrl.pathname.startsWith('/demos')) {
+    const adminKey = request.nextUrl.searchParams.get('key');
+    const adminCookie = request.cookies.get('admin-access')?.value;
+
+    // If secret key is provided in URL, set cookie and continue
+    if (adminKey === ADMIN_SECRET_KEY) {
+      const response = NextResponse.next({ request });
+      response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+      response.cookies.set('admin-access', ADMIN_SECRET_KEY, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 24 * 30,
+        path: '/',
+      });
+      return response;
+    }
+
+    // If has valid cookie, allow access
+    if (adminCookie === ADMIN_SECRET_KEY) {
+      const response = NextResponse.next({ request });
+      response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+      return response;
+    }
+
+    // No valid access, return 404
+    return NextResponse.rewrite(new URL('/not-found', request.url));
+  }
+
   // Handle admin routes with Supabase auth
   if (request.nextUrl.pathname.startsWith('/admin')) {
     // Check for admin secret key - must have ?key=owladmin2024 or admin-access cookie
