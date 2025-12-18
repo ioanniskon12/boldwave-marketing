@@ -512,7 +512,7 @@ export default function AnalyticsPage() {
                     paddingAngle={2}
                     dataKey="value"
                     label={({ name, percent }) =>
-                      `${name} ${(percent * 100).toFixed(0)}%`
+                      `${name} ${((percent || 0) * 100).toFixed(0)}%`
                     }
                   >
                     {devicePieData.map((entry, index) => (
@@ -544,7 +544,7 @@ export default function AnalyticsPage() {
                     paddingAngle={2}
                     dataKey="value"
                     label={({ name, percent }) =>
-                      `${name} ${(percent * 100).toFixed(0)}%`
+                      `${name} ${((percent || 0) * 100).toFixed(0)}%`
                     }
                   >
                     {countryPieData.map((entry, index) => (
