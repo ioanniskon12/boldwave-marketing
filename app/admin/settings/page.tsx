@@ -639,7 +639,7 @@ const getIcon = (type: string) => {
 };
 
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<'pages' | 'global' | 'integrations'>('pages');
+  const [activeTab, setActiveTab] = useState<'pages' | 'global' | 'integrations' | 'tags'>('pages');
   const [expandedPage, setExpandedPage] = useState<string | null>(null);
   const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({
     main: true,
@@ -649,6 +649,8 @@ export default function SettingsPage() {
   const [pagesMeta, setPagesMeta] = useState<AllPagesMeta>({});
   const [globalSettings, setGlobalSettings] = useState<GlobalSettings>(defaultGlobalSettings);
   const [integrationSettings, setIntegrationSettings] = useState<IntegrationSettings>(defaultIntegrationSettings);
+  const [blogTags, setBlogTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [success, setSuccess] = useState('');
@@ -700,6 +702,18 @@ export default function SettingsPage() {
         if (integrationData) {
           const settingsData = integrationData as { value: IntegrationSettings };
           setIntegrationSettings(settingsData.value);
+        }
+
+        // Fetch blog tags
+        const { data: tagsData } = await supabase
+          .from('site_settings')
+          .select('*')
+          .eq('key', 'blog_tags')
+          .single();
+
+        if (tagsData) {
+          const settingsData = tagsData as { value: string[] };
+          setBlogTags(settingsData.value || []);
         }
       } catch (err) {
         // Use defaults
@@ -867,6 +881,69 @@ export default function SettingsPage() {
     }
   };
 
+  const saveBlogTags = async (tags: string[]) => {
+    try {
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({
+          key: 'blog_tags',
+          value: tags,
+          updated_at: new Date().toISOString(),
+        } as never, {
+          onConflict: 'key'
+        });
+
+      if (error) throw error;
+      return true;
+    } catch (err: any) {
+      setError(err.message || 'Failed to save tags');
+      return false;
+    }
+  };
+
+  const handleAddTag = async () => {
+    const trimmedTag = newTag.trim();
+    if (!trimmedTag) return;
+
+    if (blogTags.includes(trimmedTag)) {
+      setError('This tag already exists');
+      return;
+    }
+
+    setSuccess('');
+    setError('');
+    setSaving('tags');
+
+    const updatedTags = [...blogTags, trimmedTag].sort();
+    const saved = await saveBlogTags(updatedTags);
+
+    if (saved) {
+      setBlogTags(updatedTags);
+      setNewTag('');
+      setSuccess('Tag added successfully!');
+    }
+
+    setSaving(null);
+  };
+
+  const handleDeleteTag = async (tagToDelete: string) => {
+    if (!confirm(`Are you sure you want to delete the tag "${tagToDelete}"?`)) return;
+
+    setSuccess('');
+    setError('');
+    setSaving('tags');
+
+    const updatedTags = blogTags.filter((tag) => tag !== tagToDelete);
+    const saved = await saveBlogTags(updatedTags);
+
+    if (saved) {
+      setBlogTags(updatedTags);
+      setSuccess('Tag deleted successfully!');
+    }
+
+    setSaving(null);
+  };
+
   const isPageConfigured = (path: string): boolean => {
     const meta = pagesMeta[path];
     return !!(meta && (meta.title || meta.description || meta.image));
@@ -895,6 +972,9 @@ export default function SettingsPage() {
         </Tab>
         <Tab $active={activeTab === 'integrations'} onClick={() => setActiveTab('integrations')}>
           Integrations
+        </Tab>
+        <Tab $active={activeTab === 'tags'} onClick={() => setActiveTab('tags')}>
+          Blog Tags
         </Tab>
       </TabsContainer>
 
@@ -1428,6 +1508,102 @@ export default function SettingsPage() {
           <SaveButton onClick={saveIntegrationSettings} disabled={saving === 'integrations'}>
             {saving === 'integrations' ? 'Saving...' : 'Save Integration Settings'}
           </SaveButton>
+        </GlobalSettingsCard>
+      )}
+
+      {activeTab === 'tags' && (
+        <GlobalSettingsCard>
+          <CardTitle>Blog Tags</CardTitle>
+          <CardDescription>
+            Manage tags that can be assigned to blog posts. Add new tags or remove existing ones.
+          </CardDescription>
+
+          <FormGrid>
+            <FormGroup $fullWidth>
+              <Label>Add New Tag</Label>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <Input
+                  placeholder="Enter tag name..."
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTag();
+                    }
+                  }}
+                  style={{ flex: 1 }}
+                />
+                <SaveButton
+                  onClick={handleAddTag}
+                  disabled={saving === 'tags' || !newTag.trim()}
+                  style={{ minWidth: '120px' }}
+                >
+                  {saving === 'tags' ? 'Adding...' : 'Add Tag'}
+                </SaveButton>
+              </div>
+            </FormGroup>
+          </FormGrid>
+
+          <div style={{ marginTop: '32px' }}>
+            <Label style={{ marginBottom: '16px', display: 'block' }}>
+              Existing Tags ({blogTags.length})
+            </Label>
+            {blogTags.length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: '#999', background: '#f9fafb', borderRadius: '8px' }}>
+                No tags yet. Add your first tag above.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                {blogTags.map((tag) => (
+                  <div
+                    key={tag}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 12px',
+                      background: '#f5f5f5',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                    }}
+                  >
+                    <span>{tag}</span>
+                    <button
+                      onClick={() => handleDeleteTag(tag)}
+                      disabled={saving === 'tags'}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: '4px',
+                        cursor: 'pointer',
+                        color: '#999',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '4px',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = '#fee2e2';
+                        e.currentTarget.style.color = '#dc2626';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'none';
+                        e.currentTarget.style.color = '#999';
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </GlobalSettingsCard>
       )}
 
