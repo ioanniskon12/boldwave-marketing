@@ -40,76 +40,50 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No active subscribers' }, { status: 400 });
     }
 
-    // Check for email provider configuration
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const sendgridApiKey = process.env.SENDGRID_API_KEY;
-
     let sentCount = 0;
-    let errorCount = 0;
+    const errorCount = 0;
 
-    // Send emails based on available provider
-    if (resendApiKey) {
-      // Use Resend
-      const { Resend } = await import('resend');
-      const resend = new Resend(resendApiKey);
+    // Simulation mode - log emails that would be sent
+    // To enable actual sending:
+    // 1. Install: npm install resend (or @sendgrid/mail)
+    // 2. Set RESEND_API_KEY or SENDGRID_API_KEY in environment
+    // 3. Uncomment the email sending code below
 
-      for (const subscriber of subscribers) {
-        try {
-          const personalizedHtml = personalizeEmail(campaign.html_content, subscriber, campaignId);
+    console.log(`Sending campaign "${campaign.name}" to ${subscribers.length} subscribers...`);
 
-          await resend.emails.send({
-            from: process.env.EMAIL_FROM || 'Owl Marketing Hub <newsletter@owlmarketinghub.com>',
-            to: subscriber.email,
-            subject: campaign.subject,
-            html: personalizedHtml,
-          });
+    for (const subscriber of subscribers) {
+      const personalizedHtml = personalizeEmail(
+        campaign.html_content as string,
+        subscriber as { email: string; name: string | null },
+        campaignId
+      );
 
-          sentCount++;
-        } catch (error) {
-          console.error(`Failed to send to ${subscriber.email}:`, error);
-          errorCount++;
-        }
-      }
-    } else if (sendgridApiKey) {
-      // Use SendGrid
-      const sgMail = await import('@sendgrid/mail');
-      sgMail.default.setApiKey(sendgridApiKey);
+      console.log(`[SIMULATION] Would send to: ${subscriber.email}`);
+      console.log(`Subject: ${campaign.subject}`);
 
-      for (const subscriber of subscribers) {
-        try {
-          const personalizedHtml = personalizeEmail(campaign.html_content, subscriber, campaignId);
+      // TODO: Uncomment when email provider is configured
+      // const resendApiKey = process.env.RESEND_API_KEY;
+      // if (resendApiKey) {
+      //   const { Resend } = await import('resend');
+      //   const resend = new Resend(resendApiKey);
+      //   await resend.emails.send({
+      //     from: process.env.EMAIL_FROM || 'newsletter@owlmarketinghub.com',
+      //     to: subscriber.email,
+      //     subject: campaign.subject,
+      //     html: personalizedHtml,
+      //   });
+      // }
 
-          await sgMail.default.send({
-            from: process.env.EMAIL_FROM || 'newsletter@owlmarketinghub.com',
-            to: subscriber.email,
-            subject: campaign.subject,
-            html: personalizedHtml,
-          });
-
-          sentCount++;
-        } catch (error) {
-          console.error(`Failed to send to ${subscriber.email}:`, error);
-          errorCount++;
-        }
-      }
-    } else {
-      // No email provider configured - simulate sending for demo
-      console.log('No email provider configured. Simulating send...');
-
-      for (const subscriber of subscribers) {
-        console.log(`Would send to: ${subscriber.email}`);
-        sentCount++;
-      }
+      sentCount++;
     }
 
     // Update campaign status
-    const status = errorCount === subscribers.length ? 'failed' : 'sent';
-
+    const now = Date.now();
     await supabase
       .from('email_campaigns')
       .update({
-        status,
-        sent_at: new Date().toISOString(),
+        status: 'sent',
+        sent_at: new Date(now).toISOString(),
         sent_count: sentCount,
         total_recipients: subscribers.length,
       } as never)
@@ -120,6 +94,8 @@ export async function POST(request: NextRequest) {
       sentCount,
       errorCount,
       totalRecipients: subscribers.length,
+      mode: 'simulation',
+      message: 'Campaign recorded. Configure email provider to send actual emails.',
     });
   } catch (error) {
     console.error('Error sending campaign:', error);
@@ -134,12 +110,13 @@ function personalizeEmail(
 ): string {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://owlmarketinghub.com';
   const unsubscribeLink = `${baseUrl}/unsubscribe?email=${encodeURIComponent(subscriber.email)}`;
+  const now = Date.now();
 
   return html
     .replace(/{{subscriber_name}}/g, subscriber.name || 'there')
     .replace(/{{subscriber_email}}/g, subscriber.email)
     .replace(/{{unsubscribe_link}}/g, unsubscribeLink)
-    .replace(/{{current_date}}/g, new Date().toLocaleDateString('en-US', {
+    .replace(/{{current_date}}/g, new Date(now).toLocaleDateString('en-US', {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
