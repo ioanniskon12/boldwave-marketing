@@ -356,9 +356,10 @@ export default function NewsletterPage() {
   };
 
   const handleStatusChange = async (id: string, status: string) => {
+    const now = Date.now();
     const updates: Record<string, unknown> = { status };
     if (status === 'unsubscribed') {
-      updates.unsubscribed_at = new Date().toISOString();
+      updates.unsubscribed_at = new Date(now).toISOString();
     }
 
     const { error } = await supabase
