@@ -197,7 +197,7 @@ export default function NewTeamMemberPage() {
       instagram: form.instagram || null,
       image_url: form.image_url || null,
       published: form.published,
-    });
+    } as never);
 
     if (!error) {
       router.push('/admin/team');

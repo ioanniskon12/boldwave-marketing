@@ -335,7 +335,7 @@ export default function NewsletterPage() {
       name: newName || null,
       source: newSource,
       status: 'active',
-    });
+    } as never);
 
     if (!error) {
       setShowModal(false);

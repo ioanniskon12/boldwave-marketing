@@ -415,9 +415,9 @@ export default function RedirectsPage() {
         setRedirects(redirects.map(r => r.id === editingId ? { ...r, ...data } : r));
       }
     } else {
-      const { data: newData, error } = await supabase.from('redirects').insert(data).select().single();
+      const { data: newData, error } = await supabase.from('redirects').insert(data as never).select().single();
       if (!error && newData) {
-        setRedirects([newData, ...redirects]);
+        setRedirects([newData as typeof redirects[0], ...redirects]);
       }
     }
 

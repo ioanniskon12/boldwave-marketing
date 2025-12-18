@@ -263,6 +263,7 @@ const LoadingState = styled.div`
 export default function ContactDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const contactId = params.id as string;
   const [contact, setContact] = useState<ContactSubmission | null>(null);
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(true);
@@ -274,7 +275,7 @@ export default function ContactDetailPage() {
       const { data, error } = await supabase
         .from('contact_submissions')
         .select('*')
-        .eq('id', params.id)
+        .eq('id', contactId)
         .single();
 
       if (!error && data) {
@@ -286,7 +287,7 @@ export default function ContactDetailPage() {
           await supabase
             .from('contact_submissions')
             .update({ status: 'read', read_at: new Date().toISOString() } as never)
-            .eq('id', params.id);
+            .eq('id', contactId);
           setContact({ ...data, status: 'read' });
         }
       }
@@ -294,7 +295,7 @@ export default function ContactDetailPage() {
     };
 
     fetchContact();
-  }, [params.id]);
+  }, [contactId]);
 
   const handleStatusChange = async (newStatus: string) => {
     if (!contact) return;

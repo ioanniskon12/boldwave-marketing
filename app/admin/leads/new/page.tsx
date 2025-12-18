@@ -168,7 +168,7 @@ export default function NewLeadPage() {
       priority: form.priority,
       estimated_value: form.estimated_value ? parseFloat(form.estimated_value) : null,
       notes: form.notes || null,
-    });
+    } as never);
 
     if (!error) {
       router.push('/admin/leads');

@@ -399,9 +399,9 @@ export default function FAQsPage() {
         setFaqs(faqs.map(f => f.id === editingId ? { ...f, ...data } : f));
       }
     } else {
-      const { data: newData, error } = await supabase.from('faqs').insert(data).select().single();
+      const { data: newData, error } = await supabase.from('faqs').insert(data as never).select().single();
       if (!error && newData) {
-        setFaqs([...faqs, newData]);
+        setFaqs([...faqs, newData as typeof faqs[0]]);
       }
     }
 
