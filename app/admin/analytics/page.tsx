@@ -512,7 +512,7 @@ export default function AnalyticsPage() {
         </StatCard>
       </StatsGrid>
 
-      {!loading && data.length > 0 && (
+      {!loading && (
         <ChartsGrid>
           <ChartCard>
             <ChartTitle>Clicks by Device</ChartTitle>
@@ -542,7 +542,7 @@ export default function AnalyticsPage() {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <ChartEmptyState>No device data available</ChartEmptyState>
+              <ChartEmptyState>No device data available yet</ChartEmptyState>
             )}
           </ChartCard>
 
@@ -574,43 +574,47 @@ export default function AnalyticsPage() {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <ChartEmptyState>No country data available</ChartEmptyState>
+              <ChartEmptyState>No country data available yet</ChartEmptyState>
             )}
           </ChartCard>
         </ChartsGrid>
       )}
 
-      {!loading && barChartData.length > 0 && (
+      {!loading && (
         <ChartCard style={{ marginBottom: '32px' }}>
           <ChartTitle>Top 5 Pages Performance</ChartTitle>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={barChartData} layout="vertical" margin={{ left: 20, right: 30 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis type="number" tick={{ fontSize: 12 }} />
-              <YAxis
-                type="category"
-                dataKey="name"
-                width={150}
-                tick={{ fontSize: 12 }}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: '#fff',
-                  border: '1px solid #eee',
-                  borderRadius: '8px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                }}
-              />
-              <Legend />
-              <Bar dataKey="clicks" name="Clicks" fill="#ff8c42" radius={[0, 4, 4, 0]} />
-              <Bar
-                dataKey="impressions"
-                name="Impressions"
-                fill="#1a1a2e"
-                radius={[0, 4, 4, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          {barChartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={barChartData} layout="vertical" margin={{ left: 20, right: 30 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis type="number" tick={{ fontSize: 12 }} />
+                <YAxis
+                  type="category"
+                  dataKey="name"
+                  width={150}
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: '#fff',
+                    border: '1px solid #eee',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="clicks" name="Clicks" fill="#ff8c42" radius={[0, 4, 4, 0]} />
+                <Bar
+                  dataKey="impressions"
+                  name="Impressions"
+                  fill="#1a1a2e"
+                  radius={[0, 4, 4, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <ChartEmptyState>No page data available yet</ChartEmptyState>
+          )}
         </ChartCard>
       )}
 
