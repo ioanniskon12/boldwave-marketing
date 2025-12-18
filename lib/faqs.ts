@@ -24,7 +24,7 @@ export async function getFaqsByCategory(category: string): Promise<FAQItem[]> {
     return [];
   }
 
-  return data || [];
+  return (data as FAQItem[]) || [];
 }
 
 // Fetch all published FAQs from Supabase grouped by category
@@ -47,8 +47,9 @@ export async function getAllSupabaseFaqs(): Promise<{ category: string; items: F
   }
 
   // Group by category
+  const faqs = data as FAQItem[];
   const grouped: { [key: string]: FAQItem[] } = {};
-  data.forEach((faq) => {
+  faqs.forEach((faq) => {
     const cat = faq.category || 'general';
     if (!grouped[cat]) {
       grouped[cat] = [];
