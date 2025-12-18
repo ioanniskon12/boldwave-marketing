@@ -237,6 +237,21 @@ const SourceBadge = styled.span<{ $source: 'supabase' | 'static' }>`
   color: ${({ $source }) => ($source === 'supabase' ? '#1d4ed8' : '#b45309')};
 `;
 
+const ClicksCount = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    color: #ff8c42;
+  }
+`;
+
 const FiltersSection = styled.div`
   margin-bottom: 24px;
 `;
@@ -310,6 +325,12 @@ interface CombinedPost {
   date: string;
   published: boolean;
   source: 'supabase' | 'static';
+  clicks?: number;
+}
+
+interface AnalyticsData {
+  key: string;
+  clicks: number;
 }
 
 export default function BlogListPage() {
@@ -318,6 +339,7 @@ export default function BlogListPage() {
   const [filter, setFilter] = useState<Filter>('all');
   const [sourceFilter, setSourceFilter] = useState<SourceType>('all');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData[]>([]);
   const supabase = createClient();
 
   const fetchPosts = async () => {
@@ -333,9 +355,31 @@ export default function BlogListPage() {
     setLoading(false);
   };
 
+  const fetchAnalytics = async () => {
+    try {
+      const response = await fetch('/api/search-console?dimension=page');
+      const result = await response.json();
+      if (!result.error && result.data) {
+        setAnalyticsData(result.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch analytics:', err);
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
+    fetchAnalytics();
   }, []);
+
+  // Get clicks for a specific blog post slug
+  const getClicksForPost = (slug: string): number => {
+    const blogUrl = `/blog/${slug}`;
+    const match = analyticsData.find((item) =>
+      item.key.includes(blogUrl) || item.key.endsWith(blogUrl)
+    );
+    return match?.clicks || 0;
+  };
 
   // Convert static posts to combined format
   const staticPostsCombined: CombinedPost[] = staticBlogPosts.map((post) => ({
@@ -494,9 +538,10 @@ export default function BlogListPage() {
       </FiltersSection>
 
       <PostsTable>
-        <TableHeader style={{ gridTemplateColumns: '1fr 100px 150px 120px 100px 100px' }}>
+        <TableHeader style={{ gridTemplateColumns: '1fr 100px 80px 150px 120px 100px 100px' }}>
           <span>Title</span>
           <span>Source</span>
+          <span>Clicks</span>
           <span>Tags</span>
           <span>Date</span>
           <span>Status</span>
@@ -519,7 +564,7 @@ export default function BlogListPage() {
           </EmptyState>
         ) : (
           allPosts.map((post) => (
-            <TableRow key={post.id} style={{ gridTemplateColumns: '1fr 100px 150px 120px 100px 100px' }}>
+            <TableRow key={post.id} style={{ gridTemplateColumns: '1fr 100px 80px 150px 120px 100px 100px' }}>
               <PostInfo>
                 <PostTitle>{post.title}</PostTitle>
                 <PostSlug>/blog/{post.slug}</PostSlug>
@@ -529,6 +574,12 @@ export default function BlogListPage() {
                   {post.source === 'supabase' ? 'DB' : 'Static'}
                 </SourceBadge>
               </div>
+              <ClicksCount>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                </svg>
+                {getClicksForPost(post.slug)}
+              </ClicksCount>
               <Tags>
                 {post.tags.slice(0, 2).map((tag) => (
                   <Tag key={tag}>{tag}</Tag>
