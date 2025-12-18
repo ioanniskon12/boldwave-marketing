@@ -159,7 +159,7 @@ const Source = styled.div`
   color: #666666;
 `;
 
-const Date = styled.div`
+const DateText = styled.div`
   font-size: 14px;
   color: #666666;
 `;
@@ -491,7 +491,7 @@ export default function NewsletterPage() {
                 {sub.name && <Name>{sub.name}</Name>}
               </div>
               <Source>{sub.source}</Source>
-              <Date>{formatDate(sub.subscribed_at)}</Date>
+              <DateText>{formatDate(sub.subscribed_at)}</DateText>
               <StatusBadge $status={sub.status}>{sub.status}</StatusBadge>
               <Actions>
                 {sub.status === 'active' && (
