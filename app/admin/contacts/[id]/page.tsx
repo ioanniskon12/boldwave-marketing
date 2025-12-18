@@ -276,7 +276,7 @@ export default function ContactDetailPage() {
         .from('contact_submissions')
         .select('*')
         .eq('id', contactId)
-        .single();
+        .single() as { data: ContactSubmission | null; error: unknown };
 
       if (!error && data) {
         setContact(data);
