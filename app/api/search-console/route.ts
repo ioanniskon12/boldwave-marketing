@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate totals
     const totals = rows.reduce(
-      (acc, row) => ({
+      (acc: { clicks: number; impressions: number }, row) => ({
         clicks: acc.clicks + (row.clicks || 0),
         impressions: acc.impressions + (row.impressions || 0),
       }),
