@@ -445,7 +445,7 @@ export default function RedirectsPage() {
 
     const { error } = await supabase
       .from('redirects')
-      .update({ active: newActive })
+      .update({ active: newActive } as never)
       .eq('id', id);
 
     if (error) {
