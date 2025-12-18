@@ -220,7 +220,7 @@ export default function SitemapPage() {
     const { data: posts } = await supabase
       .from('blog_posts')
       .select('slug, updated_at')
-      .eq('published', true);
+      .eq('published', true) as { data: { slug: string; updated_at: string }[] | null };
 
     if (posts) {
       posts.forEach((post) => {
@@ -237,7 +237,7 @@ export default function SitemapPage() {
     const { data: portfolio } = await supabase
       .from('portfolio_items')
       .select('slug, updated_at')
-      .eq('published', true);
+      .eq('published', true) as { data: { slug: string; updated_at: string }[] | null };
 
     if (portfolio) {
       portfolio.forEach((item) => {
