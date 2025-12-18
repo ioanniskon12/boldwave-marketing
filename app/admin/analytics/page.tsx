@@ -56,18 +56,29 @@ const FilterLabel = styled.label`
   text-transform: uppercase;
 `;
 
-const Select = styled.select`
-  padding: 10px 16px;
-  font-size: 14px;
-  border: 2px solid #e5e5e5;
-  border-radius: 8px;
+const TabsContainer = styled.div`
+  display: flex;
   background: #ffffff;
-  cursor: pointer;
-  min-width: 150px;
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  margin-bottom: 24px;
+`;
 
-  &:focus {
-    outline: none;
-    border-color: #ff8c42;
+const Tab = styled.button<{ $active?: boolean }>`
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: ${({ $active }) => ($active ? '#ff8c42' : 'transparent')};
+  color: ${({ $active }) => ($active ? '#ffffff' : '#666666')};
+
+  &:hover {
+    background: ${({ $active }) => ($active ? '#ff8c42' : '#f5f5f5')};
+    color: ${({ $active }) => ($active ? '#ffffff' : '#1a1a1a')};
   }
 `;
 
@@ -441,17 +452,22 @@ export default function AnalyticsPage() {
         </Subtitle>
       </Header>
 
-      <FiltersRow>
-        <FilterGroup>
-          <FilterLabel>View By</FilterLabel>
-          <Select value={dimension} onChange={(e) => setDimension(e.target.value)}>
-            <option value="page">Pages</option>
-            <option value="query">Search Queries</option>
-            <option value="country">Countries</option>
-            <option value="device">Devices</option>
-          </Select>
-        </FilterGroup>
+      <TabsContainer>
+        <Tab $active={dimension === 'page'} onClick={() => setDimension('page')}>
+          Pages
+        </Tab>
+        <Tab $active={dimension === 'query'} onClick={() => setDimension('query')}>
+          Search Queries
+        </Tab>
+        <Tab $active={dimension === 'country'} onClick={() => setDimension('country')}>
+          Countries
+        </Tab>
+        <Tab $active={dimension === 'device'} onClick={() => setDimension('device')}>
+          Devices
+        </Tab>
+      </TabsContainer>
 
+      <FiltersRow>
         <FilterGroup>
           <FilterLabel>Start Date</FilterLabel>
           <DateInput
