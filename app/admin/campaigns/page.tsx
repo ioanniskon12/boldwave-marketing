@@ -650,7 +650,7 @@ export default function CampaignsPage() {
     if (editingId) {
       await supabase.from('email_campaigns').update(campaignData as never).eq('id', editingId);
     } else {
-      const { data } = await supabase.from('email_campaigns').insert(campaignData as never).select().single();
+      const { data } = await supabase.from('email_campaigns').insert(campaignData as never).select().single() as { data: { id: string } | null };
       if (data) campaignId = data.id;
     }
 
