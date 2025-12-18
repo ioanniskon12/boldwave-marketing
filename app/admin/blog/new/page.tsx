@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { getAllTags } from '@/data/blog';
 
-// Get all available tags from existing blog posts
-const availableTags = getAllTags();
+// Get static tags from existing blog posts
+const staticTags = getAllTags();
 
 const PageHeader = styled.div`
   display: flex;
@@ -514,6 +514,27 @@ export default function NewBlogPost() {
   const [linkText, setLinkText] = useState('');
   const [contentImageUrl, setContentImageUrl] = useState('');
   const [contentImageAlt, setContentImageAlt] = useState('');
+  const [availableTags, setAvailableTags] = useState<string[]>(staticTags);
+
+  // Fetch tags from database
+  useEffect(() => {
+    const fetchTags = async () => {
+      const { data } = await supabase
+        .from('site_settings')
+        .select('value')
+        .eq('key', 'blog_tags')
+        .single();
+
+      if (data) {
+        // Combine database tags with static tags, remove duplicates
+        const record = data as { value: string[] };
+        const dbTags = record.value || [];
+        const allTags = [...new Set([...dbTags, ...staticTags])].sort();
+        setAvailableTags(allTags);
+      }
+    };
+    fetchTags();
+  }, []);
 
   const [formData, setFormData] = useState({
     title: '',

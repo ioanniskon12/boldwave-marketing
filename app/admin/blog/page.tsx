@@ -7,8 +7,8 @@ import { createClient } from '@/lib/supabase/client';
 import { BlogPost } from '@/lib/supabase/types';
 import { blogPosts as staticBlogPosts, getAllTags } from '@/data/blog';
 
-// Get all available tags
-const availableTags = getAllTags();
+// Get static tags from existing blog posts
+const staticTags = getAllTags();
 
 const PageHeader = styled.div`
   display: flex;
@@ -340,6 +340,7 @@ export default function BlogListPage() {
   const [sourceFilter, setSourceFilter] = useState<SourceType>('all');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData[]>([]);
+  const [availableTags, setAvailableTags] = useState<string[]>(staticTags);
   const supabase = createClient();
 
   const fetchPosts = async () => {
@@ -367,9 +368,25 @@ export default function BlogListPage() {
     }
   };
 
+  const fetchTags = async () => {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'blog_tags')
+      .single();
+
+    if (data) {
+      const record = data as { value: string[] };
+      const dbTags = record.value || [];
+      const allTags = [...new Set([...dbTags, ...staticTags])].sort();
+      setAvailableTags(allTags);
+    }
+  };
+
   useEffect(() => {
     fetchPosts();
     fetchAnalytics();
+    fetchTags();
   }, []);
 
   // Get clicks for a specific blog post slug
