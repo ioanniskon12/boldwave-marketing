@@ -1,10 +1,12 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import Container from '@/components/layout/Container';
 import AnimatedButton from '@/components/ui/AnimatedButton';
 import { PageHero, FAQAccordion } from '@/components/sections';
 import { getGeneralFaqs } from '@/data';
+import { getAllSupabaseFaqs, faqCategoryConfig } from '@/lib/faqs';
 import { media } from '@/styles/theme';
 import { Icon } from '@/components/icons';
 
@@ -174,6 +176,7 @@ const CTAButtons = styled.div`
 `;
 
 const categoryData = {
+  // Static FAQ categories
   'Getting Started': { icon: '🚀' },
   'Pricing & Engagement': { icon: '💰' },
   'Working Together': { icon: '🤝' },
@@ -188,10 +191,29 @@ const categoryData = {
   'Influencer Partnerships': { icon: '⭐' },
   'Marketing Strategy': { icon: '🧭' },
   'Full Funnel Setup': { icon: '⚡' },
+  // Supabase FAQ categories (from admin)
+  'General': { icon: '📋' },
+  'Services': { icon: '⚙️' },
+  'Pricing': { icon: '💰' },
+  'Support': { icon: '🤝' },
+  'Other': { icon: '❓' },
 };
 
 export function FAQPageContent() {
-  const faqsByCategory = getGeneralFaqs();
+  const [supabaseFaqs, setSupabaseFaqs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      const faqs = await getAllSupabaseFaqs();
+      setSupabaseFaqs(faqs);
+      setLoading(false);
+    };
+    fetchFaqs();
+  }, []);
+
+  // Use Supabase FAQs if available, otherwise fall back to static
+  const faqsByCategory = supabaseFaqs.length > 0 ? supabaseFaqs : getGeneralFaqs();
 
   let questionNumber = 0;
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import Link from 'next/link';
 import { media } from '@/styles/theme';
@@ -9,6 +9,7 @@ import AnimatedButton from '@/components/ui/AnimatedButton';
 import { services, getFaqsByServiceSlug } from '@/data';
 import { FAQAccordion } from '@/components/sections';
 import { ServiceIcon } from '@/components/icons';
+import { getServiceFaqs } from '@/lib/faqs';
 
 const fadeInUp = keyframes`
   from {
@@ -937,8 +938,20 @@ const featureImages = [
 export function ServicePageContent({ service }) {
   const otherServices = services.filter(s => s.id !== service.id).slice(0, 3);
   const serviceIndex = services.findIndex(s => s.id === service.id) + 1;
-  const serviceFaqs = getFaqsByServiceSlug(service.slug);
+  const staticFaqs = getFaqsByServiceSlug(service.slug);
+  const [serviceFaqs, setServiceFaqs] = useState(staticFaqs);
   const [stackedCardIndex, setStackedCardIndex] = useState(0);
+
+  // Fetch FAQs from Supabase, fall back to static if none found
+  useEffect(() => {
+    const fetchFaqs = async () => {
+      const supabaseFaqs = await getServiceFaqs(service.slug);
+      if (supabaseFaqs.length > 0) {
+        setServiceFaqs(supabaseFaqs);
+      }
+    };
+    fetchFaqs();
+  }, [service.slug]);
 
   const nextStackedCard = () => {
     setStackedCardIndex(prev => Math.min(prev + 1, service.included.length - 1));

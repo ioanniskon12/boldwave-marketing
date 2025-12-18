@@ -420,7 +420,7 @@ const ToggleSwitch = styled.button<{ $active: boolean }>`
   }
 `;
 
-const StatusBadge = styled.span<{ $published: boolean }>`
+const StatusBadge = styled.span<{ $published: boolean; $scheduled?: boolean }>`
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -428,9 +428,62 @@ const StatusBadge = styled.span<{ $published: boolean }>`
   font-size: 13px;
   font-weight: 500;
   border-radius: 20px;
-  background: ${({ $published }) => ($published ? '#dcfce7' : '#fef3c7')};
-  color: ${({ $published }) => ($published ? '#16a34a' : '#d97706')};
+  background: ${({ $published, $scheduled }) =>
+    $scheduled ? '#dbeafe' : ($published ? '#dcfce7' : '#fef3c7')};
+  color: ${({ $published, $scheduled }) =>
+    $scheduled ? '#2563eb' : ($published ? '#16a34a' : '#d97706')};
   margin-left: 12px;
+`;
+
+const ScheduleContainer = styled.div`
+  margin-top: 16px;
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 10px;
+`;
+
+const ScheduleHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+`;
+
+const ScheduleTitle = styled.div`
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+`;
+
+const ScheduleInputs = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+`;
+
+const ScheduleInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: #dbeafe;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #2563eb;
+  margin-top: 12px;
+
+  svg { width: 16px; height: 16px; flex-shrink: 0; }
+`;
+
+const ClearSchedule = styled.button`
+  font-size: 12px;
+  color: #dc2626;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover { color: #b91c1c; }
 `;
 
 function calculateReadTime(content: string): string {
@@ -464,7 +517,11 @@ export default function EditBlogPost() {
     meta_description: '',
     noindex: false,
     published: false,
+    scheduled_for: '',
   });
+
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [scheduleTime, setScheduleTime] = useState('');
 
   const [tagInput, setTagInput] = useState('');
 
@@ -496,7 +553,16 @@ export default function EditBlogPost() {
         meta_description: post.meta_description || '',
         noindex: post.noindex || false,
         published: post.published,
+        scheduled_for: post.scheduled_for || '',
       });
+
+      // Parse scheduled date/time if exists
+      if (post.scheduled_for) {
+        const scheduledDate = new Date(post.scheduled_for);
+        setScheduleDate(scheduledDate.toISOString().split('T')[0]);
+        setScheduleTime(scheduledDate.toTimeString().slice(0, 5));
+      }
+
       setLoading(false);
     };
 
@@ -556,9 +622,15 @@ export default function EditBlogPost() {
     }
   };
 
-  const handleSubmit = async (publish?: boolean) => {
+  const handleSubmit = async (publish?: boolean, schedule?: boolean) => {
     if (!formData.title || !formData.content) {
       setError('Title and content are required');
+      return;
+    }
+
+    // Validate schedule if scheduling
+    if (schedule && (!scheduleDate || !scheduleTime)) {
+      setError('Please set both date and time for scheduling');
       return;
     }
 
@@ -566,6 +638,12 @@ export default function EditBlogPost() {
     setError('');
 
     try {
+      // Build scheduled_for timestamp
+      let scheduledFor: string | null = null;
+      if (schedule && scheduleDate && scheduleTime) {
+        scheduledFor = new Date(`${scheduleDate}T${scheduleTime}`).toISOString();
+      }
+
       const updateData: BlogPostUpdate = {
         title: formData.title,
         slug: formData.slug,
@@ -580,7 +658,8 @@ export default function EditBlogPost() {
         noindex: formData.noindex,
         read_time: calculateReadTime(formData.content),
         updated_at: new Date().toISOString(),
-        published: publish !== undefined ? publish : formData.published,
+        published: schedule ? false : (publish !== undefined ? publish : formData.published),
+        scheduled_for: schedule ? scheduledFor : (publish ? null : formData.scheduled_for || null),
       };
 
       const { error } = await supabase
@@ -636,8 +715,15 @@ export default function EditBlogPost() {
       <PageHeader>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Title>Edit Post</Title>
-          <StatusBadge $published={formData.published}>
-            {formData.published ? 'Published' : 'Draft'}
+          <StatusBadge
+            $published={formData.published}
+            $scheduled={!formData.published && !!formData.scheduled_for}
+          >
+            {formData.published
+              ? 'Published'
+              : formData.scheduled_for
+              ? 'Scheduled'
+              : 'Draft'}
           </StatusBadge>
         </div>
         <HeaderActions>
@@ -778,6 +864,64 @@ export default function EditBlogPost() {
                 />
               </TagsInput>
             </FormGroup>
+
+            {!formData.published && (
+              <ScheduleContainer>
+                <ScheduleHeader>
+                  <ScheduleTitle>Schedule Post</ScheduleTitle>
+                  {(scheduleDate || scheduleTime || formData.scheduled_for) && (
+                    <ClearSchedule onClick={() => {
+                      setScheduleDate('');
+                      setScheduleTime('');
+                      setFormData(prev => ({ ...prev, scheduled_for: '' }));
+                    }}>
+                      Clear
+                    </ClearSchedule>
+                  )}
+                </ScheduleHeader>
+                <ScheduleInputs>
+                  <Input
+                    type="date"
+                    value={scheduleDate}
+                    onChange={(e) => setScheduleDate(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                  <Input
+                    type="time"
+                    value={scheduleTime}
+                    onChange={(e) => setScheduleTime(e.target.value)}
+                  />
+                </ScheduleInputs>
+                {scheduleDate && scheduleTime && (
+                  <>
+                    <ScheduleInfo>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
+                      Will publish on {new Date(`${scheduleDate}T${scheduleTime}`).toLocaleString()}
+                    </ScheduleInfo>
+                    <Button
+                      $variant="primary"
+                      onClick={() => handleSubmit(false, true)}
+                      disabled={saving}
+                      style={{ width: '100%', marginTop: '12px' }}
+                    >
+                      {saving ? 'Scheduling...' : 'Schedule Post'}
+                    </Button>
+                  </>
+                )}
+                {formData.scheduled_for && !scheduleDate && !scheduleTime && (
+                  <ScheduleInfo>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    Scheduled for {new Date(formData.scheduled_for).toLocaleString()}
+                  </ScheduleInfo>
+                )}
+              </ScheduleContainer>
+            )}
           </Card>
 
           <Card>

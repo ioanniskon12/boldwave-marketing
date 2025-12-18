@@ -23,53 +23,102 @@ const Subtitle = styled.p`
 
 const StatsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
-  margin-bottom: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
 `;
 
 const StatCard = styled.div`
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const StatIcon = styled.div<{ $color: string }>`
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: ${({ $color }) => $color}15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+
+  svg {
+    width: 22px;
+    height: 22px;
+    color: ${({ $color }) => $color};
+  }
+`;
+
+const StatValue = styled.div`
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+`;
+
+const StatLabel = styled.div`
+  font-size: 13px;
+  color: #666666;
+`;
+
+const StatChange = styled.span<{ $positive?: boolean }>`
+  font-size: 12px;
+  font-weight: 500;
+  color: ${({ $positive }) => ($positive ? '#16a34a' : '#dc2626')};
+  margin-left: 8px;
+`;
+
+const GridRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const Card = styled.div`
   background: #ffffff;
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
-const StatIcon = styled.div<{ $color: string }>`
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: ${({ $color }) => $color}15;
+const CardHeader = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`;
 
-  svg {
-    width: 24px;
-    height: 24px;
-    color: ${({ $color }) => $color};
+const CardTitle = styled.h2`
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+`;
+
+const ViewAllLink = styled(Link)`
+  font-size: 13px;
+  font-weight: 500;
+  color: #ff8c42;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
   }
 `;
 
-const StatValue = styled.div`
-  font-size: 32px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 4px;
-`;
-
-const StatLabel = styled.div`
-  font-size: 14px;
-  color: #666666;
-`;
-
 const QuickActions = styled.div`
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #1a1a1a;
   margin-bottom: 16px;
@@ -77,15 +126,15 @@ const SectionTitle = styled.h2`
 
 const ActionsGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
 `;
 
 const ActionCard = styled(Link)`
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px;
+  gap: 12px;
+  padding: 16px;
   background: #ffffff;
   border-radius: 12px;
   text-decoration: none;
@@ -98,18 +147,19 @@ const ActionCard = styled(Link)`
   }
 `;
 
-const ActionIcon = styled.div`
-  width: 44px;
-  height: 44px;
+const ActionIcon = styled.div<{ $color?: string }>`
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
-  background: #ff8c42;
+  background: ${({ $color }) => $color || '#ff8c42'};
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 
   svg {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     color: #ffffff;
   }
 `;
@@ -117,34 +167,26 @@ const ActionIcon = styled.div`
 const ActionContent = styled.div``;
 
 const ActionTitle = styled.div`
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #1a1a1a;
-  margin-bottom: 2px;
 `;
 
 const ActionDescription = styled.div`
-  font-size: 13px;
+  font-size: 12px;
   color: #666666;
 `;
 
-const RecentPosts = styled.div`
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-`;
-
-const PostList = styled.div`
+const ItemList = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-const PostItem = styled(Link)`
+const ListItem = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 0;
+  padding: 12px 0;
   border-bottom: 1px solid #f0f0f0;
   text-decoration: none;
   transition: background 0.2s ease;
@@ -156,69 +198,119 @@ const PostItem = styled(Link)`
   &:hover {
     background: #fafafa;
     margin: 0 -24px;
-    padding: 16px 24px;
+    padding: 12px 24px;
   }
 `;
 
-const PostInfo = styled.div``;
-
-const PostTitle = styled.div`
-  font-size: 15px;
-  font-weight: 500;
-  color: #1a1a1a;
-  margin-bottom: 4px;
+const ItemInfo = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
-const PostMeta = styled.div`
-  font-size: 13px;
+const ItemTitle = styled.div`
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const ItemMeta = styled.div`
+  font-size: 12px;
   color: #666666;
 `;
 
-const PostStatus = styled.span<{ $published: boolean }>`
-  font-size: 12px;
+const StatusBadge = styled.span<{ $status: string }>`
+  font-size: 11px;
   font-weight: 500;
-  padding: 4px 10px;
+  padding: 4px 8px;
   border-radius: 20px;
-  background: ${({ $published }) => ($published ? '#dcfce7' : '#fef3c7')};
-  color: ${({ $published }) => ($published ? '#16a34a' : '#d97706')};
+  flex-shrink: 0;
+  margin-left: 12px;
+  background: ${({ $status }) => {
+    switch ($status) {
+      case 'published': return '#dcfce7';
+      case 'draft': return '#fef3c7';
+      case 'new': return '#dbeafe';
+      case 'read': return '#f3f4f6';
+      case 'replied': return '#dcfce7';
+      default: return '#f3f4f6';
+    }
+  }};
+  color: ${({ $status }) => {
+    switch ($status) {
+      case 'published': return '#16a34a';
+      case 'draft': return '#d97706';
+      case 'new': return '#2563eb';
+      case 'read': return '#666666';
+      case 'replied': return '#16a34a';
+      default: return '#666666';
+    }
+  }};
 `;
 
 const EmptyState = styled.div`
   text-align: center;
-  padding: 40px;
+  padding: 32px;
   color: #666666;
+  font-size: 14px;
 `;
 
-const SetupMessage = styled.div`
-  background: #fef3c7;
-  border: 1px solid #fcd34d;
-  border-radius: 12px;
-  padding: 20px;
+const AnalyticsCard = styled.div`
+  background: linear-gradient(135deg, #ff8c42 0%, #ff6b1a 100%);
+  border-radius: 16px;
+  padding: 24px;
+  color: #ffffff;
   margin-bottom: 32px;
+`;
 
-  h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #92400e;
-    margin-bottom: 8px;
-  }
+const AnalyticsHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`;
 
-  p {
-    font-size: 14px;
-    color: #a16207;
-    margin-bottom: 16px;
-  }
+const AnalyticsTitle = styled.h3`
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.95;
+`;
 
-  code {
-    display: block;
-    background: #fffbeb;
-    padding: 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    color: #78350f;
-    margin-bottom: 8px;
-    overflow-x: auto;
+const AnalyticsLink = styled(Link)`
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+
+  &:hover {
+    color: #ffffff;
   }
+`;
+
+const AnalyticsStats = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`;
+
+const AnalyticsStat = styled.div``;
+
+const AnalyticsValue = styled.div`
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 2px;
+`;
+
+const AnalyticsLabel = styled.div`
+  font-size: 12px;
+  opacity: 0.8;
 `;
 
 interface BlogPost {
@@ -229,103 +321,202 @@ interface BlogPost {
   published: boolean;
 }
 
+interface Contact {
+  id: string;
+  name: string;
+  email: string;
+  subject: string | null;
+  status: string;
+  created_at: string;
+}
+
+interface AnalyticsData {
+  clicks: number;
+  impressions: number;
+  ctr: string;
+}
+
+interface DashboardStats {
+  totalPosts: number;
+  publishedPosts: number;
+  draftPosts: number;
+  subscribers: number;
+  newContacts: number;
+  totalLeads: number;
+  newLeads: number;
+  testimonials: number;
+  faqs: number;
+  teamMembers: number;
+  portfolioItems: number;
+}
+
 export default function AdminDashboard() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalPosts: 0,
+    publishedPosts: 0,
+    draftPosts: 0,
+    subscribers: 0,
+    newContacts: 0,
+    totalLeads: 0,
+    newLeads: 0,
+    testimonials: 0,
+    faqs: 0,
+    teamMembers: 0,
+    portfolioItems: 0,
+  });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [needsSetup, setNeedsSetup] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const { data, error } = await supabase
+        // Fetch recent posts
+        const { data: postsData } = await supabase
           .from('blog_posts')
           .select('id, title, slug, date, published')
           .order('created_at', { ascending: false })
           .limit(5);
 
-        if (error) {
-          if (error.code === '42P01') {
-            setNeedsSetup(true);
-          } else {
-            setError(error.message);
+        if (postsData) {
+          setPosts(postsData);
+        }
+
+        // Fetch all posts count
+        const { count: totalPostsCount } = await supabase
+          .from('blog_posts')
+          .select('*', { count: 'exact', head: true });
+
+        const { count: publishedCount } = await supabase
+          .from('blog_posts')
+          .select('*', { count: 'exact', head: true })
+          .eq('published', true);
+
+        // Fetch recent contacts
+        const { data: contactsData } = await supabase
+          .from('contact_submissions')
+          .select('id, name, email, subject, status, created_at')
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        if (contactsData) {
+          setContacts(contactsData);
+        }
+
+        // Fetch new contacts count
+        const { count: newContactsCount } = await supabase
+          .from('contact_submissions')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'new');
+
+        // Fetch subscribers count
+        const { count: subscribersCount } = await supabase
+          .from('newsletter_subscribers')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'active');
+
+        // Fetch leads count
+        const { count: leadsCount } = await supabase
+          .from('leads')
+          .select('*', { count: 'exact', head: true });
+
+        const { count: newLeadsCount } = await supabase
+          .from('leads')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'new');
+
+        // Fetch other counts
+        const { count: testimonialsCount } = await supabase
+          .from('testimonials')
+          .select('*', { count: 'exact', head: true });
+
+        const { count: faqsCount } = await supabase
+          .from('faqs')
+          .select('*', { count: 'exact', head: true });
+
+        const { count: teamCount } = await supabase
+          .from('team_members')
+          .select('*', { count: 'exact', head: true });
+
+        const { count: portfolioCount } = await supabase
+          .from('portfolio_items')
+          .select('*', { count: 'exact', head: true });
+
+        setStats({
+          totalPosts: totalPostsCount || 0,
+          publishedPosts: publishedCount || 0,
+          draftPosts: (totalPostsCount || 0) - (publishedCount || 0),
+          subscribers: subscribersCount || 0,
+          newContacts: newContactsCount || 0,
+          totalLeads: leadsCount || 0,
+          newLeads: newLeadsCount || 0,
+          testimonials: testimonialsCount || 0,
+          faqs: faqsCount || 0,
+          teamMembers: teamCount || 0,
+          portfolioItems: portfolioCount || 0,
+        });
+
+        // Fetch Search Console analytics
+        try {
+          const analyticsResponse = await fetch('/api/search-console?dimension=page');
+          const analyticsData = await analyticsResponse.json();
+          if (!analyticsData.error && analyticsData.totals) {
+            setAnalytics(analyticsData.totals);
           }
-        } else {
-          setPosts(data || []);
+        } catch {
+          // Analytics not available
         }
       } catch (err) {
-        setNeedsSetup(true);
+        console.error('Dashboard fetch error:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPosts();
+    fetchDashboardData();
   }, []);
 
-  const totalPosts = posts.length;
-  const publishedPosts = posts.filter((p) => p.published).length;
-  const draftPosts = posts.filter((p) => !p.published).length;
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
+  };
 
   return (
     <>
       <PageHeader>
         <Title>Dashboard</Title>
-        <Subtitle>Welcome back! Here&apos;s an overview of your content.</Subtitle>
+        <Subtitle>Welcome back! Here&apos;s an overview of your website.</Subtitle>
       </PageHeader>
 
-      {needsSetup && (
-        <SetupMessage>
-          <h3>Database Setup Required</h3>
-          <p>
-            To complete the admin setup, you need to create the database tables in Supabase.
-            Go to your Supabase project &rarr; SQL Editor &rarr; Run the following SQL:
-          </p>
-          <code>
-{`-- Create blog_posts table
-CREATE TABLE blog_posts (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  slug TEXT UNIQUE NOT NULL,
-  title TEXT NOT NULL,
-  excerpt TEXT NOT NULL,
-  content TEXT NOT NULL,
-  date TEXT NOT NULL,
-  read_time TEXT NOT NULL,
-  tags TEXT[] DEFAULT '{}',
-  thumbnail TEXT,
-  author_name TEXT NOT NULL,
-  author_image TEXT,
-  meta_title TEXT,
-  meta_description TEXT,
-  published BOOLEAN DEFAULT false,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Enable Row Level Security
-ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
-
--- Create policy to allow authenticated users full access
-CREATE POLICY "Allow authenticated users full access" ON blog_posts
-  FOR ALL USING (auth.role() = 'authenticated');
-
--- Create policy to allow public read access for published posts
-CREATE POLICY "Allow public read access" ON blog_posts
-  FOR SELECT USING (published = true);
-
--- Create storage bucket for images
-INSERT INTO storage.buckets (id, name, public) VALUES ('images', 'images', true);
-
--- Allow authenticated users to upload images
-CREATE POLICY "Allow authenticated uploads" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'images' AND auth.role() = 'authenticated');
-
--- Allow public access to images
-CREATE POLICY "Allow public image access" ON storage.objects
-  FOR SELECT USING (bucket_id = 'images');`}
-          </code>
-        </SetupMessage>
+      {analytics && (
+        <AnalyticsCard>
+          <AnalyticsHeader>
+            <AnalyticsTitle>Search Performance (Last 28 Days)</AnalyticsTitle>
+            <AnalyticsLink href="/admin/analytics">View Details &rarr;</AnalyticsLink>
+          </AnalyticsHeader>
+          <AnalyticsStats>
+            <AnalyticsStat>
+              <AnalyticsValue>{analytics.clicks.toLocaleString()}</AnalyticsValue>
+              <AnalyticsLabel>Total Clicks</AnalyticsLabel>
+            </AnalyticsStat>
+            <AnalyticsStat>
+              <AnalyticsValue>{analytics.impressions.toLocaleString()}</AnalyticsValue>
+              <AnalyticsLabel>Impressions</AnalyticsLabel>
+            </AnalyticsStat>
+            <AnalyticsStat>
+              <AnalyticsValue>{analytics.ctr}%</AnalyticsValue>
+              <AnalyticsLabel>Click Rate</AnalyticsLabel>
+            </AnalyticsStat>
+            <AnalyticsStat>
+              <AnalyticsValue>{stats.publishedPosts}</AnalyticsValue>
+              <AnalyticsLabel>Published Posts</AnalyticsLabel>
+            </AnalyticsStat>
+          </AnalyticsStats>
+        </AnalyticsCard>
       )}
 
       <StatsGrid>
@@ -336,30 +527,70 @@ CREATE POLICY "Allow public image access" ON storage.objects
               <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
             </svg>
           </StatIcon>
-          <StatValue>{loading ? '...' : totalPosts}</StatValue>
-          <StatLabel>Total Posts</StatLabel>
+          <StatValue>{loading ? '...' : stats.totalPosts}</StatValue>
+          <StatLabel>Blog Posts</StatLabel>
         </StatCard>
 
         <StatCard>
-          <StatIcon $color="#16a34a">
+          <StatIcon $color="#8b5cf6">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-              <polyline points="22 4 12 14.01 9 11.01" />
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
             </svg>
           </StatIcon>
-          <StatValue>{loading ? '...' : publishedPosts}</StatValue>
-          <StatLabel>Published</StatLabel>
+          <StatValue>{loading ? '...' : stats.subscribers}</StatValue>
+          <StatLabel>Subscribers</StatLabel>
         </StatCard>
 
         <StatCard>
-          <StatIcon $color="#eab308">
+          <StatIcon $color="#3b82f6">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
           </StatIcon>
-          <StatValue>{loading ? '...' : draftPosts}</StatValue>
-          <StatLabel>Drafts</StatLabel>
+          <StatValue>
+            {loading ? '...' : stats.newContacts}
+            {stats.newContacts > 0 && <StatChange $positive>new</StatChange>}
+          </StatValue>
+          <StatLabel>Contacts</StatLabel>
+        </StatCard>
+
+        <StatCard>
+          <StatIcon $color="#10b981">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </StatIcon>
+          <StatValue>
+            {loading ? '...' : stats.totalLeads}
+            {stats.newLeads > 0 && <StatChange $positive>+{stats.newLeads}</StatChange>}
+          </StatValue>
+          <StatLabel>Leads</StatLabel>
+        </StatCard>
+
+        <StatCard>
+          <StatIcon $color="#f59e0b">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+          </StatIcon>
+          <StatValue>{loading ? '...' : stats.testimonials}</StatValue>
+          <StatLabel>Testimonials</StatLabel>
+        </StatCard>
+
+        <StatCard>
+          <StatIcon $color="#ec4899">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          </StatIcon>
+          <StatValue>{loading ? '...' : stats.portfolioItems}</StatValue>
+          <StatLabel>Portfolio</StatLabel>
         </StatCard>
       </StatsGrid>
 
@@ -374,67 +605,137 @@ CREATE POLICY "Allow public image access" ON storage.objects
               </svg>
             </ActionIcon>
             <ActionContent>
-              <ActionTitle>New Blog Post</ActionTitle>
-              <ActionDescription>Create a new article</ActionDescription>
+              <ActionTitle>New Post</ActionTitle>
+              <ActionDescription>Create article</ActionDescription>
             </ActionContent>
           </ActionCard>
 
-          <ActionCard href="/admin/blog">
-            <ActionIcon>
+          <ActionCard href="/admin/leads/new">
+            <ActionIcon $color="#10b981">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="8" y1="6" x2="21" y2="6" />
-                <line x1="8" y1="12" x2="21" y2="12" />
-                <line x1="8" y1="18" x2="21" y2="18" />
-                <line x1="3" y1="6" x2="3.01" y2="6" />
-                <line x1="3" y1="12" x2="3.01" y2="12" />
-                <line x1="3" y1="18" x2="3.01" y2="18" />
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <line x1="20" y1="8" x2="20" y2="14" />
+                <line x1="17" y1="11" x2="23" y2="11" />
               </svg>
             </ActionIcon>
             <ActionContent>
-              <ActionTitle>Manage Posts</ActionTitle>
-              <ActionDescription>View all blog posts</ActionDescription>
+              <ActionTitle>Add Lead</ActionTitle>
+              <ActionDescription>New prospect</ActionDescription>
+            </ActionContent>
+          </ActionCard>
+
+          <ActionCard href="/admin/portfolio/new">
+            <ActionIcon $color="#ec4899">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <line x1="12" y1="8" x2="12" y2="16" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+            </ActionIcon>
+            <ActionContent>
+              <ActionTitle>Add Project</ActionTitle>
+              <ActionDescription>Portfolio item</ActionDescription>
+            </ActionContent>
+          </ActionCard>
+
+          <ActionCard href="/admin/team/new">
+            <ActionIcon $color="#6366f1">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <line x1="20" y1="8" x2="20" y2="14" />
+                <line x1="17" y1="11" x2="23" y2="11" />
+              </svg>
+            </ActionIcon>
+            <ActionContent>
+              <ActionTitle>Add Member</ActionTitle>
+              <ActionDescription>Team member</ActionDescription>
+            </ActionContent>
+          </ActionCard>
+
+          <ActionCard href="/admin/media">
+            <ActionIcon $color="#14b8a6">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                <circle cx="8.5" cy="8.5" r="1.5" />
+                <polyline points="21 15 16 10 5 21" />
+              </svg>
+            </ActionIcon>
+            <ActionContent>
+              <ActionTitle>Media</ActionTitle>
+              <ActionDescription>Upload files</ActionDescription>
             </ActionContent>
           </ActionCard>
 
           <ActionCard href="/admin/settings">
-            <ActionIcon>
+            <ActionIcon $color="#64748b">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="3" />
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4" />
               </svg>
             </ActionIcon>
             <ActionContent>
-              <ActionTitle>SEO Settings</ActionTitle>
-              <ActionDescription>Update meta data</ActionDescription>
+              <ActionTitle>Settings</ActionTitle>
+              <ActionDescription>SEO & config</ActionDescription>
             </ActionContent>
           </ActionCard>
         </ActionsGrid>
       </QuickActions>
 
-      <RecentPosts>
-        <SectionTitle>Recent Posts</SectionTitle>
-        {loading ? (
-          <EmptyState>Loading...</EmptyState>
-        ) : posts.length === 0 ? (
-          <EmptyState>
-            No blog posts yet. Create your first post to get started!
-          </EmptyState>
-        ) : (
-          <PostList>
-            {posts.map((post) => (
-              <PostItem key={post.id} href={`/admin/blog/${post.id}`}>
-                <PostInfo>
-                  <PostTitle>{post.title}</PostTitle>
-                  <PostMeta>{post.date}</PostMeta>
-                </PostInfo>
-                <PostStatus $published={post.published}>
-                  {post.published ? 'Published' : 'Draft'}
-                </PostStatus>
-              </PostItem>
-            ))}
-          </PostList>
-        )}
-      </RecentPosts>
+      <GridRow>
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Posts</CardTitle>
+            <ViewAllLink href="/admin/blog">View All</ViewAllLink>
+          </CardHeader>
+          {loading ? (
+            <EmptyState>Loading...</EmptyState>
+          ) : posts.length === 0 ? (
+            <EmptyState>No blog posts yet</EmptyState>
+          ) : (
+            <ItemList>
+              {posts.map((post) => (
+                <ListItem key={post.id} href={`/admin/blog/${post.id}`}>
+                  <ItemInfo>
+                    <ItemTitle>{post.title}</ItemTitle>
+                    <ItemMeta>{post.date}</ItemMeta>
+                  </ItemInfo>
+                  <StatusBadge $status={post.published ? 'published' : 'draft'}>
+                    {post.published ? 'Published' : 'Draft'}
+                  </StatusBadge>
+                </ListItem>
+              ))}
+            </ItemList>
+          )}
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Contacts</CardTitle>
+            <ViewAllLink href="/admin/contacts">View All</ViewAllLink>
+          </CardHeader>
+          {loading ? (
+            <EmptyState>Loading...</EmptyState>
+          ) : contacts.length === 0 ? (
+            <EmptyState>No contact submissions yet</EmptyState>
+          ) : (
+            <ItemList>
+              {contacts.map((contact) => (
+                <ListItem key={contact.id} href={`/admin/contacts/${contact.id}`}>
+                  <ItemInfo>
+                    <ItemTitle>{contact.name}</ItemTitle>
+                    <ItemMeta>{contact.subject || contact.email}</ItemMeta>
+                  </ItemInfo>
+                  <StatusBadge $status={contact.status}>
+                    {contact.status}
+                  </StatusBadge>
+                </ListItem>
+              ))}
+            </ItemList>
+          )}
+        </Card>
+      </GridRow>
     </>
   );
 }

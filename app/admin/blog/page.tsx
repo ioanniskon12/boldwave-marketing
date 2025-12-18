@@ -135,14 +135,18 @@ const PostDate = styled.div`
   color: #666666;
 `;
 
-const PostStatus = styled.span<{ $published: boolean }>`
+const PostStatus = styled.span<{ $status: 'published' | 'scheduled' | 'draft' }>`
   display: inline-block;
   font-size: 12px;
   font-weight: 500;
   padding: 6px 12px;
   border-radius: 20px;
-  background: ${({ $published }) => ($published ? '#dcfce7' : '#fef3c7')};
-  color: ${({ $published }) => ($published ? '#16a34a' : '#d97706')};
+  background: ${({ $status }) =>
+    $status === 'published' ? '#dcfce7' :
+    $status === 'scheduled' ? '#dbeafe' : '#fef3c7'};
+  color: ${({ $status }) =>
+    $status === 'published' ? '#16a34a' :
+    $status === 'scheduled' ? '#2563eb' : '#d97706'};
 `;
 
 const Actions = styled.div`
@@ -252,6 +256,189 @@ const ClicksCount = styled.div`
   }
 `;
 
+const HeaderButtons = styled.div`
+  display: flex;
+  gap: 12px;
+`;
+
+const ManageTagsButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #ffffff;
+  color: #666666;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f5f5f5;
+    border-color: #cccccc;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+`;
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+`;
+
+const ModalTitle = styled.h2`
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+`;
+
+const ModalDescription = styled.p`
+  font-size: 14px;
+  color: #666666;
+  margin-bottom: 24px;
+`;
+
+const TagInput = styled.input`
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 14px;
+  border: 2px solid #e5e5e5;
+  border-radius: 10px;
+  outline: none;
+
+  &:focus {
+    border-color: #ff8c42;
+  }
+`;
+
+const AddTagButton = styled.button`
+  padding: 12px 24px;
+  background: #ff8c42;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: #e67d35;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+const TagsList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+`;
+
+const TagItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+const DeleteTagButton = styled.button`
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+`;
+
+const CloseButton = styled.button`
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: #999;
+  border-radius: 8px;
+
+  &:hover {
+    background: #f5f5f5;
+    color: #1a1a1a;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
+const SuccessMessage = styled.div`
+  padding: 12px 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #16a34a;
+  font-size: 14px;
+  margin-bottom: 16px;
+`;
+
+const ErrorMessage = styled.div`
+  padding: 12px 16px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 14px;
+  margin-bottom: 16px;
+`;
+
 const FiltersSection = styled.div`
   margin-bottom: 24px;
 `;
@@ -314,7 +501,7 @@ const SourceButton = styled.button<{ $active: boolean }>`
   }
 `;
 
-type Filter = 'all' | 'published' | 'draft';
+type Filter = 'all' | 'published' | 'scheduled' | 'draft';
 type SourceType = 'all' | 'supabase' | 'static';
 
 interface CombinedPost {
@@ -324,6 +511,7 @@ interface CombinedPost {
   tags: string[];
   date: string;
   published: boolean;
+  scheduled_for?: string | null;
   source: 'supabase' | 'static';
   clicks?: number;
 }
@@ -341,6 +529,11 @@ export default function BlogListPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>(staticTags);
+  const [showTagsModal, setShowTagsModal] = useState(false);
+  const [newTagInput, setNewTagInput] = useState('');
+  const [tagSaving, setTagSaving] = useState(false);
+  const [tagSuccess, setTagSuccess] = useState('');
+  const [tagError, setTagError] = useState('');
   const supabase = createClient();
 
   const fetchPosts = async () => {
@@ -383,6 +576,66 @@ export default function BlogListPage() {
     }
   };
 
+  const saveTags = async (tags: string[]) => {
+    const { error } = await supabase
+      .from('site_settings')
+      .upsert({
+        key: 'blog_tags',
+        value: tags,
+        updated_at: new Date().toISOString(),
+      } as never, {
+        onConflict: 'key'
+      });
+    return !error;
+  };
+
+  const handleAddTag = async () => {
+    const trimmedTag = newTagInput.trim();
+    if (!trimmedTag) return;
+
+    if (availableTags.includes(trimmedTag)) {
+      setTagError('This tag already exists');
+      return;
+    }
+
+    setTagSuccess('');
+    setTagError('');
+    setTagSaving(true);
+
+    const newTags = [...availableTags, trimmedTag].sort();
+    const saved = await saveTags(newTags);
+
+    if (saved) {
+      setAvailableTags(newTags);
+      setNewTagInput('');
+      setTagSuccess('Tag added!');
+    } else {
+      setTagError('Failed to save tag');
+    }
+
+    setTagSaving(false);
+  };
+
+  const handleDeleteTag = async (tagToDelete: string) => {
+    if (!confirm(`Delete tag "${tagToDelete}"?`)) return;
+
+    setTagSuccess('');
+    setTagError('');
+    setTagSaving(true);
+
+    const newTags = availableTags.filter((t) => t !== tagToDelete);
+    const saved = await saveTags(newTags);
+
+    if (saved) {
+      setAvailableTags(newTags);
+      setTagSuccess('Tag deleted!');
+    } else {
+      setTagError('Failed to delete tag');
+    }
+
+    setTagSaving(false);
+  };
+
   useEffect(() => {
     fetchPosts();
     fetchAnalytics();
@@ -417,6 +670,7 @@ export default function BlogListPage() {
     tags: post.tags,
     date: post.date,
     published: post.published,
+    scheduled_for: post.scheduled_for,
     source: 'supabase' as const,
   }));
 
@@ -433,9 +687,29 @@ export default function BlogListPage() {
   // Filter by status
   if (filter === 'published') {
     allPosts = allPosts.filter((p) => p.published);
+  } else if (filter === 'scheduled') {
+    allPosts = allPosts.filter((p) => !p.published && p.scheduled_for);
   } else if (filter === 'draft') {
-    allPosts = allPosts.filter((p) => !p.published);
+    allPosts = allPosts.filter((p) => !p.published && !p.scheduled_for);
   }
+
+  // Helper to get post status
+  const getPostStatus = (post: CombinedPost): 'published' | 'scheduled' | 'draft' => {
+    if (post.published) return 'published';
+    if (post.scheduled_for) return 'scheduled';
+    return 'draft';
+  };
+
+  // Helper to format scheduled date
+  const formatScheduledDate = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+  };
 
   // Filter by tags
   if (selectedTags.length > 0) {
@@ -469,15 +743,20 @@ export default function BlogListPage() {
       alert('Static posts are always published. Import them to Supabase to manage their status.');
       return;
     }
+    // When publishing, clear the scheduled_for date
+    const updateData = !currentStatus
+      ? { published: true, scheduled_for: null }
+      : { published: false };
+
     const { error } = await supabase
       .from('blog_posts')
-      .update({ published: !currentStatus } as never)
+      .update(updateData as never)
       .eq('id', id);
 
     if (!error) {
       setSupabasePosts(
         supabasePosts.map((p) =>
-          p.id === id ? { ...p, published: !currentStatus } : p
+          p.id === id ? { ...p, published: !currentStatus, scheduled_for: !currentStatus ? null : p.scheduled_for } : p
         )
       );
     }
@@ -490,13 +769,22 @@ export default function BlogListPage() {
           <Title>Blog Posts</Title>
           <Subtitle>Manage your blog content</Subtitle>
         </HeaderLeft>
-        <AddButton href="/admin/blog/new">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          New Post
-        </AddButton>
+        <HeaderButtons>
+          <ManageTagsButton onClick={() => setShowTagsModal(true)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+              <line x1="7" y1="7" x2="7.01" y2="7" />
+            </svg>
+            Manage Tags
+          </ManageTagsButton>
+          <AddButton href="/admin/blog/new">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            New Post
+          </AddButton>
+        </HeaderButtons>
       </PageHeader>
 
       <FiltersSection>
@@ -511,6 +799,9 @@ export default function BlogListPage() {
               onClick={() => setFilter('published')}
             >
               Published
+            </FilterButton>
+            <FilterButton $active={filter === 'scheduled'} onClick={() => setFilter('scheduled')}>
+              Scheduled
             </FilterButton>
             <FilterButton $active={filter === 'draft'} onClick={() => setFilter('draft')}>
               Drafts
@@ -603,9 +894,21 @@ export default function BlogListPage() {
                 ))}
                 {post.tags.length > 2 && <Tag>+{post.tags.length - 2}</Tag>}
               </Tags>
-              <PostDate>{post.date}</PostDate>
-              <PostStatus $published={post.published}>
-                {post.published ? 'Published' : 'Draft'}
+              <PostDate>
+                {post.scheduled_for && !post.published ? (
+                  <span style={{ color: '#2563eb', fontSize: '12px' }}>
+                    {formatScheduledDate(post.scheduled_for)}
+                  </span>
+                ) : (
+                  post.date
+                )}
+              </PostDate>
+              <PostStatus $status={getPostStatus(post)}>
+                {getPostStatus(post) === 'published'
+                  ? 'Published'
+                  : getPostStatus(post) === 'scheduled'
+                  ? 'Scheduled'
+                  : 'Draft'}
               </PostStatus>
               <Actions>
                 {post.source === 'supabase' ? (
@@ -655,6 +958,53 @@ export default function BlogListPage() {
           ))
         )}
       </PostsTable>
+
+      {showTagsModal && (
+        <ModalOverlay onClick={() => setShowTagsModal(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()} style={{ position: 'relative' }}>
+            <CloseButton onClick={() => setShowTagsModal(false)}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </CloseButton>
+            <ModalTitle>Manage Tags</ModalTitle>
+            <ModalDescription>
+              Add new tags or delete existing ones. These tags will be available when creating blog posts.
+            </ModalDescription>
+
+            {tagSuccess && <SuccessMessage>{tagSuccess}</SuccessMessage>}
+            {tagError && <ErrorMessage>{tagError}</ErrorMessage>}
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <TagInput
+                type="text"
+                placeholder="Enter new tag name..."
+                value={newTagInput}
+                onChange={(e) => setNewTagInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
+              />
+              <AddTagButton onClick={handleAddTag} disabled={tagSaving || !newTagInput.trim()}>
+                {tagSaving ? 'Adding...' : 'Add Tag'}
+              </AddTagButton>
+            </div>
+
+            <TagsList>
+              {availableTags.map((tag) => (
+                <TagItem key={tag}>
+                  {tag}
+                  <DeleteTagButton onClick={() => handleDeleteTag(tag)} title="Delete tag">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </DeleteTagButton>
+                </TagItem>
+              ))}
+            </TagsList>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </>
   );
 }
