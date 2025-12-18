@@ -579,7 +579,7 @@ export default function CampaignsPage() {
     if (editingId) {
       await supabase.from('email_campaigns').update(data as never).eq('id', editingId);
     } else {
-      await supabase.from('email_campaigns').insert(data);
+      await supabase.from('email_campaigns').insert(data as never);
     }
 
     setShowModal(false);
@@ -614,7 +614,7 @@ export default function CampaignsPage() {
     if (editingId) {
       await supabase.from('email_campaigns').update(data as never).eq('id', editingId);
     } else {
-      await supabase.from('email_campaigns').insert(data);
+      await supabase.from('email_campaigns').insert(data as never);
     }
 
     setShowModal(false);
@@ -650,7 +650,7 @@ export default function CampaignsPage() {
     if (editingId) {
       await supabase.from('email_campaigns').update(campaignData as never).eq('id', editingId);
     } else {
-      const { data } = await supabase.from('email_campaigns').insert(campaignData).select().single();
+      const { data } = await supabase.from('email_campaigns').insert(campaignData as never).select().single();
       if (data) campaignId = data.id;
     }
 
@@ -696,7 +696,7 @@ export default function CampaignsPage() {
       html_content: campaign.html_content,
       template_id: campaign.template_id,
       status: 'draft',
-    });
+    } as never);
     fetchData();
   };
 

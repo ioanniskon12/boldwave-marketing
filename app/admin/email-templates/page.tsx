@@ -751,7 +751,7 @@ export default function EmailTemplatesPage() {
         fetchTemplates();
       }
     } else {
-      const { error } = await supabase.from('email_templates').insert(data);
+      const { error } = await supabase.from('email_templates').insert(data as never);
 
       if (!error) {
         fetchTemplates();
@@ -780,7 +780,7 @@ export default function EmailTemplatesPage() {
       html_content: template.html_content,
       category: template.category,
       is_default: false,
-    });
+    } as never);
 
     if (!error) {
       fetchTemplates();
